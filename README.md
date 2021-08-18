@@ -1,4 +1,4 @@
-# Fireworks Mania Mod Tools
+# Fireworks Mania - Mod Tools
 This is the place to start when creating mods for Fireworks Mania.
 
 
