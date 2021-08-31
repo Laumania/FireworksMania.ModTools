@@ -33,7 +33,3 @@ https://unity3d.com/get-unity/download/archive
 ## Dependencies / Packages to include
 - DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
 - UniTask (https://github.com/Cysharp/UniTask#upm-package)
-
-
-# License
-Essentially all from this repo can *only* be used to make mods for Fireworks Mania.
