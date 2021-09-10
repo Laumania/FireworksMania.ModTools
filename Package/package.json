@@ -2,7 +2,7 @@
     "name": "net.laumania.fireworksmania-modtools",
     "displayName": "Fireworks Mania Mod Tools",
     "author": { "name": "Laumania ApS", "url": "https://laumania.net" },
-    "version": "2021.09.1",
+    "version": "2021.9.1",
     "unity": "2021.1.19",
     "description": "Requiered tools for making mods for Fireworks Mania",
     "keywords": [ "mod", "laumania", "fireworks mania"],
