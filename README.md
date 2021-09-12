@@ -41,11 +41,11 @@ Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git?pa
 
 ### UniTask
 Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
+
 See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
 
 ### DOTween
 Package Manager, My Assets, Search for DOTween, Install
-
 DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
 
 ## 4. Create mod
