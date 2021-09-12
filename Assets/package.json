@@ -8,5 +8,8 @@
     "keywords": [ "mod", "laumania", "fireworks mania"],
     "license": "Restricted use - see included",
     "category": "Mods",
-    "dependencies": {}
+    "dependencies": 
+	{
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+	}
 }
