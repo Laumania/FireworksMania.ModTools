@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 909286468, guid: 2ca7469166ddd1146ae427314a1268f6, type: 3}
+  m_Name: ExporterResources
+  m_EditorClassIdentifier: 
+  uModLogoSmall: {fileID: 2800000, guid: c448fdc3e88b8c041ac7510ed442ba42, type: 3}
+  uModLogoLarge: {fileID: 2800000, guid: 743913e259a4c96499614a5cc1d59462, type: 3}
+  defaultModToolsLogoSmall: {fileID: 2800000, guid: 6f07acb02ff92e4499353eeebb694742,
+    type: 3}
+  defaultModToolsLogoLarge: {fileID: 2800000, guid: a77bc5b31d1e4874b997e62e5f514d51,
+    type: 3}
+  newModIcon: {fileID: 2800000, guid: 032f31724619fe7499f78683a05b6e9d, type: 3}
+  aboutIcon: {fileID: 2800000, guid: 57d7841d20a76db41ad12c3c45773499, type: 3}
+  settingsIcon: {fileID: 2800000, guid: feb12a8b91b4d4a4ab9bb3629c39b438, type: 3}
+  documentationImage: {fileID: 2800000, guid: c7b17da9302058d4996be7d25ba00c27, type: 3}
+  scriptingReferenceImage: {fileID: 2800000, guid: b3898c5f437ba594d9830299efe22c58,
+    type: 3}
+  companyImage: {fileID: 2800000, guid: 203611578768e8c40ac7803087ef8514, type: 3}
+  uModImage: {fileID: 0}
+  errorIcon: {fileID: 2800000, guid: 02ae554fad960ca47bdbb6e860f568b3, type: 3}
+  exporterSettingsIcon: {fileID: 2800000, guid: 7e072377e0fa44b4d8789dd16e547237,
+    type: 3}
+  exporterHelpIcon: {fileID: 2800000, guid: 4b660e13441f9b143ae697e83293f418, type: 3}

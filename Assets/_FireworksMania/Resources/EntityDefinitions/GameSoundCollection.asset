@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1410589922, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Name: GameSoundCollection
+  m_EditorClassIdentifier: 
+  _sounds:
+  - '[Type In]'
+  - '[None]'
+  - 50mm_Explosion
+  - 50mm_ExplosionCrackling
+  - 75mm_Explosion
+  - AMB_Night_Countryside_Lp_001
+  - AMB_Night_DesignedCrickets_Lp_001
+  - Basketball_Bounce
+  - CodyB_KokkenRulle_Explosion
+  - CodyB_KokkenRulle_Explosion_Deep
+  - DefaultImpact
+  - drinks_glasses_touching_003
+  - EraserTool_Erase
+  - Exp_Basic explosionB_Os
+  - EXP_Firecracker_A
+  - EXP_Firecracker_B
+  - Exp_Generic Explosion Sharp_Os_001
+  - EXP_Koekkenrulle_Tight
+  - Exp_MortarPuff_Os
+  - Exp_Propane tank_Os
+  - EXP_RomanCandleBurn_Os
+  - EXP_RomanCandleExplosion
+  - EXP_RomanCandlePuff_Os
+  - EXP_SepticEyeExplosion_Os_001
+  - EXP_SepticEyePoof_Os_001
+  - EXP_StrobeBob_Explosion_Os_001
+  - EXP_StrobeBob_Explosion_Os_001_Deep
+  - EXP_StrobeBob_PreExplScreech_Os_001
+  - EXP_StrobeBob_SingleStrobes
+  - EXP_StrobeBob_TakeOff_Os_001
+  - EXP_Suburb_GasStationPump_Os_001
+  - FAN Air Conditioner, Hard Metal Grinding Noise, Hum, Buzz, LOOP
+  - FireworkRocketLaunch_1
+  - FireworkRocketLaunch_13
+  - FireworkRocketLaunch_6
+  - FIREWORKS_Airbomb_01_Explode_Crackle_CCM41_Mono
+  - FIREWORKS_Airbomb_01_Explode_Crackle_CO100K_Mono
+  - FIREWORKS_Airbomb_01_Launch_CCM41_Mono
+  - FIREWORKS_Airbomb_01_Launch_CO100K_Mono
+  - FIREWORKS_Airbomb_02_Launch_CCM41_Mono
+  - FIREWORKS_Airbomb_03_Explode_CCM41_Mono
+  - FIREWORKS_Airbomb_03_Explode_Mixed
+  - FIREWORKS_Airbomb_04_Explode_Crackle_MKH8040_Right_Mono_VeryDeep
+  - FIREWORKS_Airbomb_08_Explode_Mixed
+  - FIREWORKS_Airbomb_09_Explode_Crackle_Mixed
+  - FIREWORKS_Airbomb_09_Launch_CCM41_Mono
+  - FIREWORKS_Airbomb_12_Explode_Crackle_Mixed_Alt
+  - FIREWORKS_Rocket_02_Explode_CCM41_Mono
+  - FIREWORKS_Rocket_02_Explode_NTG3_Mono
+  - FIREWORKS_Rocket_18_Explode_Mixed
+  - FIREWORKS_Rocket_18_Explode_MKH8040_Right_Mono_Deep
+  - FIREWORKS_Rocket_Big_01_Explode_CO100K_Mono
+  - Fireworks_Strobe_Explosion
+  - FIREWORKS_Whistler_03_Explode_NTG3_Mono
+  - FIREWORKS_Whistler_03_Whistle_NT5_Medium_Mono
+  - FlashlightSwitch_Off
+  - FlashlightSwitch_On
+  - Fountain_Gold_Core
+  - Fountain_Gold_End
+  - Fountain_Gold_Start
+  - FuseConnection_Strips
+  - FusetimeAdjustment_Click
+  - IgnitedFuse_High
+  - IgnitedFuse_Low
+  - IgnitedFuse_Middle
+  - IMP_PipeADropSingle_Os
+  - IMP_PipeADropSingle_Os_Heavy
+  - IMP_TrashCanAImpact_Os
+  - IMP_TrashCanBImpact_Os
+  - IMPACT_Wood_Plank_On_Wood_Pile_06_Short_mono
+  - Koekkenrulle_Sketch_Crack
+  - LadyFingerExact
+  - Metal_Sheets_Sledgehammer_Hit_02
+  - NeonLightBuzzing
+  - PhysicsTool_Laser_Off
+  - PhysicsTool_Laser_On
+  - Piano_Destroyed_demolished_broken_Wurlitzer_Upright_Impact_string_note_hit_ringing
+    out_buzzing_string_03
+  - SFX_FireHeavy_Mono_Lp_001
+  - SFX_FireHeavy_Mono_Lp_001_Large
+  - SFX_Impact_GeneralLarge
+  - SFX_Impact_GeneralMedium
+  - SFX_SpawnElectricity_Os
+  - SFX_SpawnFireworks_Os
+  - Spawn_Default
+  - Spawn_Freeze
+  - Thruster_Strobe_Start
+  - Thruster_Strobe_Whistle
+  - Torch_Small_Begin
+  - Torch_Small_Burn
+  - Torch_Small_End
+  - TOY_Squeeky_Bright_mono
+  - Zipper_Launch

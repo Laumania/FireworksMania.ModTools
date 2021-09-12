@@ -1,0 +1,202 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1295631454, guid: 4d9ac0cbb6dcbc8428255d2df10dafee, type: 3}
+  m_Name: ModToolsSettings
+  m_EditorClassIdentifier: 
+  toolsIconSmall: {fileID: 0}
+  toolsIconLarge: {fileID: 0}
+  toolsName: FM Mod Tools
+  toolsVersion: 2021.9.1
+  firstRunWindow:
+    assemblyQualifiedName: 
+  developerName: Laumania ApS
+  gameName: Fireworks Mania
+  gameVersion: 2021.9.1
+  modFileExtension: .mod
+  commandLineLaunchFormat: +mod=$PATH
+  targetUnityVersion: 2021.1.19f1
+  developerWebsiteURL: 
+  onlineDocumentationURL: 
+  onlineScriptingReferenceURL: 
+  assetSharing:
+    sharedAssetBundlePath: Resources/Editor/ModToolsSharedAssets.modbundle
+    sharedAssets:
+    - assetGUID: f14c4b71eab72f54c91ba25eca7f58e7
+      assetBundlePath: Assets/BugTest_MissingScript/Dirt_Sandbag_BuildableDefence.FBX
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Dirt_Sandbag_BuildableDefence.FBX.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+    - assetGUID: 5a9e09e6160283749b1e16f2ad38c3e6
+      assetBundlePath: Assets/BugTest_MissingScript/File that works/Prop_Fence1v2_Mod.prefab
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Prop_Fence1v2_Mod.prefab.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+    - assetGUID: 6bdf042b6ca7a1e48a6d0455243e0d99
+      assetBundlePath: Assets/BugTest_MissingScript/File that works/Wooden_fence1v2.FBX
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Wooden_fence1v2.FBX.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+    - assetGUID: 5aa5f337f4f72324bb971d41876e2789
+      assetBundlePath: Assets/BugTest_MissingScript/Structure_Sandbags_DirtMound_Mod.prefab
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Structure_Sandbags_DirtMound_Mod.prefab.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+    - assetGUID: b440845d0f79e384696be41ca5f77c87
+      assetBundlePath: Assets/Exclude/SharedAsset.prefab
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/SharedAsset.prefab.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+    - assetGUID: 7a59bde8455cad046ae3dae10d903151
+      assetBundlePath: Assets/Modding/FireMobile.prefab
+      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/FireMobile.prefab.png
+      assetType:
+        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      assetLabels: []
+  options:
+    allowAssetsInMods: 1
+    allowScenesInMods: 1
+    allowScriptsInMods: 1
+    allowMultipleModsPerProject: 1
+    allowModReferences: 1
+    allowDotNet4X: 1
+    allowMenu: 1
+    menuRoot: Mod Tools
+    menuEntries:
+    - menuEntryName: Create/New Mod
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.CreateModWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    - menuEntryName: Create/Prefab Node
+      menuAction: 1
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Create/Material Node
+      menuAction: 2
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: 
+      menuAction: 0
+      enabled: 1
+      isSeparator: 1
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Exporter
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.ExporterWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    - menuEntryName: 
+      menuAction: 0
+      enabled: 1
+      isSeparator: 1
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Export Settings
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.SettingsWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    - menuEntryName: Build Mod %#b
+      menuAction: 3
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Build and Run %#r
+      menuAction: 0
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: 
+      menuAction: 0
+      enabled: 1
+      isSeparator: 1
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Help
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.HelpWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    - menuEntryName: About
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.AboutWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    - menuEntryName: 
+      menuAction: 0
+      enabled: 1
+      isSeparator: 1
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Referencing/Rebuild Reference Cache
+      menuAction: 6
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: 
+      menuAction: 0
+      enabled: 1
+      isSeparator: 1
+      windowType:
+        assemblyQualifiedName: 
+    - menuEntryName: Game Assets
+      menuAction: 5
+      enabled: 1
+      isSeparator: 0
+      windowType:
+        assemblyQualifiedName: UMod.Exporter.GameAssetsWindow, UMod-Exporter, Version=1.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    readOnly: 0
+  security:
+    performBuildSecurityChecks: 1
+    allowScriptsInMods: 1
+    allowAssembliesInMods: 0
+    securityRestrictions: {fileID: 11400000, guid: ec48e15fce9a35846964f190f066079d,
+      type: 2}
+    readOnly: 0
+  gameLocking:
+    allowGameLocking: 1
+    allowGameVersionLocking: 0
+    gameLockingGUID: 5ba6bec1-998c-4a0c-afd8-ebe50eb18b5a
+    readOnly: 0
+  stripShaderNames: []
+  readOnly: 0
+  newModTextFile: {fileID: 4900000, guid: 565e07c038553cf488486a6cbfad595c, type: 3}

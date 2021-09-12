@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 868c75e0b9d09664bb358f7ec0383ebe
+labels:
+- uMod2.0
+- Modding
+- ModSupport
+- Mod
+timeCreated: 1521108121
+licenseType: Store
+PluginImporter:
+  serializedVersion: 1
+  iconMap: {}
+  executionOrder: {}
+  isPreloaded: 0
+  platformData:
+    Any:
+      enabled: 1
+      settings: {}
+    Editor:
+      enabled: 0
+      settings:
+        DefaultValueInitialized: true
+    WindowsStoreApps:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
