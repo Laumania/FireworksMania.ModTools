@@ -36,6 +36,11 @@ https://unity3d.com/get-unity/download/archive
 
 ## 3. Install dependencies
 
+### Git
+If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
+You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
+
+
 ### Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git?path=Assets
 
