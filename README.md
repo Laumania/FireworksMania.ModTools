@@ -21,7 +21,7 @@ So the first thing you need is Unity.
 
 > If you have no idea how Unity works, I will suggest you find some getting started tutorial on YouTube (Insert link?).
 
-Go and get the "Unity Hub": https://store.unity.com/download-nuo
+Go and get the "Unity Hub": https://unity3d.com/get-unity/download
 
 When Unity Hub installed on your machine you can install you are ready to install Unity.
 
