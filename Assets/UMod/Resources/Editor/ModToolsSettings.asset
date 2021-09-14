@@ -19,8 +19,11 @@ MonoBehaviour:
   firstRunWindow:
     assemblyQualifiedName: 
   developerName: Laumania ApS
+  syncDeveloperName: 1
   gameName: Fireworks Mania
+  syncGameName: 1
   gameVersion: 2021.9.1
+  syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
   targetUnityVersion: 2021.1.19f1
