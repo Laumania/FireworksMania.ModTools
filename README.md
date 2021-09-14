@@ -21,7 +21,7 @@ So the first thing you need is Unity.
 
 > If you have no idea how Unity works, I will suggest you find some getting started tutorial on YouTube (Insert link?).
 
-Go and get the "Unity Hub": https://store.unity.com/download-nuo
+Go and get the "Unity Hub": https://unity3d.com/get-unity/download
 
 When Unity Hub installed on your machine you can install you are ready to install Unity.
 
@@ -35,6 +35,11 @@ https://unity3d.com/get-unity/download/archive
 
 
 ## 3. Install dependencies
+
+### Git
+If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
+You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
+
 
 ### Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git?path=Assets
