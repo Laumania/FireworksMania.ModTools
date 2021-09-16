@@ -26,7 +26,7 @@ MonoBehaviour:
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
-  targetUnityVersion: 2021.1.19f1
+  targetUnityVersion: 2021.1.20f1
   developerWebsiteURL: 
   onlineDocumentationURL: 
   onlineScriptingReferenceURL: 
