@@ -48,7 +48,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1687488049}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bd8c9cdfadec6d4d856f5c06622b17d, type: 3}
+  m_Script: {fileID: -1430930928, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: b8494a238699e9547b8f6d8101cf46bd, type: 2}
@@ -108,10 +108,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1687488049}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a31f1659d28f4945b06e3fd090cc740, type: 3}
+  m_Script: {fileID: -432571082, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ImpactSound: SFX_Impact_GeneralMedium
+  _sound: SFX_Impact_GeneralMedium
 --- !u!114 &-6549521464206406694
 MonoBehaviour:
   m_ObjectHideFlags: 0
