@@ -22,7 +22,7 @@ MonoBehaviour:
   syncDeveloperName: 1
   gameName: Fireworks Mania
   syncGameName: 1
-  gameVersion: 2021.9.1
+  gameVersion: 2021.9.2
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
