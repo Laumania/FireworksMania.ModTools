@@ -1,6 +1,9 @@
 # Change log
 List of changes for each version of the Fireworks Mania Mod Tools.
 
+## 2021.9.2
+- Refactored FuseSmall and FuseMedium to use a new setup for FuseConnectionPoint logic
+
 ## 2021.9.1
 - Changed CakeBehavior to only have one particle effect as we dont' need a list, as multiple particle systems can be just be put under one anyway
 - Changed Thruster to have a single particle system too, for same reasons as above
