@@ -1,6 +1,16 @@
 # Change log
 List of changes for each version of the Fireworks Mania Mod Tools.
 
+## 2021.9.6
+- Added new "CakeBehavior" so you can now build cakes in your mods
+- Added a DummyCake in the Mod Samples to see how it's put together, but as you will see, it works very much like RocketBehavior
+- Updated the DummyRocket effect to be a bit more performant, discovered it wasn't using GPU materials places where it should
+- Deleted the legacy FuseConnectionPointIndicatorPrefab as we don't need it anymore
+- Removed the Fireworks Type "Featured" as modders shouldn't use that (plus this enture thing might change completely)
+- Upgraded to UMod 2.8.5 - should fix the "Fuse reference bug"
+- Renamed "FuseSmall" to "FuseStandardPrefab" in the Mod Samples
+- Upgraded to use Unity v2021.1.22f1
+
 ## 2021.9.2
 - Refactored FuseSmall and FuseMedium to use a new setup for FuseConnectionPoint logic
 
