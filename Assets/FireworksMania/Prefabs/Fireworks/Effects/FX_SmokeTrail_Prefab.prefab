@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6074374117019434768}
   - component: {fileID: 5030316545989495357}
   m_Layer: 0
-  m_Name: SmokeTrail_Prefab
+  m_Name: FX_SmokeTrail_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4816,7 +4816,7 @@ ParticleSystemRenderer:
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_UseCustomVertexStreams: 1
+  m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 1
   m_ApplyActiveColorSpace: 0
   m_AllowRoll: 1
