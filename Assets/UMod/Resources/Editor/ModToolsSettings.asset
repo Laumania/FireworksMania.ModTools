@@ -27,7 +27,7 @@ MonoBehaviour:
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
   targetUnityVersion: 2021.1.22f1
-  allowAnyUnityVersion: 0
+  allowAnyUnityVersion: 1
   developerWebsiteURL: 
   onlineDocumentationURL: 
   onlineScriptingReferenceURL: 
