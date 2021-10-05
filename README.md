@@ -2,12 +2,6 @@
 > 
 > FEAR NOT - KEEP AND EYE ON THIS REPO AND MY YOUTUBE CHANNEL (https://www.youtube.com/laumania) TO GET UPDATED ON WHEN THIS WILL BE AVAILABLE FOR EVERYBODY.
 > 
-> IF YOU REALLY WANT TO STARTED PLAYING AROUND WITH MODS FOR FIREWORKS MANIA - REACH OUT TO ME (Laumania) ON MY DISCORD AND YOU MIGHT BE ABLE TO JOIN THE CLOSED-BETA.
-> 
-> DISCORD INVITE: https://discord.gg/SzZD77p
-
-
-
 
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for Fireworks Mania.
