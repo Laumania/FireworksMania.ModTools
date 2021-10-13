@@ -28,8 +28,8 @@ MonoBehaviour:
   commandLineLaunchFormat: +mod=$PATH
   targetUnityVersion: 2021.1.22f1
   allowAnyUnityVersion: 1
-  developerWebsiteURL: 
-  onlineDocumentationURL: 
+  developerWebsiteURL: https://github.com/Laumania/FireworksMania.ModTools
+  onlineDocumentationURL: https://github.com/Laumania/FireworksMania.ModTools
   onlineScriptingReferenceURL: 
   assetSharing:
     sharedAssetBundlePath: Resources/Editor/ModToolsSharedAssets.modbundle

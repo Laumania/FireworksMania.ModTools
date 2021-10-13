@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1184703327, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Name: RomanCandle_DummyRomanCandle
+  m_EditorClassIdentifier: 
+  _id: RomanCandle_DummyRomanCandle
+  _prefabGameObject: {fileID: 1870502819757431397, guid: c346852db02f35f41bb81ac0ec3da4c7,
+    type: 3}
+  _itemName: Dummy Roman Candle
+  _icon: {fileID: 21300000, guid: 53d73ed3002df7e4cb671d52ec1be1e7, type: 3}
+  _entityDefinitionType: {fileID: 11400000, guid: 1ceaec4d2b051d048a25ac00be853121,
+    type: 2}
