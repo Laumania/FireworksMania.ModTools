@@ -15,21 +15,21 @@ MonoBehaviour:
   toolsIconSmall: {fileID: 0}
   toolsIconLarge: {fileID: 0}
   toolsName: FM Mod Tools
-  toolsVersion: 2021.10.1
+  toolsVersion: 2021.10.2
   firstRunWindow:
     assemblyQualifiedName: 
   developerName: Laumania ApS
   syncDeveloperName: 1
   gameName: Fireworks Mania
   syncGameName: 1
-  gameVersion: 2021.10.1
+  gameVersion: 2021.10.2
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
   targetUnityVersion: 2021.1.22f1
   allowAnyUnityVersion: 1
-  developerWebsiteURL: 
-  onlineDocumentationURL: 
+  developerWebsiteURL: https://github.com/Laumania/FireworksMania.ModTools
+  onlineDocumentationURL: https://github.com/Laumania/FireworksMania.ModTools
   onlineScriptingReferenceURL: 
   assetSharing:
     sharedAssetBundlePath: Resources/Editor/ModToolsSharedAssets.modbundle
