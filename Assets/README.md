@@ -8,6 +8,14 @@ To update a .git package, you simply just add the package again.
 So just add the .git url again to the Mod Tools.
 
 ---
+## v2021.10.2
+- Added possibility to create Firecracker, Fountains, PreloadedTube, RomanCandle, SmokeBomb, Whistler and Zipper
+- Added "Dummy" prefabs as samples for all the above in the ModSamples folder. These are meant to be used as a starting point. Drag the Dummy prefab to the hierchy and Prefab-Unpack and create your own from there (I will do a video of this soon :))
+- Upgraded UMod to 2.8.6 (There is still the bug that the old mods prior to v2021.10.1 have to rebuild with the latest version. However, after a long dialog with the UMod creator, it actually looks like this might be a Unity bug. It have been filed as a bug to Unity
+- Removed the "locked" part of the EntityDefinitions, as the locked logic in the game is now done in another way
+- Added Developer references to the Mod Tools to point to this repository
+- Removed Muzzle and Trail materials from the Mod Tools as they were never meant to be there
+
 
 ## v2021.10.1
 - Included missing materials for DummyCake
