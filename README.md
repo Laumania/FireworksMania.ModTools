@@ -42,10 +42,12 @@ To install that specific version, go to the [Unity Archive](https://unity3d.com/
 ![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
 
 ## 3. Create empty Unity project
-Fireworks Mania mods are build from inside Unity and we therefore need a empty 3D Unity project. This is initially exactly as you would do if you were going to create your own game, however, when building mods there are a few things that are different.
+Fireworks Mania mods are build from inside Unity and you therefore need a empty 3D Unity project. This is (initially) exactly as you would do if you were going to create your own game, however, when building mods there are a few things that are different, which we will get to a bit later.
 
 
-![image](https://user-images.githubusercontent.com/1378458/133001075-917e2258-838f-4051-9221-02f48a73323f.png)
+![image](https://user-images.githubusercontent.com/1378458/138611162-2917e479-285b-4192-b640-2fd0a10abbb9.png)
+
+One important thing to know when naming your project is that you can have multiple mods within a single Unity project. This means that you might want to name the Unity project something more common like, "YourNickNameFireworksManiaMods", or "YourNickName.FireworksMania.Mods" etc. These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on mod name or anything.
 
 
 ## 4. Install dependencies
