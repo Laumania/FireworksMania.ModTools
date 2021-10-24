@@ -40,6 +40,9 @@ To install that specific version, go to the [Unity Archive](https://unity3d.com/
 ![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
 
 ## 3. Create empty Unity project
+Fireworks Mania mods are build from inside Unity and we therefore need a empty 3D Unity project. This is initially exactly as you would do if you were going to create your own game, however, when building mods there are a few things that are different.
+
+
 ![image](https://user-images.githubusercontent.com/1378458/133001075-917e2258-838f-4051-9221-02f48a73323f.png)
 
 
