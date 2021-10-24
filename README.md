@@ -1,7 +1,6 @@
-> DISCLAIMER: IF YOU FOUND THIS REPO AND ARE NOT CURRENTLY A PART OF THE CLOSED-BETA TESTERS - YOU WONT BE ABLE TO TEST THIS.
+> DISCLAIMER: THIS ENTIRE REPOSITORY IS WORK-IN-PROGRESS - SO BARE WITH ME :)
 > 
-> FEAR NOT - KEEP AND EYE ON THIS REPO AND MY YOUTUBE CHANNEL (https://www.youtube.com/laumania) TO GET UPDATED ON WHEN THIS WILL BE AVAILABLE FOR EVERYBODY.
-> 
+> KEEP AN EYE ON THIS REPO AND MY [YOUTUBE CHANNEL](https://www.youtube.com/laumania) TO GET UPDATED ON WHEN THIS WILL BE AVAILABLE FOR EVERYBODY.
 
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for Fireworks Mania.
@@ -21,7 +20,9 @@ When Unity Hub installed on your machine you can install you are ready to instal
 
 > I'm not sure how this will work in the future yet when it comes to different versions of Unity, for now you need a specific version.
 
-You need Unity *2021.1.19*. Go to this link and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
+### Specific Unity Version
+To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with. [You can see the version you need here](https://github.com/Laumania/FireworksMania.ModTools/blob/059e7a83ae0a3f7b293aa1e1c297d4a4e2109a66/ProjectSettings/ProjectVersion.txt#L1). 
+Go to this link and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
 https://unity3d.com/get-unity/download/archive
 
 ## 2. Create empty Unity project
