@@ -5,6 +5,23 @@
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for Fireworks Mania.
 
+# Prerequisites
+To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
+
+- Basic knowledge about [Unity](https://unity.com)
+  - If you want to get started I recommend Imphenzia's ["LEARN UNITY - The Most BASIC TUTORIAL I'll Ever Make"](https://www.youtube.com/watch?v=pwZpJzpE2lQ)
+- Basic 3D modeling skills ([Blender](https://www.blender.org) is the tool I use, but there are others. As long as they can export to .fbx I think it's all fine)
+  - If you want to get started I recommend Imphenzia's ["Learn Low Poly Modeling in Blender"](https://www.youtube.com/watch?v=1jHUY3qoBu8) if you are all new to Blender. 
+
+Keep in mind that there are tons of good tutorials out there for basic Unity and Blender, so go check out what YouTube have to offer, the two recommendation are just one place to start.
+
+**NO CODING SKILLS NEEDED**
+
+It's very important to note, because this seems to be the biggest problem for most people, that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
+
+So none-coders, fear not :)
+
+
 # Getting started
 Ok lets get started boys and girls - read on to get started.
 
