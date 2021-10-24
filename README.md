@@ -37,7 +37,7 @@ To avoid unintended behavior and issues you always need the specific version of 
 
 To install that specific version, go to the [Unity Archive](https://unity3d.com/get-unity/download/archive) and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
 
-![image](https://user-images.githubusercontent.com/1378458/138601849-0f5f8869-813b-4803-a30e-18fe26a46309.png)
+![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
 
 ## 3. Create empty Unity project
 ![image](https://user-images.githubusercontent.com/1378458/133001075-917e2258-838f-4051-9221-02f48a73323f.png)
