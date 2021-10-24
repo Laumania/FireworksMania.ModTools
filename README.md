@@ -23,30 +23,27 @@ So none-coders, fear not :)
 
 
 # Getting started
-Ok lets get started boys and girls - read on to get started.
+## 1. Getting Unity Hub
+Go and get the [Unity Hub](https://unity3d.com/get-unity/download) (not the Beta version!)
 
+When Unity Hub is installed on your machine, you are ready to install "Unity" (also called "Unity Editor").
 
-## 1. Getting Unity
-So the first thing you need is Unity. 
+## 2. Getting Unity Editor
+To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with. 
 
-> If you have no idea how Unity works, I will suggest you find some getting started tutorial on YouTube (Insert link?).
+> As the Mod Tools gets updated, the target Unity version will also be updated. You can go back here and see what version you need. Alternatively the Mod Tools will tell you what version you need when you try to build your mod.
 
-Go and get the "Unity Hub": https://unity3d.com/get-unity/download
+[You can see the version you need in the ModToolsSettings file on the highlighted line here](https://github.com/Laumania/FireworksMania.ModTools/blob/58a86d3d521b8451016bb59fbf89225f07890761/Assets/UMod/Resources/Editor/ModToolsSettings.asset#L29). 
 
-When Unity Hub installed on your machine you can install you are ready to install Unity.
+To install that specific version, go to the [Unity Archive](https://unity3d.com/get-unity/download/archive) and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
 
-> I'm not sure how this will work in the future yet when it comes to different versions of Unity, for now you need a specific version.
+![image](https://user-images.githubusercontent.com/1378458/138601849-0f5f8869-813b-4803-a30e-18fe26a46309.png)
 
-### Specific Unity Version
-To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with. [You can see the version you need here](https://github.com/Laumania/FireworksMania.ModTools/blob/059e7a83ae0a3f7b293aa1e1c297d4a4e2109a66/ProjectSettings/ProjectVersion.txt#L1). 
-Go to this link and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
-https://unity3d.com/get-unity/download/archive
-
-## 2. Create empty Unity project
+## 3. Create empty Unity project
 ![image](https://user-images.githubusercontent.com/1378458/133001075-917e2258-838f-4051-9221-02f48a73323f.png)
 
 
-## 3. Install dependencies
+## 4. Install dependencies
 
 ### Git
 If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
@@ -65,5 +62,5 @@ See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-packa
 Package Manager, My Assets, Search for DOTween, Install
 DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
 
-## 4. Create mod
+## 5. Create mod
 ![image](https://user-images.githubusercontent.com/1378458/133001208-db4187e8-e6d5-40cf-8504-24639e493286.png)
