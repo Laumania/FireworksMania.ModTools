@@ -29,7 +29,9 @@ Go and get the [Unity Hub](https://unity3d.com/get-unity/download) (not the Beta
 When Unity Hub is installed on your machine, you are ready to install "Unity" (also called "Unity Editor").
 
 ## 2. Getting Unity Editor
-To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with. 
+To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with.
+
+Luckily, when you have the Unity Hub installed, it's very easy to install the specific version you want and you can have multiple versions installed at the same time.
 
 > As the Mod Tools gets updated, the target Unity version will also be updated. You can go back here and see what version you need. Alternatively the Mod Tools will tell you what version you need when you try to build your mod.
 
