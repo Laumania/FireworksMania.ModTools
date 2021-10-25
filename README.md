@@ -1,9 +1,9 @@
-> DISCLAIMER: THIS ENTIRE REPOSITORY IS WORK-IN-PROGRESS - SO BARE WITH ME :)
+> DISCLAIMER: THIS ENTIRE REPOSITORY AND MOD SUPPORT IS STILL UNDER DEVELOPMENT SO ALL SHOULD BE SEEN AS WORK-IN-PROGRESS.
 > 
 > KEEP AN EYE ON THIS REPO AND MY [YOUTUBE CHANNEL](https://www.youtube.com/laumania) TO GET UPDATED ON WHEN THIS WILL BE AVAILABLE FOR EVERYBODY.
 
 # Fireworks Mania - Mod Tools
-This is the place to start when creating mods for Fireworks Mania.
+This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
 # Prerequisites
 To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
