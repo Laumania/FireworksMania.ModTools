@@ -58,9 +58,8 @@ At this point you should now have an empty Unity project that should look someth
 ![image](https://user-images.githubusercontent.com/1378458/138737260-cd972920-94cd-4eeb-940f-41fe5002c736.png)
 
 ## 4. Install dependencies
-For now you have to install these dependencies manually, sadly there are no current way to automatically include these dependencies, so you have to add them manually.
-
-Fear not, it looks much more complicated than it really is.
+> As of writing, Oct. 2021, you sadly have to install these dependencies manually as there are no way to automatically include these dependencies in the Mod Tools package.
+> Fear not, it looks much more complicated than it really is.
 
 ### Git
 If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
