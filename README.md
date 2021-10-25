@@ -74,7 +74,7 @@ Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/As
 
 See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
 
-### Fireworks Mania Mod Tools
+## 5. Install Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
 
 
