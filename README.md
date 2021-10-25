@@ -63,7 +63,7 @@ You can get git from here, install that and restart Unity and Unity Hub: https:/
 
 
 ### Fireworks Mania Mod Tools
-Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git?path=Assets
+Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
 
 ### UniTask
 Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
