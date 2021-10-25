@@ -54,13 +54,14 @@ This means that you might want to name the Unity project something more generic 
 
 These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on actual mod(s) name(s).
 
+At this point you should now have an empty Unity project that should look something like this:
+![image](https://user-images.githubusercontent.com/1378458/138737260-cd972920-94cd-4eeb-940f-41fe5002c736.png)
 
 ## 4. Install dependencies
 
 ### Git
 If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
 You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
-
 
 ### Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
@@ -73,6 +74,9 @@ See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-packa
 ### DOTween
 Package Manager, My Assets, Search for DOTween, Install
 DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
+
+
+
 
 ## 5. Create mod
 ![image](https://user-images.githubusercontent.com/1378458/133001208-db4187e8-e6d5-40cf-8504-24639e493286.png)
