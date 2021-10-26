@@ -37,6 +37,8 @@ Luckily, when you have the Unity Hub installed, it's very easy to install the sp
 
 [You can see the version you need in the ModToolsSettings file on the highlighted line here](https://github.com/Laumania/FireworksMania.ModTools/blob/58a86d3d521b8451016bb59fbf89225f07890761/Assets/UMod/Resources/Editor/ModToolsSettings.asset#L29). 
 
+![image](https://user-images.githubusercontent.com/1378458/138910145-e5900b45-8a0e-4b2c-b3fb-dc2822d5ccfd.png)
+
 To install that specific version, go to the [Unity Archive](https://unity3d.com/get-unity/download/archive) and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
 
 ![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
