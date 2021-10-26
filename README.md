@@ -81,25 +81,25 @@ Select "My Assets".
 
 Search for "DOTween", select it and press the Download button.
 
-![image](https://user-images.githubusercontent.com/1378458/138902089-a3024171-8ba4-4420-bada-7fddd4a3c437.png)
+![image](https://user-images.githubusercontent.com/1378458/138949692-1f3a146b-8b22-4a66-820f-3ff8c8813823.png)
 
-Once it's downloaded the download button change to an import button, press that to import the package into your Unity project.
+Once it's downloaded the Download button change to an Import button, press that to import the package into your Unity project.
 
 An new window will pop up showing you the files in this package, press the Import button and wait for it to complete the import.
 
-![image](https://user-images.githubusercontent.com/1378458/138902812-b01f4de1-9ca3-4f94-be34-b8bc55094f77.png)
+![image](https://user-images.githubusercontent.com/1378458/138950003-89dd8a4e-d78a-44a0-8d51-d9f0cbaa7274.png)
 
 Follow the instructions in the DOTween guide.
 
-![image](https://user-images.githubusercontent.com/1378458/138903155-66622b26-d539-4ca3-a815-5d178066a1a9.png)
+![image](https://user-images.githubusercontent.com/1378458/138950084-9c78f82e-4eb2-4217-802d-e2830ef70c24.png)
 
-![image](https://user-images.githubusercontent.com/1378458/138903200-3b911624-f50a-430a-af66-7de77bd8fc31.png)
+![image](https://user-images.githubusercontent.com/1378458/138950154-9c14bca3-53dd-46f1-82b5-2930cdb0bea1.png)
 
-![image](https://user-images.githubusercontent.com/1378458/138903272-84fac192-7a7b-43dd-a876-f36fd19c5489.png)
+![image](https://user-images.githubusercontent.com/1378458/138950195-dc1a6a65-bdd3-46f7-a0f4-0039d8952292.png)
 
-![image](https://user-images.githubusercontent.com/1378458/138903389-4d59344c-6fa0-4283-bf30-2eda33978fe9.png)
+![image](https://user-images.githubusercontent.com/1378458/138950236-cd3dcbc5-2341-454c-9603-e76d90aeb693.png)
 
-![image](https://user-images.githubusercontent.com/1378458/138903461-87af2c19-61bf-4c8a-b860-fcf949e8336d.png)
+![image](https://user-images.githubusercontent.com/1378458/138950293-a1360486-b225-40f4-8162-b7a53578d79e.png)
 
 You now have DOTween installed. You won't use it directly and you will not see any changes in the Unity Editor, its purely a dependency that the Fireworks Mania Mod Tools need to be able to build the project and thereby build the mods later on.
 
