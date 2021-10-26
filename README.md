@@ -61,18 +61,47 @@ At this point you should now have an empty Unity project that should look someth
 > As of writing, Oct. 2021, you sadly have to install these dependencies manually as there are no way to automatically include these dependencies in the Mod Tools package.
 > Fear not, it looks much more complicated than it really is.
 
-### Package - DOTween
-Between DOTween is an Unity Asset Store package, you need to make sure it have it added to "My Assets" to install it in Unity.
+### DOTween
+Because DOTween is an Unity Asset Store package, you need to make sure it have it added to "My Assets" to install it in Unity.
 
-Go to [DOTween in a browser here](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676), be sure you are logged in and click to "Add to My Assets" button.
+Go to [DOTween in a browser here](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676), be sure you are logged in and click to "Add to My Assets" button. If the blue button says "Open in Unity" you already have it in your assets and you can move on to next step.
 
-![image](https://user-images.githubusercontent.com/1378458/138895826-0ac8eafc-916a-4efc-a01a-c5f03a879059.png)
+![image](https://user-images.githubusercontent.com/1378458/138900846-8c105138-d955-4ad9-84c5-ffd82cc282f9.png)
+
+Now go to the Package Manager in the Unity Editor: Window -> Package Manager
+
+![image](https://user-images.githubusercontent.com/1378458/138901793-177e0102-e32d-453d-9c12-7f3e9bc9a5bc.png)
+
+Select "My Assets".
+
+![image](https://user-images.githubusercontent.com/1378458/138901891-eb2392bc-b1e5-4326-aec4-9543173b91f6.png)
+
+Search for "DOTween", select it and press the Download button.
+
+![image](https://user-images.githubusercontent.com/1378458/138902089-a3024171-8ba4-4420-bada-7fddd4a3c437.png)
+
+Once it's downloaded the download button change to an import button, press that to import the package into your Unity project.
+
+An new window will pop up showing you the files in this package, press the Import button and wait for it to complete the import.
+
+![image](https://user-images.githubusercontent.com/1378458/138902812-b01f4de1-9ca3-4f94-be34-b8bc55094f77.png)
+
+Follow the instructions in the DOTween guide.
+
+![image](https://user-images.githubusercontent.com/1378458/138903155-66622b26-d539-4ca3-a815-5d178066a1a9.png)
+
+![image](https://user-images.githubusercontent.com/1378458/138903200-3b911624-f50a-430a-af66-7de77bd8fc31.png)
+
+![image](https://user-images.githubusercontent.com/1378458/138903272-84fac192-7a7b-43dd-a876-f36fd19c5489.png)
+
+![image](https://user-images.githubusercontent.com/1378458/138903389-4d59344c-6fa0-4283-bf30-2eda33978fe9.png)
+
+![image](https://user-images.githubusercontent.com/1378458/138903461-87af2c19-61bf-4c8a-b860-fcf949e8336d.png)
+
+You now have DOTween installed. You won't use it directly and you will not see any changes in the Unity Editor, its purely a dependency that the Fireworks Mania Mod Tools need to be able to build the project and thereby build the mods later on.
 
 
-Package Manager, My Assets, Search for DOTween, Install
-
-
-### Package - UniTask
+### UniTask
 Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
 
