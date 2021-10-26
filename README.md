@@ -100,13 +100,29 @@ Follow the instructions in the DOTween guide.
 
 You now have DOTween installed. You won't use it directly and you will not see any changes in the Unity Editor, its purely a dependency that the Fireworks Mania Mod Tools need to be able to build the project and thereby build the mods later on.
 
-
 ### UniTask
-Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
+This dependency needs to be installed a little different, which is actually easier.
+
+Go to the Package Manager again, click the little + button and select that you want to add an git package.
+
+![image](https://user-images.githubusercontent.com/1378458/138905085-66314ab7-da3e-47a0-a418-3a974cb713b2.png)
+
+Paste the following url in and press Add: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
+
+![image](https://user-images.githubusercontent.com/1378458/138905271-262a098e-85f5-43a8-b336-25759917fd4e.png)
 
 > Troubleshooting: If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer. 
 > You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
+
+![image](https://user-images.githubusercontent.com/1378458/138905359-08064f6f-63b8-4b4e-bc8a-65b047fdc084.png)
+
+After the installation, you should be able to see the package in the list of "Packages: In Project" and remember to clear the search field too.
+
+![image](https://user-images.githubusercontent.com/1378458/138905779-3a250d0b-5fbb-4ad0-822e-127e74096469.png)
+
+If it looks similar to the above, you are done installing UniTask and can continue.
+
+If you want to know more about UniTask, see details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
 
 ## 5. Install Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
