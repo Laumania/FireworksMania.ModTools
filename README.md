@@ -174,7 +174,7 @@ Lets first create an "Mods" folder where we can have all our mods in.
 
 ![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
 
-Then lets go and create a new mod.
+Then let us go and create a new mod.
 
 ![image](https://user-images.githubusercontent.com/1378458/138917553-79bbd930-3c96-420a-966a-e95093adbd7f.png)
 
@@ -184,7 +184,7 @@ Now give the mod an good descriptive and unique name, it's always an good idea t
 
 Make sure to put the mod in "Assets/Mods" as shown. 
 
-It's not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
+It is not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
 
 ![image](https://user-images.githubusercontent.com/1378458/138918428-50febbac-15d8-4937-9ff7-bb8499e82961.png)
 
@@ -204,3 +204,15 @@ Right click and create the following folders:
 
 ![image](https://user-images.githubusercontent.com/1378458/138955786-77c7cbcd-afd4-45e1-b040-ca1e9fc2ba90.png)
 
+## Create an EntityDefinition
+Now we are starting to hit Fireworks Mania specific stuff, EntityDefinition - what is that?
+
+> An EntityDefinition is basically metadata that describes any object you can spawn in Fireworks Mania. It holds data such as the name, icon, prefab to spawn etc.
+
+All items in the inventory in Fireworks Mania is basically an "EntityDefinition".
+
+Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition", which holds metadata about a specific type of entity, namely "fireworks". 
+
+We of cause create this in our "Definitions" folder.
+
+![image](https://user-images.githubusercontent.com/1378458/138957039-abd6b1a8-299c-4d69-bb7f-e0e0d64936c2.png)
