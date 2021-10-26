@@ -192,3 +192,15 @@ You can think of this folder, "Laumania_TutorialMod_01" in this sample, as the m
 
 Simply put, everything you want to include in your mod needs to be inside this folder.
 
+Now that we are in the mod folder, lets create some more folders that will help us better organize our files as we go.
+
+> You can organize your mod as you want, but if you are in doubt I recommend using this folder structure for a start.
+
+Right click and create the following folders:
+- Definitions
+- Icons
+- Models
+- Prefabs
+
+![image](https://user-images.githubusercontent.com/1378458/138955786-77c7cbcd-afd4-45e1-b040-ca1e9fc2ba90.png)
+
