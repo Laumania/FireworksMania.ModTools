@@ -62,8 +62,15 @@ At this point you should now have an empty Unity project that should look someth
 > Fear not, it looks much more complicated than it really is.
 
 ### Package - DOTween
+Between DOTween is an Unity Asset Store package, you need to make sure it have it added to "My Assets" to install it in Unity.
+
+Go to [DOTween in a browser here](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676), be sure you are logged in and click to "Add to My Assets" button.
+
+![image](https://user-images.githubusercontent.com/1378458/138895826-0ac8eafc-916a-4efc-a01a-c5f03a879059.png)
+
+
 Package Manager, My Assets, Search for DOTween, Install
-DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
+
 
 ### Package - UniTask
 Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
