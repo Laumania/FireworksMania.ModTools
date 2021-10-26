@@ -20,6 +20,7 @@ Keep in mind that there are tons of good tutorials out there for basic Unity and
 It is very important to note that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
 
 So none-coders, fear not.
+
 Coders, fear not either, you can do custom scripting (with some security limitations of cause).
 
 # Getting started
@@ -166,6 +167,26 @@ You are now ready to start creating your first mod.
 # Create Your First Mod
 This is the point where things start to get interesting.
 
-As mentioned previously, it's important to remember that you can build 
+As mentioned previously, it is important to remember that you can build multiple, completely different mods, from this single Unity project you just setup. You can even have many different things in a single mod too.
 
-![image](https://user-images.githubusercontent.com/1378458/133001208-db4187e8-e6d5-40cf-8504-24639e493286.png)
+## Project Structure
+Lets first create an "Mods" folder where we can have all our mods in.
+
+![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
+
+Then lets go and create a new mod.
+
+![image](https://user-images.githubusercontent.com/1378458/138917553-79bbd930-3c96-420a-966a-e95093adbd7f.png)
+
+![image](https://user-images.githubusercontent.com/1378458/138917674-36b0c45c-79ac-44c0-8ca3-82389738d7fd.png)
+
+Now give the mod an good descriptive and unique name, it's always an good idea to prefix it with your nickname like I have done here.
+
+Make sure to put the mod in "Assets/Mods" as shown. It's not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
+
+![image](https://user-images.githubusercontent.com/1378458/138918428-50febbac-15d8-4937-9ff7-bb8499e82961.png)
+
+You can think of this mod folder, Laumania_TutorialMod_01, in this sample, as the mod itself. 
+
+Simply put, everything you want to include in your mod needs to be inside this folder.
+
