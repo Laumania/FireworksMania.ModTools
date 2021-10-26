@@ -61,18 +61,16 @@ At this point you should now have an empty Unity project that should look someth
 > As of writing, Oct. 2021, you sadly have to install these dependencies manually as there are no way to automatically include these dependencies in the Mod Tools package.
 > Fear not, it looks much more complicated than it really is.
 
-### Git
-If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer.
-You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
-
-### DOTween
+### Package - DOTween
 Package Manager, My Assets, Search for DOTween, Install
 DOTween (https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
 
-### UniTask
+### Package - UniTask
 Package Manager, git: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-
 See details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
+
+> Troubleshooting: If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer. 
+> You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
 
 ## 5. Install Fireworks Mania Mod Tools
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
