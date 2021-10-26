@@ -124,7 +124,15 @@ If it looks similar to the above, you are done installing UniTask and can contin
 
 If you want to know more about UniTask, see details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
 
+Just as a little check to make sure you are all good before moving on, it's a good idea at this point to press the little Play button to run your current project. No errors should show up in the console and it should look similar to this.
+
+![image](https://user-images.githubusercontent.com/1378458/138906746-b06d03c3-c800-4e79-ab26-4c0ac49a7d54.png)
+
+Remember to press Play again to stop it running before continuing :)
+
 ## 5. Install Fireworks Mania Mod Tools
+So with all the dependencies installed
+
 Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
 
 
