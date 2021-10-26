@@ -17,10 +17,10 @@ Keep in mind that there are tons of good tutorials out there for basic Unity and
 
 **NO CODING SKILLS NEEDED**
 
-It's very important to note, because this seems to be the biggest problem for most people, that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
+It is very important to note that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
 
-So none-coders, fear not :)
-
+So none-coders, fear not.
+Coders, fear not either, you can do custom scripting (with some security limitations of cause).
 
 # Getting started
 ## 1. Getting Unity Hub
@@ -161,6 +161,11 @@ You should see something like this, with no errors. If the erros keep coming, it
 
 ![image](https://user-images.githubusercontent.com/1378458/138908645-7d96c0ae-e49f-4faf-b34b-e5ad5aaa833a.png)
 
+You are now ready to start creating your first mod.
 
-## 5. Create mod
+# Create Your First Mod
+This is the point where things start to get interesting.
+
+As mentioned previously, it's important to remember that you can build 
+
 ![image](https://user-images.githubusercontent.com/1378458/133001208-db4187e8-e6d5-40cf-8504-24639e493286.png)
