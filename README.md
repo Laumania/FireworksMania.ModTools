@@ -167,7 +167,7 @@ You are now ready to start creating your first mod.
 # Create Your First Mod
 This is the point where things start to get interesting.
 
-As mentioned previously, it is important to remember that you can build multiple, completely different mods, from this single Unity project you just setup. You can even have many different things in a single mod too.
+As mentioned previously, it is important to remember that you can build multiple, completely different, mods from this single Unity project you just setup. You can even have different things in a single mod.
 
 ## Project Structure
 Lets first create an "Mods" folder where we can have all our mods in.
@@ -182,11 +182,13 @@ Then lets go and create a new mod.
 
 Now give the mod an good descriptive and unique name, it's always an good idea to prefix it with your nickname like I have done here.
 
-Make sure to put the mod in "Assets/Mods" as shown. It's not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
+Make sure to put the mod in "Assets/Mods" as shown. 
+
+It's not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
 
 ![image](https://user-images.githubusercontent.com/1378458/138918428-50febbac-15d8-4937-9ff7-bb8499e82961.png)
 
-You can think of this mod folder, Laumania_TutorialMod_01, in this sample, as the mod itself. 
+You can think of this folder, "Laumania_TutorialMod_01" in this sample, as the mod itself. 
 
 Simply put, everything you want to include in your mod needs to be inside this folder.
 
