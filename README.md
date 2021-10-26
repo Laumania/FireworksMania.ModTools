@@ -131,14 +131,33 @@ Just as a little check to make sure you are all good before moving on, it's a go
 Remember to press Play again to stop it running before continuing :)
 
 ## 5. Install Fireworks Mania Mod Tools
-So with all the dependencies installed
+So with all the dependencies installed and a Unity Editor being able to "Play" without errors, you are ready to continue.
 
-Package Manager, git: https://github.com/Laumania/FireworksMania.ModTools.git
+Now we need to install the actual Fireworks Mania Mod Tools. The installation is exactly as we did before with the git package.
 
+![image](https://user-images.githubusercontent.com/1378458/138907247-a5e8d7d9-6318-4997-87b4-526839aa3301.png)
 
+Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
 
+![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
 
+![image](https://user-images.githubusercontent.com/1378458/138907625-188d9548-4fc3-4fd0-bd21-8663755ab91a.png)
 
+Once it's done installing you might see a few errors in the console.
+
+I am contantly working on trying to remove errors like this that you shouldn't worry about, however it's not always possible.
+
+In many cases the errors are actually trying to help you with stuff you forgot, so please read them and see if it sounds right.
+
+![image](https://user-images.githubusercontent.com/1378458/138907936-92101674-d704-4d14-a0d2-1e6199eda40c.png)
+
+In this case they don't and you can see that by hitting the Clear button to remove all in the console and then press Play in the Unity Editor.
+
+![image](https://user-images.githubusercontent.com/1378458/138908469-92b43605-70b3-4dde-8f3f-a6d4254170c2.png)
+
+You should see something like this, with no errors. If the erros keep coming, it is an indicator that something is actually wrong, so click the error and see what it selects and read the message.
+
+![image](https://user-images.githubusercontent.com/1378458/138908645-7d96c0ae-e49f-4faf-b34b-e5ad5aaa833a.png)
 
 
 ## 5. Create mod
