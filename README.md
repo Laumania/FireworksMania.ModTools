@@ -282,13 +282,42 @@ However, when you set the type, you get another error, saying something about mi
 
 ![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
 
-This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework in game. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have the 3d model, rocket behavior, effect, fuse, sound etc. 
+This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have the 3d model, rocket behavior, effect, fuse, sound etc. 
 
 Creating and modifying this prefab is where the majority of your time will be spend as a typical firework mod creator.
 
-You can go and create your prefab from nothing but that is a little too advanced for a getting started guide, so I have included some "Mod Samples" you can use parts from to create your own fireworks, without having to do a lot at first. It is simply made to help you get started and have a good foundation to start from.
+For now however, as this is a getting started guide, we will keep it simple so you get a basic idea of how a mod it put together, without going into the details of creating particle effect, setup the various fireworks behavior etc. We will get to that later.
 
-Of cause you should make your own model, effect etc. but with these these are here to give you a starting point.
+So to help you get started, I have included some "ModSamples" in the Fireworks Mania Mod Tools.
+
+![image](https://user-images.githubusercontent.com/1378458/139133149-cb18c33b-ebcb-4b6b-b851-891144278131.png)
+
+Find the prefab "Rocket_DummyRocket_Prefab".
+
+As all these are inside a package you cannot copy or manipulate them here, which is as it should be. However, you can drag this prefab into your scene and from it create your own prefab.
+
+First drag the prefab into the scene hierarchy.
+
+![image](https://user-images.githubusercontent.com/1378458/139134286-520ea2c2-d501-4125-95a3-d8eec58fd288.png)
+
+Then right click it, Prefab -> Unpack to unpack it from being an prefab fra the ModSamples.
+
+![image](https://user-images.githubusercontent.com/1378458/139134419-0c5a2bc1-eeb1-4e81-8f70-a18053211956.png)
+
+Now you can rename that gameobject in the hierarchy to fit your fireworks name.
+
+![image](https://user-images.githubusercontent.com/1378458/139134599-3c7b2f82-7c80-41e1-9e1d-a3df9c8459cf.png)
+
+Because it is no longer a prefab in the hierarchy, we can make it our own prefab by dragging it to the Prefabs folder in our mod's folder.
+
+![image](https://user-images.githubusercontent.com/1378458/139134750-664001a0-9994-4f86-8a3e-1075ba8188db.png)
+
+As it is now a prefab again, but now our own prefab, it is again showing up as blue in the hierarchy and you can see it in the Prefabs folder in your mod.
+
+![image](https://user-images.githubusercontent.com/1378458/139135040-54edae2e-88ec-4715-b4cc-74ce128b22a5.png)
+
+
+
 
 
 
