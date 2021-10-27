@@ -390,6 +390,22 @@ For now let us just use one of the icons from the ModSamples.
 
 ![image](https://user-images.githubusercontent.com/1378458/139143908-dfe541f8-8c4c-4b76-aa7a-7996255d977b.png)
 
+## Build Mod
+With all the above setup building the mod is the easy part.
+
+![image](https://user-images.githubusercontent.com/1378458/139146350-44fdf6ff-5197-4b90-9e96-a12cd6922801.png)
+
+Unity will spend some time building and you should see this in the console when it is done.
+
+![image](https://user-images.githubusercontent.com/1378458/139146423-6e893d7d-9dc8-469a-b93d-5ba4d88c776c.png)
+
+At the same time the export directory will open and you should see your mod in the Mods folder of Fireworks Mania.
+
+![image](https://user-images.githubusercontent.com/1378458/139146509-e1e52e96-f5af-4096-882a-9c4f7043cac0.png)
+
+Your mod is successfully build - let us try it out!
+
+
 
 
 
