@@ -212,9 +212,21 @@ Fill out the various fields with what fits your mod.
 
 ![image](https://user-images.githubusercontent.com/1378458/139144549-56aa5eb8-bb3f-499b-b728-72bdd3918456.png)
 
-The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the game and do not have to copy files each time.
+The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the games mods folder and do not have to copy files each time.
 
-Set it to: %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
+To find the path press WIN + R to get the Run prompt up.
+
+Put in: %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
+
+And press Enter.
+
+![image](https://user-images.githubusercontent.com/1378458/139145921-f7382bfc-71b1-4e84-9a87-d22297c02e28.png)
+
+A new window will open in the correct location, copy the path from that and put it into the "Mod Export Directory".
+
+![image](https://user-images.githubusercontent.com/1378458/139146085-5420792e-8587-4858-a341-e41be75a2bb9.png)
+
+![image](https://user-images.githubusercontent.com/1378458/139146248-a8748f42-a27e-44c8-98c9-57294a864cdd.png)
 
 On the "Build" tab, set the "Optimize for" to "File Size" to avoid your mods to be very large in size.
 
