@@ -345,6 +345,23 @@ Drag the prefab to the field in the Inspector.
 ![image](https://user-images.githubusercontent.com/1378458/139140686-ab690713-05f9-4b6e-9796-340b7abb4b51.png)
 
 
+### Entity Definition Name
+Our FireworkEntityDefinition also needs a name, which is the one showing up in the Inventory.
+
+So let us give it a name.
+
+![image](https://user-images.githubusercontent.com/1378458/139143631-9e0996cb-e476-4520-bcd4-05e65604a9d0.png)
+
+
+### Entity Definition Icon
+We also need to provide an icon which is used in the Inventory. In your own mod you would create your own icon and I will do a guide on how to do that later.
+
+For now let us just use one of the icons from the ModSamples.
+
+![image](https://user-images.githubusercontent.com/1378458/139143908-dfe541f8-8c4c-4b76-aa7a-7996255d977b.png)
+
+
+
 
 
 
