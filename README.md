@@ -169,7 +169,7 @@ This is the point where things start to get interesting.
 
 As mentioned previously, it is important to remember that you can build multiple, completely different, mods from this single Unity project you just setup. You can even have different things in a single mod.
 
-## Project Structure
+## Create The Mod & Folders
 Lets first create an "Mods" folder where we can have all our mods in.
 
 ![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
@@ -243,7 +243,7 @@ Looking closer we see that Id the error is talking about.
 
 For a newly created EntityDefinition, you can see this field it set to: INSERT UNIQUE DEFINITION ID
 
-> You CAN put in your own here but I recommend, just using the helper method I have added, that give it and id that match the filename.
+> You CAN put in your own id here, but I recommend using the context menu method I have added that give it an Id that match the filename.
 
 Right click in the top of the Inspector.
 
@@ -252,6 +252,33 @@ Right click in the top of the Inspector.
 ![image](https://user-images.githubusercontent.com/1378458/139090412-096b6eeb-5c23-4715-ae94-a22b6569e8a7.png)
 
 > One important thing to note here is that this EntityDefinitionId is used, among other things, to save in blueprint files. Therefore, once your mod has been released the first time - **do not change this id** - as you will break users of your mods blueprints.
+
+The next error says something about EntityDefinitionType that is missing. It is because an FireworkEntityDefinition needs to have a type.
+
+![image](https://user-images.githubusercontent.com/1378458/139092007-5dda56e1-3ff9-40f5-b99b-3868787eed6f.png)
+
+As we know we are building a rocket let us pick the Rocket type.
+
+> EntityDefinitionType is the one that determine under what category/type the firework will show up in the Inventory in game.
+
+Click this little round thingy to select a type.
+
+![image](https://user-images.githubusercontent.com/1378458/139092367-62e29a9f-f74f-486d-ba92-3718f69e37f3.png)
+
+If you window looks like this:
+ 
+![image](https://user-images.githubusercontent.com/1378458/139092429-e2a5b3ae-db6c-4fe8-aa6a-4052f9c236af.png)
+
+You need to click the little eye icon to toggle on assets from packages, as these types comes as part of the Fireworks Mania Mod Tools in a package.
+
+![image](https://user-images.githubusercontent.com/1378458/139092700-00311929-681d-427b-a0c3-c346efbeee6a.png)
+
+
+
+
+
+
+
 
 
 
