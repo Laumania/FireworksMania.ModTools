@@ -406,6 +406,26 @@ At the same time the export directory will open and you should see your mod in t
 Your mod is successfully build - let us try it out!
 
 
+## Testing Your Mod In Game
+With your mod, or mods, in the "Mods" folder of the game, the mods will attempt to load on the load of a map in the game.
+
+So let us start up the game and to go the Flat map. All map should work for this. When the map is loaded open the Inventory and head over to the "Workshop" part.
+
+Here you should see your first mod rocket.
+
+![image](https://user-images.githubusercontent.com/1378458/139147106-8e53f90a-68f4-42fc-aece-eff7edf7be2a.png)
+
+Now select it and spawn it and see it working.
+
+![image](https://user-images.githubusercontent.com/1378458/139147195-b91c4243-e2d8-4b0f-9e08-c2c1a96a7606.png)
+
+![image](https://user-images.githubusercontent.com/1378458/139147243-39be5c71-1067-466d-ae3f-37b713da9343.png)
+
+Congrats - you have created your first Fireworks Mania Mod!
+
+
+
+
 
 
 
