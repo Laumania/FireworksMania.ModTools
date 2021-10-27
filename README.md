@@ -169,7 +169,7 @@ This is the point where things start to get interesting.
 
 As mentioned previously, it is important to remember that you can build multiple, completely different, mods from this single Unity project you just setup. You can even have different things in a single mod.
 
-## Create The Mod & Folders
+## Create Mod & Folders
 Lets first create an "Mods" folder where we can have all our mods in.
 
 ![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
@@ -203,6 +203,24 @@ Right click and create the following folders:
 - Prefabs
 
 ![image](https://user-images.githubusercontent.com/1378458/139088027-daae90f7-a681-4519-9e34-6e12fb6fc30d.png)
+
+Now head to the Export Settings to setup metadata on your mod, some build options etc.
+
+![image](https://user-images.githubusercontent.com/1378458/139144466-032e17db-1912-4688-b16b-d596a211ba02.png)
+
+Fill out the various fields with what fits your mod.
+
+![image](https://user-images.githubusercontent.com/1378458/139144549-56aa5eb8-bb3f-499b-b728-72bdd3918456.png)
+
+The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the game and do not have to copy files each time.
+
+Set it to: %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
+
+On the "Build" tab, set the "Optimize for" to "File Size" to avoid your mods to be very large in size.
+
+![image](https://user-images.githubusercontent.com/1378458/139145086-9d16d5d8-083e-40cf-a87d-79dbe1675781.png)
+
+After this you can close the "Export Settings" window and continue.
 
 ## Create an EntityDefinition
 Now we are starting to hit Fireworks Mania specific stuff, EntityDefinition - what is that?
