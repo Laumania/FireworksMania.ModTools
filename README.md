@@ -276,9 +276,13 @@ You need to click the little eye icon to toggle on assets from packages, as thes
 ![image](https://user-images.githubusercontent.com/1378458/139092700-00311929-681d-427b-a0c3-c346efbeee6a.png)
 
 ### Entity Definition Prefab
-Now we have a definition with an unique Id and an EntityDefinitionType. However, when you set the type, you get another error, saying something about missing a Prefab Game Object.
+Now we have a definition with an unique Id and an Entity Definition Type. 
+
+However, when you set the type, you get another error, saying something about missing a Prefab Game Object.
 
 ![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
+
+This is the prefab that will be spawned in game when a player spawns your firework in game. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have model, rocket behavior, effect, sound etc. Creating this prefab is where the majority of your time will be spend as a typical modder.
 
 
 
