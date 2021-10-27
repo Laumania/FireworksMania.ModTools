@@ -316,6 +316,42 @@ As it is now a prefab again, it is again showing up as blue in the hierarchy and
 
 ![image](https://user-images.githubusercontent.com/1378458/139135040-54edae2e-88ec-4715-b4cc-74ce128b22a5.png)
 
+For now we can delete the game object (prefab instance) in the hierarchy to avoid by mistake make changes to that, instead of the actual prefab.
+
+![image](https://user-images.githubusercontent.com/1378458/139139295-1c519819-27ed-4df8-b661-b57d84636f8c.png)
+
+Instead, double click the prefab in the project window, to open up the prefab.
+
+![image](https://user-images.githubusercontent.com/1378458/139139537-98b56d31-6a6a-44a4-841d-4f14aa87b0a9.png)
+
+You now have the prefab open in edit mode and by selecting the top gameobject (root node) you can setup the last part of the prefab to fit to your FireworkEntityDefinition you created earlier.
+
+![image](https://user-images.githubusercontent.com/1378458/139139782-7c0d18ff-59b5-4ab8-b251-fa7363c369e8.png)
+
+Only thing we need to do here is to tell this prefabs RocketBehavior, which Entity Definition it is related to.
+
+As you might have guessed, as we want this prefab to be related to our FireworkEntityDefinition from before.
+
+So, again click the little round icon and select your definition.
+
+![image](https://user-images.githubusercontent.com/1378458/139140050-af61b1e2-c505-4340-8a1c-fde06606f5f1.png)
+
+![image](https://user-images.githubusercontent.com/1378458/139140092-d4dd3cf1-8546-4142-a31c-0448d369a0c4.png)
+
+Now we need to go back to where we came from, the FireworkEntityDefinition from before, where we needed to provide it with an prefab. We have now created that prefab and can therefore assign it to the FireworkEntityDefinition.
+
+Drag the prefab to the field in the Inspector.
+
+![image](https://user-images.githubusercontent.com/1378458/139140686-ab690713-05f9-4b6e-9796-340b7abb4b51.png)
+
+
+
+
+
+
+
+
+
 
 
 
