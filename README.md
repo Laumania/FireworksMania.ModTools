@@ -282,9 +282,13 @@ However, when you set the type, you get another error, saying something about mi
 
 ![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
 
-This is the prefab that will be spawned in game when a player spawns your firework in game. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have model, rocket behavior, effect, sound etc. Creating this prefab is where the majority of your time will be spend as a typical modder.
+This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework in game. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have the 3d model, rocket behavior, effect, fuse, sound etc. 
 
+Creating and modifying this prefab is where the majority of your time will be spend as a typical firework mod creator.
 
+You can go and create your prefab from nothing, but that is a little too advanced for a getting started guide, so I have included some "Mod Samples" you can use parts from to create your own fireworks, without having to do a lot at first. 
+
+Of cause you should make your own model, effect etc. but these are here to give you a starting point.
 
 
 
