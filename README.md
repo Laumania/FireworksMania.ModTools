@@ -312,7 +312,7 @@ Because it is no longer a prefab in the hierarchy, we can make it our own prefab
 
 ![image](https://user-images.githubusercontent.com/1378458/139134750-664001a0-9994-4f86-8a3e-1075ba8188db.png)
 
-As it is now a prefab again, but now our own prefab, it is again showing up as blue in the hierarchy and you can see it in the Prefabs folder in your mod.
+As it is now a prefab again, it is again showing up as blue in the hierarchy and you can see it in the Prefabs folder in your mod.
 
 ![image](https://user-images.githubusercontent.com/1378458/139135040-54edae2e-88ec-4715-b4cc-74ce128b22a5.png)
 
