@@ -286,9 +286,9 @@ This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be 
 
 Creating and modifying this prefab is where the majority of your time will be spend as a typical firework mod creator.
 
-You can go and create your prefab from nothing, but that is a little too advanced for a getting started guide, so I have included some "Mod Samples" you can use parts from to create your own fireworks, without having to do a lot at first. 
+You can go and create your prefab from nothing but that is a little too advanced for a getting started guide, so I have included some "Mod Samples" you can use parts from to create your own fireworks, without having to do a lot at first. It is simply made to help you get started and have a good foundation to start from.
 
-Of cause you should make your own model, effect etc. but these are here to give you a starting point.
+Of cause you should make your own model, effect etc. but with these these are here to give you a starting point.
 
 
 
