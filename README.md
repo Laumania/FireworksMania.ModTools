@@ -227,6 +227,7 @@ In my sample here I call it: *Laumania_Rocket_TutorialRocket*
 
 ![image](https://user-images.githubusercontent.com/1378458/139089176-ac89b969-a843-4ea8-bb6a-9bcbfa045538.png)
 
+### Entity Definition Id
 You will see some "errors" in the console now - these are here to help you.
 
 ![image](https://user-images.githubusercontent.com/1378458/139089415-9f065536-acd9-404e-a781-db2d7f846ea8.png)
@@ -253,6 +254,7 @@ Right click in the top of the Inspector.
 
 > One important thing to note here is that this EntityDefinitionId is used, among other things, to save in blueprint files. Therefore, once your mod has been released the first time - **do not change this id** - as you will break users of your mods blueprints.
 
+### Entity Definition Type
 The next error says something about EntityDefinitionType that is missing. It is because an FireworkEntityDefinition needs to have a type.
 
 ![image](https://user-images.githubusercontent.com/1378458/139092007-5dda56e1-3ff9-40f5-b99b-3868787eed6f.png)
@@ -272,6 +274,15 @@ If you window looks like this:
 You need to click the little eye icon to toggle on assets from packages, as these types comes as part of the Fireworks Mania Mod Tools in a package.
 
 ![image](https://user-images.githubusercontent.com/1378458/139092700-00311929-681d-427b-a0c3-c346efbeee6a.png)
+
+### Entity Definition Prefab
+Now we have a definition with an unique Id and an EntityDefinitionType. However, when you set the type, you get another error, saying something about missing a Prefab Game Object.
+
+![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
+
+
+
+
 
 
 
