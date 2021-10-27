@@ -202,7 +202,7 @@ Right click and create the following folders:
 - Models
 - Prefabs
 
-![image](https://user-images.githubusercontent.com/1378458/138955786-77c7cbcd-afd4-45e1-b040-ca1e9fc2ba90.png)
+![image](https://user-images.githubusercontent.com/1378458/139088027-daae90f7-a681-4519-9e34-6e12fb6fc30d.png)
 
 ## Create an EntityDefinition
 Now we are starting to hit Fireworks Mania specific stuff, EntityDefinition - what is that?
@@ -215,4 +215,49 @@ Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition
 
 We of cause create this in our "Definitions" folder.
 
-![image](https://user-images.githubusercontent.com/1378458/138957039-abd6b1a8-299c-4d69-bb7f-e0e0d64936c2.png)
+![image](https://user-images.githubusercontent.com/1378458/139088210-1c2f4197-59da-47dc-ad83-4a678146d5b4.png)
+
+As you will see in a moment, it is always a good idea to name your EntityDefinitions something unique, as the name of the file will also be used as the "EntityDefinitionId" that will be used to uniquely identify this specific firework that you are creating.
+
+I therefore recommend naming it after this schema:
+
+*YourNickname_EntityType_NameOfTheItem*
+
+In my sample here I call it: *Laumania_Rocket_TutorialRocket*
+
+![image](https://user-images.githubusercontent.com/1378458/139089176-ac89b969-a843-4ea8-bb6a-9bcbfa045538.png)
+
+You will see some "errors" in the console now - these are here to help you.
+
+![image](https://user-images.githubusercontent.com/1378458/139089415-9f065536-acd9-404e-a781-db2d7f846ea8.png)
+
+You can see the first one says something about you need to update the Id.
+
+If you select the EntityDefinition you can see what fields it have in the Inspector.
+
+![image](https://user-images.githubusercontent.com/1378458/139089742-c8ca719b-ed2e-4aa3-b238-0e3c52d6313c.png)
+
+Looking closer we see that Id the error is talking about.
+
+![image](https://user-images.githubusercontent.com/1378458/139089828-98d75d83-ef54-4bed-9f21-fff46ab47612.png)
+
+For a newly created EntityDefinition, you can see this field it set to: INSERT UNIQUE DEFINITION ID
+
+> You CAN put in your own here but I recommend, just using the helper method I have added, that give it and id that match the filename.
+
+Right click in the top of the Inspector.
+
+![image](https://user-images.githubusercontent.com/1378458/139090061-2abfdf99-385c-4e07-87fc-d3991c90d140.png)
+
+![image](https://user-images.githubusercontent.com/1378458/139090412-096b6eeb-5c23-4715-ae94-a22b6569e8a7.png)
+
+> One important thing to note here is that this EntityDefinitionId is used, among other things, to save in blueprint files. Therefore, once your mod has been released the first time - **do not change this id** - as you will break users of your mods blueprints.
+
+
+
+
+
+
+
+
+
