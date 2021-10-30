@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5743218695902557886}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &8042717381679986973
 Light:
@@ -123,7 +123,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5743218695902557886}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &1019022070296075639
 ParticleSystem:
@@ -4941,7 +4941,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 410891237279073724}
-  - {fileID: 8052170812144958959}
   - {fileID: 8381296213886416319}
   - {fileID: 8241161986878020802}
   - {fileID: 5783550628708170418}
@@ -5138,7 +5137,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.990566, g: 0.7770492, b: 0.35978103, a: 0.5882353}
+      maxColor: {r: 0.990566, g: 0.7770492, b: 0.35978103, a: 0.5019608}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -5200,7 +5199,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.7
+      scalar: 0.4
       minScalar: 0.1
       maxCurve:
         serializedVersion: 2
@@ -8651,7 +8650,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.3
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -9688,7 +9687,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d39b3ae4b94df4248b6765350b6f39a0, type: 2}
+  - {fileID: 2100000, guid: 6dea83e0163214845a3faa1c1d448479, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9729,7 +9728,7 @@ ParticleSystemRenderer:
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 0001030409
-  m_Mesh: {fileID: 4300000, guid: 219de587148d8bb41a8e255859dafe53, type: 3}
+  m_Mesh: {fileID: 1609945119554850432, guid: 7a0295d595e04b6499354e9889a06464, type: 3}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -9869,6 +9868,8 @@ GameObject:
   - component: {fileID: 7511472119967128223}
   - component: {fileID: 4160180690420605000}
   - component: {fileID: 5022561634382078969}
+  - component: {fileID: 9111761509698192511}
+  - component: {fileID: 5689686861773691570}
   m_Layer: 9
   m_Name: Sparkle Flash
   m_TagString: Untagged
@@ -14734,6 +14735,32 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &9111761509698192511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6585142195369560903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -740855493, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _particleSpawnedPhysicsEffect: {fileID: 7336093774538356092}
+  _particleDestroyedPhysicsEffect: {fileID: 0}
+--- !u!114 &5689686861773691570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6585142195369560903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -412979324, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8166559906316218121
 GameObject:
   m_ObjectHideFlags: 0
@@ -14777,10 +14804,10 @@ MonoBehaviour:
   m_Script: {fileID: 2030764095, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _range: 0.2
+  _range: 0.3
   _upwardsmodifier: 0.2
   _forceMode: 0
-  _explosionForce: 50
+  _explosionForce: 100
   _applyForceRelativeToMass: 1
   _ignoreKinematic: 1
   _ignoreRigidbodies:
@@ -14790,7 +14817,7 @@ MonoBehaviour:
     m_Bits: 5633
   _igniteSurroundingIgnitables: 1
   _enableShakeEffect: 0
-  _shakeRangeMultipler: 15
+  _shakeRangeMultipler: 0
 --- !u!1 &8454438337153471288
 GameObject:
   m_ObjectHideFlags: 0
@@ -14823,63 +14850,6 @@ Transform:
   m_Father: {fileID: 7401274604805972277}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8485713185947442895
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8052170812144958959}
-  - component: {fileID: 8034062106539252589}
-  m_Layer: 0
-  m_Name: DestroyExplosionForce
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8052170812144958959
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8485713185947442895}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.3128, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5743218695902557886}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8034062106539252589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8485713185947442895}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 2030764095, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _range: 0.2
-  _upwardsmodifier: 0.1
-  _forceMode: 0
-  _explosionForce: 50
-  _applyForceRelativeToMass: 1
-  _ignoreKinematic: 1
-  _ignoreRigidbodies:
-  - {fileID: 2844274055090702735}
-  _layers:
-    serializedVersion: 2
-    m_Bits: 5633
-  _igniteSurroundingIgnitables: 1
-  _enableShakeEffect: 0
-  _shakeRangeMultipler: 15
 --- !u!1 &8493445312891062043
 GameObject:
   m_ObjectHideFlags: 0
@@ -14891,8 +14861,6 @@ GameObject:
   - component: {fileID: 8241161986878020802}
   - component: {fileID: 6859046094181417526}
   - component: {fileID: 8358784935206845394}
-  - component: {fileID: 5651788854814643678}
-  - component: {fileID: 7432781925895992573}
   m_Layer: 9
   m_Name: Fast Sparkles
   m_TagString: Untagged
@@ -14913,7 +14881,7 @@ Transform:
   m_Children:
   - {fileID: 7511472119967128223}
   m_Father: {fileID: 5743218695902557886}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &6859046094181417526
 ParticleSystem:
@@ -18704,7 +18672,7 @@ ParticleSystem:
       emitter: {fileID: 4160180690420605000}
       type: 2
       properties: 0
-      emitProbability: 0.2
+      emitProbability: 0.1
   LightsModule:
     enabled: 0
     ratio: 1
@@ -19701,32 +19669,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &5651788854814643678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8493445312891062043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -740855493, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _particleSpawnedPhysicsEffect: {fileID: 7336093774538356092}
-  _particleDestroyedPhysicsEffect: {fileID: 8034062106539252589}
---- !u!114 &7432781925895992573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8493445312891062043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -412979324, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2933280718512499161
 PrefabInstance:
   m_ObjectHideFlags: 0
