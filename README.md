@@ -423,6 +423,15 @@ Now select it and spawn it and see it working.
 
 Congrats - you have created your first Fireworks Mania Mod!
 
+# Project in Github
+This is not a requirement, but having your project in some sort of version control is essential.
+
+If you are new to Github, Blender etc. and all seems overwhelming, I know it seems like another big thing you have to learn, but learning to use version control can save you so much time trying to figure out what broke your mod/game. Further more you are likely to try out a bit more risky things, because you know you can always just revert and get back to a version that worked.
+
+There are many good videos out there, but here is one to get started, that can help you get started with getting your Unity project in Github.
+
+[Using GitHub with Unity effectively! Improve your workflow!](https://www.youtube.com/watch?v=WH7qDUYHGK8)
+
 
 
 
