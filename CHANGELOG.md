@@ -14,6 +14,11 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.10.3
+- Reorganized how the github repo for the package to remove all that it is not specifically a part of the pack. This also means the .git url have changed - the new .git path can be found in the new [README](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
+- Updated Readme to have much more info on how to get started creating mods. It takes you through all the basic setup stuff and to build your first mod
+- Changed logic in SaveableEntity so it now always tries to set the EntityDefinition by itself, if it finds an component that implements IHaveBaseEntityDefinition. This basically means that you do not have to set this anymore when creating a firework. Only for props this this needs to be set
+
 ## v2021.10.2
 - Added possibility to create Firecracker, Fountains, PreloadedTube, RomanCandle, SmokeBomb, Whistler and Zipper
 - Added "Dummy" prefabs as samples for all the above in the ModSamples folder. These are meant to be used as a starting point. Drag the Dummy prefab to the hierchy and Prefab-Unpack and create your own from there (I will do a video of this soon :))
