@@ -433,6 +433,13 @@ There are many good videos out there, but here is one to get started, that can h
 [Using GitHub with Unity effectively! Improve your workflow!](https://www.youtube.com/watch?v=WH7qDUYHGK8)
 
 
+# Publish Your Mod
+Once your mod is ready for the world, it is time to get it into the workshop in the game.
+
+You do that by uploading your mod to mod.io here: https://fireworksmania.mod.io
+
+We all look forward to try out your mod :D
+
 
 
 
