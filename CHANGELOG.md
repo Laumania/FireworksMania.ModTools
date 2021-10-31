@@ -2,10 +2,16 @@
 List of changes for each version of the Fireworks Mania Mod Tools.
 
 # How to upgrade Mod Tools
-Unity is not currently able to update .git packages with the Package Manager (a feature tht should come in the future) - you have to do it manually.
-To update a .git package, you simply just add the package again.
 
-So just add the .git url again to the Mod Tools.
+> **IMPORTANT**: Make sure you have a backup of your project before upgrading! 
+> 
+> It is always recommened to have your project in some sort of version control, like putting it on Github or similar.
+
+Unity is not currently able to update .git packages with the Package Manager (a feature tht should come in the future) - you have to do it manually.
+
+So to update a .git package, you simply just add the package again.
+
+[So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
 ## v2021.10.2
