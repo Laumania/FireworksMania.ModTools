@@ -253,6 +253,10 @@ I therefore recommend naming it after this schema:
 
 *YourNickname_EntityType_NameOfTheItem*
 
+You will find all the possible firework types in this folder:
+![image](https://user-images.githubusercontent.com/1378458/140571230-807126d2-4ffd-4587-9409-055f25c457a0.png)
+
+
 In my sample here I call it: *Laumania_Rocket_TutorialRocket*
 
 ![image](https://user-images.githubusercontent.com/1378458/139089176-ac89b969-a843-4ea8-bb6a-9bcbfa045538.png)
