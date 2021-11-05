@@ -5,6 +5,11 @@
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
+# Video Tutorials
+I have created a playlist with various videos about creating mods for Fireworks Mania:
+
+[Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
+
 # Prerequisites
 To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
 
