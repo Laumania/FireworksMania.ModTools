@@ -14,6 +14,9 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.11.2
+- Fixed missing collider on the Dummy Fountain in the included ModSamples
+
 ## v2021.10.3
 - Reorganized how the github repo for the package to remove all that it is not specifically a part of the pack. This also means the .git url have changed - the new .git path can be found in the new [README](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 - Updated Readme to have much more info on how to get started creating mods. It takes you through all the basic setup stuff and to build your first mod
