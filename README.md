@@ -5,6 +5,11 @@
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
+# Video Tutorials
+I have created a playlist with various videos about creating mods for Fireworks Mania:
+
+[Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
+
 # Prerequisites
 To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
 
@@ -252,6 +257,10 @@ As you will see in a moment, it is always a good idea to name your EntityDefinit
 I therefore recommend naming it after this schema:
 
 *YourNickname_EntityType_NameOfTheItem*
+
+You will find all the possible firework types in this folder:
+![image](https://user-images.githubusercontent.com/1378458/140571230-807126d2-4ffd-4587-9409-055f25c457a0.png)
+
 
 In my sample here I call it: *Laumania_Rocket_TutorialRocket*
 
