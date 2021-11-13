@@ -14,6 +14,13 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.11.3
+- Added more validation to the ParticleSystemExplosion and ParticleSystemSound to help inform that you are missing an ParticleSystemObserver component, as they need that to be able to work
+- Added validation to inform about if you have an empty/null item in yoru list of "ignore rigidbodies" on ExplosionPhysicsForceEffect, so you can either assign the fireworks own rigidbody to it, which you in most cases want, or remove the item for the list. Both are valid ways to fix this problem
+- Renamed "Layers" to "Affected Layers" on ExplosionPhysicsForceEffect to be a bit descriptive. The tool tip is still all wrong, but it is an Unity bug which should be [fixed in a upcoming version](https://issuetracker.unity3d.com/issues/layermask-ignores-custom-tooltips-and-labels-in-the-inspector-when-using-the-tooltip-attribute-or-guicontent) 
+- Added posibility to include "custom sounds" in your mod via the "Game Sound Definition". This means you can now include your own sounds in your mod and use them in all the scripts where you pick a sound from the drop down. First you need to drag in an audio file with the sound (typically .wav file) into your mod folder. Then you need to create an: Fireworks Mania -> Definitions -> Game Sound Definition. Then you drag in your audio clip from before into the game sound definition and set the various properties. Then you can select your sound from the drop down where you pick sounds
+
+
 ## v2021.11.2
 - Fixed missing collider on the Dummy Fountain in the included ModSamples
 
