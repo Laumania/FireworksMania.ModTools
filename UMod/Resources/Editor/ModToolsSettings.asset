@@ -15,14 +15,14 @@ MonoBehaviour:
   toolsIconSmall: {fileID: 0}
   toolsIconLarge: {fileID: 0}
   toolsName: FM Mod Tools
-  toolsVersion: 2021.11.3
+  toolsVersion: 2021.11.4
   firstRunWindow:
     assemblyQualifiedName: 
   developerName: Laumania ApS
   syncDeveloperName: 1
   gameName: Fireworks Mania
   syncGameName: 1
-  gameVersion: 2021.11.3
+  gameVersion: 2021.11.4
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
