@@ -14,6 +14,10 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.11.4
+- Changed the validation on the "IgnoreRigidbodies" to be a warning instead of an error, as the mod can actually work with this issue, it is just recommended to fix it
+
+
 ## v2021.11.3
 - Added more validation to the ParticleSystemExplosion and ParticleSystemSound to help inform that you are missing an ParticleSystemObserver component, as they need that to be able to work
 - Added validation to inform about if you have an empty/null item in yoru list of "ignore rigidbodies" on ExplosionPhysicsForceEffect, so you can either assign the fireworks own rigidbody to it, which you in most cases want, or remove the item for the list. Both are valid ways to fix this problem
