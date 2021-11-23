@@ -3,7 +3,7 @@ List of changes for each version of the Fireworks Mania Mod Tools.
 
 # How to upgrade Mod Tools
 
-> **IMPORTANT**: Make sure you have a backup of your project before upgrading! 
+> **IMPORTANT**: Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup) 
 > 
 > It is always recommened to have your project in some sort of version control, like putting it on Github or similar.
 
@@ -14,6 +14,12 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.11.5
+- Added validations on Fuse so it will log an error in Unity if you are missing particle effect etc. on the Fuse
+- Added "Random Pitch" to GameSoundDefinition so the game can add a random pitch to your custom sound to "fake" variations. Per default it is set to -0.1 and 0.1 which is what I also use default in the build in sounds and that seems to add a good variation, so for most of you, just leave it at that
+- Added "Fade In/out" to GameSoundDefinition so you custom sound can have a fade in/out. In most cases this is not needed, for like explosions etc. however, for sounds that kind of "start" and "end" more fluent, it might come in handy, ex. could be some of the "Fire Machine" sound where they right now stops kind of "too fast", a little fade would be good here I think - play around with it
+
+
 ## v2021.11.4
 - Changed the validation on the "IgnoreRigidbodies" to be a warning instead of an error, as the mod can actually work with this issue, it is just recommended to fix it
 
