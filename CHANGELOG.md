@@ -14,6 +14,9 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.11.6
+- Nothing major, just upgraded the UMod version, shouldn't have any big impact
+
 ## v2021.11.5
 - Added validations on Fuse so it will log an error in Unity if you are missing particle effect etc. on the Fuse
 - Added "Random Pitch" to GameSoundDefinition so the game can add a random pitch to your custom sound to "fake" variations. Per default it is set to -0.1 and 0.1 which is what I also use default in the build in sounds and that seems to add a good variation, so for most of you, just leave it at that
