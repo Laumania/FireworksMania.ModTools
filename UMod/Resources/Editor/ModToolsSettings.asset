@@ -15,14 +15,14 @@ MonoBehaviour:
   toolsIconSmall: {fileID: 0}
   toolsIconLarge: {fileID: 0}
   toolsName: FM Mod Tools
-  toolsVersion: 2021.12.1
+  toolsVersion: 2022.1.1
   firstRunWindow:
     assemblyQualifiedName: 
   developerName: Laumania ApS
   syncDeveloperName: 1
   gameName: Fireworks Mania
   syncGameName: 1
-  gameVersion: 2021.12.1
+  gameVersion: 2022.1.1
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
@@ -33,49 +33,7 @@ MonoBehaviour:
   onlineScriptingReferenceURL: 
   assetSharing:
     sharedAssetBundlePath: Resources/Editor/ModToolsSharedAssets.modbundle
-    sharedAssets:
-    - assetGUID: f14c4b71eab72f54c91ba25eca7f58e7
-      assetBundlePath: Assets/BugTest_MissingScript/Dirt_Sandbag_BuildableDefence.FBX
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Dirt_Sandbag_BuildableDefence.FBX.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
-    - assetGUID: 5a9e09e6160283749b1e16f2ad38c3e6
-      assetBundlePath: Assets/BugTest_MissingScript/File that works/Prop_Fence1v2_Mod.prefab
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Prop_Fence1v2_Mod.prefab.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
-    - assetGUID: 6bdf042b6ca7a1e48a6d0455243e0d99
-      assetBundlePath: Assets/BugTest_MissingScript/File that works/Wooden_fence1v2.FBX
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Wooden_fence1v2.FBX.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
-    - assetGUID: 5aa5f337f4f72324bb971d41876e2789
-      assetBundlePath: Assets/BugTest_MissingScript/Structure_Sandbags_DirtMound_Mod.prefab
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/Structure_Sandbags_DirtMound_Mod.prefab.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
-    - assetGUID: b440845d0f79e384696be41ca5f77c87
-      assetBundlePath: Assets/Exclude/SharedAsset.prefab
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/SharedAsset.prefab.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
-    - assetGUID: 7a59bde8455cad046ae3dae10d903151
-      assetBundlePath: Assets/Modding/FireMobile.prefab
-      assetPreviewBundlePath: Assets/umod-buildtools-sharedasset-previews/FireMobile.prefab.png
-      assetType:
-        assemblyQualifiedName: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
-      assetLabels: []
+    sharedAssets: []
   options:
     allowAssetsInMods: 1
     allowScenesInMods: 1
