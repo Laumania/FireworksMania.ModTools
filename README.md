@@ -1,7 +1,3 @@
-> DISCLAIMER: THIS ENTIRE REPOSITORY AND MOD SUPPORT IS STILL UNDER DEVELOPMENT SO ALL SHOULD BE SEEN AS WORK-IN-PROGRESS.
-> 
-> KEEP AN EYE ON THIS REPO AND MY [YOUTUBE CHANNEL](https://www.youtube.com/laumania) TO GET UPDATED ON WHEN THIS WILL BE AVAILABLE FOR EVERYBODY.
-
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
