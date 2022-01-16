@@ -14,6 +14,10 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2021.12.1
+- Renamed "SmokeBomb" type to "Smoke" so we can put more than just smokebombs under it
+- Added new type Fountains - not that we have that many yet, but it's a category by itself anyway
+
 ## v2021.11.6
 - Nothing major, just upgraded the UMod version, shouldn't have any big impact
 
