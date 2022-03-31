@@ -244,7 +244,7 @@ All items in the inventory in Fireworks Mania is basically an "EntityDefinition"
 
 Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition", which holds metadata about a specific type of entity, namely "fireworks". 
 
-We ofcourse create this in our "Definitions" folder.
+We of course create this in our "Definitions" folder.
 
 ![image](https://user-images.githubusercontent.com/1378458/139088210-1c2f4197-59da-47dc-ad83-4a678146d5b4.png)
 
