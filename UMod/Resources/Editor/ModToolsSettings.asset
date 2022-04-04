@@ -53,13 +53,13 @@ MonoBehaviour:
           Culture=neutral, PublicKeyToken=null
     - menuEntryName: Create/Prefab Node
       menuAction: 1
-      enabled: 1
+      enabled: 0
       isSeparator: 0
       windowType:
         assemblyQualifiedName: 
     - menuEntryName: Create/Material Node
       menuAction: 2
-      enabled: 1
+      enabled: 0
       isSeparator: 0
       windowType:
         assemblyQualifiedName: 
@@ -97,7 +97,7 @@ MonoBehaviour:
         assemblyQualifiedName: 
     - menuEntryName: Build and Run %#r
       menuAction: 0
-      enabled: 1
+      enabled: 0
       isSeparator: 0
       windowType:
         assemblyQualifiedName: 
@@ -141,7 +141,7 @@ MonoBehaviour:
         assemblyQualifiedName: 
     - menuEntryName: Game Assets
       menuAction: 5
-      enabled: 1
+      enabled: 0
       isSeparator: 0
       windowType:
         assemblyQualifiedName: UMod.Exporter.GameAssetsWindow, UMod-Exporter, Version=1.0.0.0,
