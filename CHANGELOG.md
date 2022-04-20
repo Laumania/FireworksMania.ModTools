@@ -19,6 +19,8 @@ So to update a .git package, you simply just add the package again.
 - Renamed all "MessengerEvents" in Core (Mod Tools) to be named similar to the ones in the native game. This will be a breaking change if a mod use these directly, however, as I haven't done much documentation for how to use this works, I assume not many are using these
 - Added new "UseableBehavior". Putting this on an game object in your mod will make it show up as an "Useable" object for the player and the player can "click" it with the E button.
 This behavior have the events OnBeginUse (triggered when E is pressed) and OnEndUse (triggered when E is released). You can in Unity then hook up these events to call what ever method on your game object to execute logic. Examples of this could be a button, open/close door etc
+- Added new "PlaySoundBehavior" which can be used to play a sound from an object on Start, or used together with the "UseableBehavior" to trigger an sound when something is clicked
+- Removed "Build & Run" option from the Mod Tools menu, as it wasn't working anyway
 - This is not something new to the Mod Tools as such, but logic has been added to the game, that enables the player to pick up game objects that does not have the UseableBehavior on it and weighs under 20kg (Weight is set as the Mass in the Rigidbody component on the game object). Just something to be aware of, if you are creating something that logically shouldn't be possible to pick up, it needs to weigh more than 20 kg (Mass > 20)
 
 ## v2021.12.1
