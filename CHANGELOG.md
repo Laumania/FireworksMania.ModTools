@@ -14,6 +14,13 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.4.1
+- Added "Hang time" settings to the RocketBehavior to adjust the time between fuse burns out to the rocket explode. In some cases, you don't want the random "hang time" that is per default applied. However, unless you have a specific reason to disable this randomness, you should leave it, as it's there to make things seem a bit more "real" and for performance reasons, so not all rockets goes off in the exact same frame
+- Renamed all "MessengerEvents" in Core (Mod Tools) to be named similar to the ones in the native game. This will be a breaking change if a mod use these directly, however, as I haven't done much documentation for how to use this works, I assume not many are using these
+- Added new "UseableBehavior". Putting this on an game object in your mod will make it show up as an "Useable" object for the player and the player can "click" it with the E button.
+This behavior have the events OnBeginUse (triggered when E is pressed) and OnEndUse (triggered when E is released). You can in Unity then hook up these events to call what ever method on your game object to execute logic. Examples of this could be a button, open/close door etc
+- This is not something new to the Mod Tools as such, but logic has been added to the game, that enables the player to pick up game objects that does not have the UseableBehavior on it and weighs under 20kg (Weight is set as the Mass in the Rigidbody component on the game object). Just something to be aware of, if you are creating something that logically shouldn't be possible to pick up, it needs to weigh more than 20 kg (Mass > 20)
+
 ## v2021.12.1
 - Renamed "SmokeBomb" type to "Smoke" so we can put more than just smokebombs under it
 - Added new type Fountains - not that we have that many yet, but it's a category by itself anyway
