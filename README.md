@@ -143,6 +143,9 @@ Now we need to install the actual Fireworks Mania Mod Tools. The installation is
 
 Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
 
+> If you want to use the experimental branch, use this url:
+> https://github.com/Laumania/FireworksMania.ModTools.git#experimental
+
 ![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
 
 ![image](https://user-images.githubusercontent.com/1378458/138907625-188d9548-4fc3-4fd0-bd21-8663755ab91a.png)
