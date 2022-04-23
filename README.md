@@ -143,6 +143,9 @@ Now we need to install the actual Fireworks Mania Mod Tools. The installation is
 
 Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
 
+> If you want to use the experimental branch, use this url:
+> https://github.com/Laumania/FireworksMania.ModTools.git#experimental
+
 ![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
 
 ![image](https://user-images.githubusercontent.com/1378458/138907625-188d9548-4fc3-4fd0-bd21-8663755ab91a.png)
@@ -244,7 +247,7 @@ All items in the inventory in Fireworks Mania is basically an "EntityDefinition"
 
 Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition", which holds metadata about a specific type of entity, namely "fireworks". 
 
-We ofcourse create this in our "Definitions" folder.
+We of course create this in our "Definitions" folder.
 
 ![image](https://user-images.githubusercontent.com/1378458/139088210-1c2f4197-59da-47dc-ad83-4a678146d5b4.png)
 
