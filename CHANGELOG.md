@@ -14,6 +14,11 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.4.2
+- Added optional settings on 'UseableBehavior" to turn on/off outline and interaction UI ('Use 'E')
+- Upgraded from the quick patch version of UMod, to the real new v2.9.0 version of UMod
+- Refactored the BaseFireworksBehavior to implement some more interfaces, that were previously implemented in each firework behavior, like RocketBehavior etc. I guess very few, if any, have made their own firework behavior, deriving from BaseFireworkBehavior, but if you have, please rebuild your mod, as you must likely can remove some of the methods, as they are now for of the BaseFireworkBehavior
+
 ## v2022.4.1
 - Added "Hang time" settings to the RocketBehavior to adjust the time between fuse burns out to the rocket explode. In some cases, you don't want the random "hang time" that is per default applied. However, unless you have a specific reason to disable this randomness, you should leave it, as it's there to make things seem a bit more "real" and for performance reasons, so not all rockets goes off in the exact same frame
 - Renamed all "MessengerEvents" in Core (Mod Tools) to be named similar to the ones in the native game. This will be a breaking change if a mod use these directly, however, as I haven't done much documentation for how to use this works, I assume not many are using these
