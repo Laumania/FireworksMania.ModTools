@@ -14,6 +14,13 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.5.1
+- Added "IgnorePickupBehavior"
+- Refactored the Messenger system. The old Messender is marked as depricated and the new one if found in the FireworksMania.Core.Messaging namespace. Go see the video on my channel about how the Messenger works: https://youtu.be/UhIaPy3pw14
+- Added new messages (MessengerEventBlueprintStartLoading + MessengerEventBlueprintCompletedLoading) you can add a listener to to react upon Blueprint start loading and completed loaded
+- Added new message (MessengerEventChangeUIMode) you can broadcast to change the "UI Mode"
+
+
 ## v2022.4.2
 - Added optional settings on 'UseableBehavior" to turn on/off outline and interaction UI ('Use 'E')
 - Upgraded from the quick patch version of UMod, to the real new v2.9.0 version of UMod
