@@ -4,6 +4,11 @@
         <name>FireworksMania.Core</name>
     </assembly>
     <members>
+        <member name="T:FireworksMania.Core.CoreSettings">
+            <summary>
+            Various game settings relevant for 'Core' classes. Initialized and updated automatic by main game.
+            </summary>
+        </member>
         <member name="T:FireworksMania.Core.Messaging.Messenger">
             <summary>
             Messenger used to hook up listeners for messages and for broadcasting messages across components
@@ -29,11 +34,6 @@
             </summary>
             <typeparam name="T"></typeparam>
             <param name="arg1"></param>
-        </member>
-        <member name="T:FireworksMania.Core.Messaging.MessengerHelper">
-            <summary>
-            This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.
-            </summary>
         </member>
         <member name="T:FireworksMania.Core.Messaging.MessengerEventPlaySoundAtVector3">
             <summary>
@@ -77,6 +77,11 @@
             </summary>
             <param name="showCursor">Show the cursor or not.</param>
             <param name="canPlayerMove">Determine if the player should reacti to inputs and there by be able to move or not.</param>
+        </member>
+        <member name="T:FireworksMania.Core.Messaging.MessengerEventFuseConnectionToolEnableChanged">
+            <summary>
+            Broadcasted when FuseConnectTool's 'Enabled' state change
+            </summary>
         </member>
     </members>
 </doc>

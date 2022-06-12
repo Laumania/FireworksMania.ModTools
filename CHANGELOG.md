@@ -14,6 +14,12 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.6.2
+- Added new property "Enabled" to IIgnitable, so if you are using this in custom code you need to recompile and implement it
+- Added new settings in FireworksMania.Core.CoreSettings, right now it's possible to also set these in your custom scripts, please don't do that. I will change that later on I think, so its readonly. Anyway, if you have a custom firework, you might need to look into taking the "AutoDespawnFireworks" into consideration
+- Disabled shadows on FuseStandardPrefab, as you don't really see it, so we might get that little extra performance for not having to render shadows for fuses
+
+
 ## v2022.5.1
 - Added "IgnorePickupBehavior"
 - Refactored the Messenger system. The old Messender is marked as depricated and the new one if found in the FireworksMania.Core.Messaging namespace. Go see the video on my channel about how the Messenger works: https://youtu.be/UhIaPy3pw14
