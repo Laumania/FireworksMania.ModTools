@@ -45,6 +45,7 @@ MonoBehaviour:
   - EXP_StrobeBob_TakeOff_Os_001
   - EXP_Suburb_GasStationPump_Os_001
   - FAN Air Conditioner, Hard Metal Grinding Noise, Hum, Buzz, LOOP
+  - Fast Whoosh
   - FireworkRocketLaunch_1
   - FireworkRocketLaunch_13
   - FireworkRocketLaunch_6
@@ -82,6 +83,7 @@ MonoBehaviour:
   - IMP_PipeADropSingle_Os_Heavy
   - IMP_TrashCanAImpact_Os
   - IMP_TrashCanBImpact_Os
+  - IMP_WasteBagImpact
   - IMPACT_Wood_Plank_On_Wood_Pile_06_Short_mono
   - Koekkenrulle_Sketch_Crack
   - LadyFingerExact

@@ -14,6 +14,33 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.6.2
+- Added new property "Enabled" to IIgnitable, so if you are using this in custom code you need to recompile and implement it
+- Added new settings in FireworksMania.Core.CoreSettings, right now it's possible to also set these in your custom scripts, please don't do that. I will change that later on I think, so its readonly. Anyway, if you have a custom firework, you might need to look into taking the "AutoDespawnFireworks" into consideration
+- Disabled shadows on FuseStandardPrefab, as you don't really see it, so we might get that little extra performance for not having to render shadows for fuses
+
+
+## v2022.5.1
+- Added "IgnorePickupBehavior"
+- Refactored the Messenger system. The old Messender is marked as depricated and the new one if found in the FireworksMania.Core.Messaging namespace. Go see the video on my channel about how the Messenger works: https://youtu.be/UhIaPy3pw14
+- Added new messages (MessengerEventBlueprintStartLoading + MessengerEventBlueprintCompletedLoading) you can add a listener to to react upon Blueprint start loading and completed loaded
+- Added new message (MessengerEventChangeUIMode) you can broadcast to change the "UI Mode"
+
+
+## v2022.4.2
+- Added optional settings on 'UseableBehavior" to turn on/off outline and interaction UI ('Use 'E')
+- Upgraded from the quick patch version of UMod, to the real new v2.9.0 version of UMod
+- Refactored the BaseFireworksBehavior to implement some more interfaces, that were previously implemented in each firework behavior, like RocketBehavior etc. I guess very few, if any, have made their own firework behavior, deriving from BaseFireworkBehavior, but if you have, please rebuild your mod, as you must likely can remove some of the methods, as they are now for of the BaseFireworkBehavior
+
+## v2022.4.1
+- Added "Hang time" settings to the RocketBehavior to adjust the time between fuse burns out to the rocket explode. In some cases, you don't want the random "hang time" that is per default applied. However, unless you have a specific reason to disable this randomness, you should leave it, as it's there to make things seem a bit more "real" and for performance reasons, so not all rockets goes off in the exact same frame
+- Renamed all "MessengerEvents" in Core (Mod Tools) to be named similar to the ones in the native game. This will be a breaking change if a mod use these directly, however, as I haven't done much documentation for how to use this works, I assume not many are using these
+- Added new "UseableBehavior". Putting this on an game object in your mod will make it show up as an "Useable" object for the player and the player can "click" it with the E button.
+This behavior have the events OnBeginUse (triggered when E is pressed) and OnEndUse (triggered when E is released). You can in Unity then hook up these events to call what ever method on your game object to execute logic. Examples of this could be a button, open/close door etc
+- Added new "PlaySoundBehavior" which can be used to play a sound from an object on Start, or used together with the "UseableBehavior" to trigger an sound when something is clicked
+- Removed "Build & Run" option from the Mod Tools menu, as it wasn't working anyway
+- This is not something new to the Mod Tools as such, but logic has been added to the game, that enables the player to pick up game objects that does not have the UseableBehavior on it and weighs under 20kg (Weight is set as the Mass in the Rigidbody component on the game object). Just something to be aware of, if you are creating something that logically shouldn't be possible to pick up, it needs to weigh more than 20 kg (Mass > 20)
+
 ## v2021.12.1
 - Renamed "SmokeBomb" type to "Smoke" so we can put more than just smokebombs under it
 - Added new type Fountains - not that we have that many yet, but it's a category by itself anyway
