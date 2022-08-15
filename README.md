@@ -116,7 +116,7 @@ Paste the following url in and press Add: https://github.com/Cysharp/UniTask.git
 ![image](https://user-images.githubusercontent.com/1378458/138905271-262a098e-85f5-43a8-b336-25759917fd4e.png)
 
 > Troubleshooting: If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer. 
-> You can get git from here, install that and restart Unity and Unity Hub: https://git-scm.com/
+> You can get git from here, install that and restart your computer: https://git-scm.com/
 
 ![image](https://user-images.githubusercontent.com/1378458/138905359-08064f6f-63b8-4b4e-bc8a-65b047fdc084.png)
 
