@@ -5,8 +5,8 @@
         "name": "Laumania ApS",
         "url": "https://github.com/Laumania/FireworksMania.ModTools"
     },
-    "version": "2022.6.2",
-    "unity": "2021.1",
+    "version": "2022.9.1",
+    "unity": "2021.3",
     "description": "Mod Tools requiered for creating mods for Fireworks Mania",
     "documentationUrl": "https://github.com/Laumania/FireworksMania.ModTools",
     "keywords": [

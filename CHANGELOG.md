@@ -14,6 +14,9 @@ So to update a .git package, you simply just add the package again.
 [So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
 
 ---
+## v2022.9.1
+- Upgraded Unity version to v2021.3.9f1 - this means you have to upgrade the Unity version you build mods in to the same. (Remember to backup!)
+
 ## v2022.6.2
 - Added new property "Enabled" to IIgnitable, so if you are using this in custom code you need to recompile and implement it
 - Added new settings in FireworksMania.Core.CoreSettings, right now it's possible to also set these in your custom scripts, please don't do that. I will change that later on I think, so its readonly. Anyway, if you have a custom firework, you might need to look into taking the "AutoDespawnFireworks" into consideration
