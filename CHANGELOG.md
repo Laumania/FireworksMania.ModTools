@@ -12,7 +12,7 @@ In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod T
 
 ---
 ## [Unreleased]
-**IMPORTANT**: Be sure to update Unity to version v2021.3.9f1
+**IMPORTANT**: Be sure to update Unity to version v2021.3.9f1!
 ### Added
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 
