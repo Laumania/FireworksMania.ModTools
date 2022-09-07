@@ -16,6 +16,7 @@ So to update a .git package, you simply just add the package again.
 ---
 ## v2022.9.1
 - Upgraded Unity version to v2021.3.9f1 - this means you have to upgrade the Unity version you build mods in to the same. (Remember to backup!)
+- Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 
 ## v2022.6.2
 - Added new property "Enabled" to IIgnitable, so if you are using this in custom code you need to recompile and implement it
