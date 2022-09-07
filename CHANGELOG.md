@@ -8,8 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > **IMPORTANT**: Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
 
 
-To update:
-> Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
+In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
 
 ---
 ## [Unreleased]
@@ -18,7 +17,7 @@ To update:
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 
 ### Changed
-- Upgraded Unity version to v2021.3.9f1 - this means you have to upgrade the Unity version you build mods in to the same. (Remember to backup!)
+- **Upgraded Unity version to v2021.3.9f1 - this means you have to upgrade the Unity version you build mods in to the same. (Remember to backup!)**
 - Updated "How to upgrade Mod Tools" section, as the new version of Unity supports updating git packages via the Package Manager UI.
 - Updated the Changelog structure to be based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
