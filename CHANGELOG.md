@@ -7,16 +7,13 @@ List of changes for each version of the Fireworks Mania Mod Tools.
 > 
 > It is always recommened to have your project in some sort of version control, like putting it on Github or similar.
 
-Unity is not currently able to update .git packages with the Package Manager (a feature tht should come in the future) - you have to do it manually.
-
-So to update a .git package, you simply just add the package again.
-
-[So just add the .git url again to the Mod Tools.](https://github.com/Laumania/FireworksMania.ModTools#5-install-fireworks-mania-mod-tools)
+Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
 
 ---
 ## v2022.9.1
 - Upgraded Unity version to v2021.3.9f1 - this means you have to upgrade the Unity version you build mods in to the same. (Remember to backup!)
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
+- Updated "How to upgrade Mod Tools" section, as the new version of Unity supports updating git packages via the Package Manager UI.
 
 ## v2022.6.2
 - Added new property "Enabled" to IIgnitable, so if you are using this in custom code you need to recompile and implement it
