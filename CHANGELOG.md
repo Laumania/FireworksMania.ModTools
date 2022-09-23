@@ -11,8 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
 
 ---
-## [Unreleased]
+## [Experimental]
 **IMPORTANT**: Be sure to update Unity to version v2021.3.9f1!
+
+**Troubleshooting**
+
+Sometimes, if you get a lot of bugs like missing FuseIndicator, Reimport All seems to fix the issue. Thanks guanaco0403.
+
 ### Added
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 
