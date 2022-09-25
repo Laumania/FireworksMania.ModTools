@@ -13,6 +13,11 @@ In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod T
 ---
 ## [Experimental]
 **IMPORTANT**: Be sure to update Unity to version v2021.3.9f1!
+
+**Troubleshooting**
+
+Sometimes, if you get a lot of bugs like missing FuseIndicator, Reimport All seems to fix the issue. Thanks guanaco0403.
+
 ### Added
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 - Added new StartUpPrefabDefinition. Add a prefab to this and the prefab will be instansiated upon mod load. This it meant to be used for Start/OnDestroy events and not visual objects etc.
