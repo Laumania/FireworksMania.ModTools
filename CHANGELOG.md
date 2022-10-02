@@ -13,7 +13,7 @@ If you don't see this "Update" button, be sure you are on the right version of U
 
 ## Troubleshooting
 
-Sometimes, if you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
+If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
 
 ---
 ## [Released]  [v2022.9.6] - 2022-09-30
