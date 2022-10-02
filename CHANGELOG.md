@@ -17,9 +17,9 @@ If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Uni
 
 ---
 ## [Released]  [v2022.9.6] - 2022-09-30
-**IMPORTANT**: Be sure to update Unity to version specifically v2021.3.9f1 **BEFORE** upgrading the Mod Tools!
+**IMPORTANT**: Be sure to update Unity to version specifically [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9) (click the "Install this version with Unity Hub." in the top) **BEFORE** upgrading the Mod Tools!
 
-[How to install a specific version of Unity](https://www.youtube.com/watch?v=RU6fppWN74M)
+[Alternatively see how to install a specific version of Unity in general](https://www.youtube.com/watch?v=RU6fppWN74M)
 
 ### Added
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
