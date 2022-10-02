@@ -19,6 +19,8 @@ If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Uni
 ## [Released]  [v2022.9.6] - 2022-09-30
 **IMPORTANT**: Be sure to update Unity to version specifically v2021.3.9f1 **BEFORE** upgrading the Mod Tools!
 
+[How to install a specific version of Unity](https://www.youtube.com/watch?v=RU6fppWN74M)
+
 ### Added
 - Added new SearchWidget UI for browsing GameSounds (No more endless scrolling when browsing for game sounds!)
 - Added new StartUpPrefabDefinition. Add a prefab to this and the prefab will be instansiated upon mod load. This it meant to be used for Start/OnDestroy events and not visual objects etc.
