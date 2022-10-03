@@ -37,7 +37,7 @@ Luckily, when you have the Unity Hub installed, it's very easy to install the sp
 
 > As the Mod Tools gets updated, the target Unity version will also be updated. You can go back here and see what version you need. Alternatively the Mod Tools will tell you what version you need when you try to build your mod.
 
-[You can see the version you need in the ModToolsSettings file on the highlighted line here](https://github.com/Laumania/FireworksMania.ModTools/blob/58a86d3d521b8451016bb59fbf89225f07890761/Assets/UMod/Resources/Editor/ModToolsSettings.asset#L29). 
+[You can see the version you need in the ModToolsSettings file on the highlighted line here](/UMod/Resources/Editor/ModToolsSettings.asset#L29). 
 
 ![image](https://user-images.githubusercontent.com/1378458/138910145-e5900b45-8a0e-4b2c-b3fb-dc2822d5ccfd.png)
 
