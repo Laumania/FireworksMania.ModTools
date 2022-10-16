@@ -16,6 +16,14 @@ If you don't see this "Update" button, be sure you are on the right version of U
 If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
 
 ---
+## [Experimental]  [v2022.10.2] - 2022-10-16
+Keep in mind that 'custom map' support is early on, so I'm sure there will be multiple issues, but now we got started :)
+
+### Added
+- Added custom map support. Create an scene with a unique name in your mod, add the "PlayerSpawnLocationPrefab" from the Mod Tools to your scene, create an MapDefinition and fill out all the fields. Now build your mod and your map should show up in the map selection UI
+
+
+
 ## [Released]  [v2022.9.6] - 2022-09-30
 **IMPORTANT**: Be sure to update Unity to version specifically v2021.3.9f1 **BEFORE** upgrading the Mod Tools!
 
