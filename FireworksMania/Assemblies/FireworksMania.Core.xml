@@ -83,5 +83,10 @@
             Broadcasted when FuseConnectTool's 'Enabled' state change
             </summary>
         </member>
+        <member name="T:FireworksMania.Core.Messaging.MessengerEventLoadSceneCompleted">
+            <summary>
+            Broadcasted once scene have been loaded right before loading screen is removed
+            </summary>
+        </member>
     </members>
 </doc>
