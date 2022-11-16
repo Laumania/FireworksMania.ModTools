@@ -11,11 +11,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
 If you don't see this "Update" button, be sure you are on the right version of Unity as stated in the changelog below.
 
-## Troubleshooting
-
-If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
-
 ---
+## [Experimental]  [v2022.11.1] - [2022-11-16](https://unity3d.com/unity/whats-new/2021.3.9)
+### Upgrade Notes
+This update of the Mod Tools have the two dependencies DOTween and UniTask included. Therefore you need to uninstall them from your Unity Project after upgrading.
+
+Target Unity version: v2021.3.9f1
+
+- Todo: How to uninstall UniTask
+- Todo: How to uninstall DOTween
+
+### Added
+- DayNightCycleTriggerBehavior
+
+
+
 ## [Experimental]  [v2022.10.2] - 2022-10-16
 Keep in mind that 'custom map' support is early on, so I'm sure there will be multiple issues, but now we got started :)
 
