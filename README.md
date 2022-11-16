@@ -452,18 +452,8 @@ You do that by uploading your mod to mod.io here: https://fireworksmania.mod.io
 
 We all look forward to try out your mod :D
 
-
-
-
-
-
-
-
-
-
-
-
-
+# Troubleshooting
+If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
 
 
 
