@@ -88,5 +88,10 @@
             Broadcasted once scene have been loaded right before loading screen is removed
             </summary>
         </member>
+        <member name="T:FireworksMania.Core.Messaging.MessengerEventDayNightChanged">
+            <summary>
+            Broadcasted when day changes to night and night changes to day
+            </summary>
+        </member>
     </members>
 </doc>
