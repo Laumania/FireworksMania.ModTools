@@ -12,11 +12,11 @@ In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod T
 If you don't see this "Update" button, be sure you are on the right version of Unity as stated in the changelog below.
 
 ---
-## [Experimental]  [v2022.11.1] - [2022-11-16](https://unity3d.com/unity/whats-new/2021.3.9)
+## [Experimental]  [v2022.11.1] - 2022-11-16
 ### Upgrade Notes
 This update of the Mod Tools have the two dependencies DOTween and UniTask included. Therefore you need to uninstall them from your Unity Project after upgrading.
 
-Target Unity version: v2021.3.9f1
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
 - Todo: How to uninstall UniTask
 - Todo: How to uninstall DOTween
