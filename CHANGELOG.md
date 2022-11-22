@@ -7,11 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > **IMPORTANT**: Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
 
+Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
-In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
-If you don't see this "Update" button, be sure you are on the right version of Unity as stated in the changelog below.
-
----
 ## [Experimental]  [v2022.11.1] - 2022-11-22
 ### Upgrade Guide
 Backup your Unity project before you continue!
@@ -23,18 +20,18 @@ This update of the Mod Tools have the two dependencies DOTween and UniTask inclu
 
 2. Update Fireworks Mania Mod Tools to latest version
 
-   Window > Package Manager > (Packages: In Project > Fireworks Mania Mod Tools > Press "Remove" button  
+   - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
    
 3. Uninstall UniTask
 
-   Window > Package Manager > (Packages: In Project > UniTask > Press "Update" button
+   - Window > Package Manager > (Packages: In Project > UniTask > Press "Remove" button
    
 4. Uninstall DOTween
 
-   Delete folder "/Assets/Plugins/Demigiant"
-   Delete file "/Assets/Resources/DOTweenSettings"
+   - Delete folder "/Assets/Plugins/Demigiant"
+   - Delete file "/Assets/Resources/DOTweenSettings"
 
-Close Unity and reopen your Unity project. You should now be able to build your mod(s) as normally.
+Close Unity and reopen. You should now be able to build your mod(s) as normally.
 
 See the changelog below.
 
