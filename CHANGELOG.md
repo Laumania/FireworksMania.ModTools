@@ -10,30 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
 ## [Experimental]  [v2022.11.1] - 2022-11-22
-### Upgrade Guide
-Backup your Unity project before you continue!
-
-This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
-
-
-1. Upgrade to Unity [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
-
-2. Update Fireworks Mania Mod Tools to latest version
-
-   - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
-   
-3. Uninstall UniTask
-
-   - Window > Package Manager > (Packages: In Project > UniTask > Press "Remove" button
-   
-4. Uninstall DOTween
-
-   - Delete folder "/Assets/Plugins/Demigiant"
-   - Delete file "/Assets/Resources/DOTweenSettings"
-
-Close Unity and reopen. You should now be able to build your mod(s) as normally.
-
-See the changelog below.
+> ### Upgrade Guide
+> Backup your Unity project before you continue!
+> 
+> This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
+>
+>
+> 1. Upgrade to Unity [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+> 
+> 2. Update Fireworks Mania Mod Tools to latest version
+> 
+>    - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+>   
+> 3. Uninstall UniTask
+>
+>    - Window > Package Manager > (Packages: In Project > UniTask > Press "Remove" button
+>   
+> 4. Uninstall DOTween
+>
+>    - Delete folder "/Assets/Plugins/Demigiant"
+>    - Delete file "/Assets/Resources/DOTweenSettings"
+>
+> 5. Close Unity and reopen
+>    - You should now be able to build your mod(s) as normally.
 
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
