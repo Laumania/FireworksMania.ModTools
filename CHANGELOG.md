@@ -5,17 +5,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## How to upgrade Mod Tools package
 
-> **IMPORTANT**: Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+
+Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+
+## [Experimental]  [v2022.11.1] - 2022-11-22
+> ### Important upgrade steps
+> Backup your Unity project before you continue!
+> 
+> This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
+>
+>
+> 1. Upgrade to Unity [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+> 
+> 2. Update Fireworks Mania Mod Tools to latest version
+> 
+>    - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+>    - *You might get some errors and warning, but just continue, they should all go await after completing all the steps*
+>   
+> 3. Uninstall UniTask
+>
+>    - Window > Package Manager > (Packages: In Project > UniTask > Press "Remove" button
+>   
+> 4. Uninstall DOTween
+>
+>    - In Unity, right click and delete folder "/Assets/Plugins/Demigiant"
+>    - In Unity, right click and delete file "/Assets/Resources/DOTweenSettings"
+>
+> 5. Close Unity and reopen
+>    - You should now be able to build your mod(s) as normally.
+
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+
+### Changed
+- Upgraded UMod to latest version (v2.9.2)
+- Added a lot of "Environment" settings to MapDefinition so you have control over a lot more things
+  - *There is currently a challenge with some of the weather settings, so currently in v2022.11.1 of the game, these have no effect*
+
+### Added
+- DayNightCycleTriggerBehavior - Behavior that fires Unity Events upon day and night changes so you can ex. turn on and off lights
+  - *This is the behavior used on the streetlights in Town and City to turn them on/off* 
+- Added some validations to when building the mod, so you get a warning if your scene includes a camera or a Directional light. It won't stop the build, just warn you in the console
 
 
-In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
-If you don't see this "Update" button, be sure you are on the right version of Unity as stated in the changelog below.
 
-## Troubleshooting
 
-If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
-
----
 ## [Experimental]  [v2022.10.2] - 2022-10-16
 Keep in mind that 'custom map' support is early on, so I'm sure there will be multiple issues, but now we got started :)
 
