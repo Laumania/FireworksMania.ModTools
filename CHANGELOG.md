@@ -10,7 +10,7 @@ Make sure you have a [backup of your project before upgrading!](https://github.c
 Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
 ## [Experimental]  [v2022.11.1] - 2022-11-22
-> ### Important Upgrade Steps
+> ### Important upgrade steps
 > Backup your Unity project before you continue!
 > 
 > This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
@@ -21,6 +21,7 @@ Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod
 > 2. Update Fireworks Mania Mod Tools to latest version
 > 
 >    - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+>    - *You might get some errors and warning, but just continue, they should all go await after completing all the steps*
 >   
 > 3. Uninstall UniTask
 >
@@ -28,16 +29,23 @@ Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod
 >   
 > 4. Uninstall DOTween
 >
->    - Delete folder "/Assets/Plugins/Demigiant"
->    - Delete file "/Assets/Resources/DOTweenSettings"
+>    - In Unity, right click and delete folder "/Assets/Plugins/Demigiant"
+>    - In Unity, right click and delete file "/Assets/Resources/DOTweenSettings"
 >
 > 5. Close Unity and reopen
 >    - You should now be able to build your mod(s) as normally.
 
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
+### Changed
+- Upgraded UMod to latest version (v2.9.2)
+- Added a lot of "Environment" settings to MapDefinition so you have control over a lot more things
+  - *There is currently a challenge with some of the weather settings, so currently in v2022.11.1 of the game, these have no effect*
+
 ### Added
-- DayNightCycleTriggerBehavior - this behavior fires Unity Events upon day and night so you can ex. turn on and off lights
+- DayNightCycleTriggerBehavior - Behavior that fires Unity Events upon day and night changes so you can ex. turn on and off lights
+  - *This is the behavior used on the streetlights in Town and City to turn them on/off* 
+
 
 
 
