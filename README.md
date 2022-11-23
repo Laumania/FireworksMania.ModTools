@@ -71,13 +71,15 @@ Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModToo
 
 ![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
 
+> Troubleshooting: If you get an error saying something with "Git" when you try to add the Mod Tools, its because you don't have Git installed on your computer. You can get git from here, install that and restart your computer: https://git-scm.com/
+
 ![image](https://user-images.githubusercontent.com/1378458/203601491-86803483-48e0-4984-b0d2-0636cf34f669.png)
 
 Once it's done installing you might see a few errors in the console.
 
 Restart Unity and reopen your project.
 
-To verify that your project is working and building, press the "Play" button in the stop.
+To verify that your project is working and building, press the "Play" button in the top.
 
 You should see something like this, with no errors. 
 
