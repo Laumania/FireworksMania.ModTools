@@ -75,19 +75,15 @@ Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModToo
 
 Once it's done installing you might see a few errors in the console.
 
-I am contantly working on trying to remove errors like this that you shouldn't worry about, however it's not always possible.
+Restart Unity and reopen your project.
 
-In many cases the errors are actually trying to help you with stuff you forgot, so please read them and see if it sounds right.
+To verify that your project is working and building, press the "Play" button in the stop.
 
-![image](https://user-images.githubusercontent.com/1378458/138907936-92101674-d704-4d14-a0d2-1e6199eda40c.png)
-
-In this case they don't and you can see that by hitting the Clear button to remove all in the console and then press Play in the Unity Editor.
-
-![image](https://user-images.githubusercontent.com/1378458/138908469-92b43605-70b3-4dde-8f3f-a6d4254170c2.png)
-
-You should see something like this, with no errors. If the erros keep coming, it is an indicator that something is actually wrong, so click the error and see what it selects and read the message.
+You should see something like this, with no errors. 
 
 ![image](https://user-images.githubusercontent.com/1378458/138908645-7d96c0ae-e49f-4faf-b34b-e5ad5aaa833a.png)
+
+> If you see errors, try and read them and see if you can solve them, else reach out in the Mod Creation channels on my [Discord](https://discord.gg/SzZD77p).
 
 You are now ready to start creating your first mod.
 
