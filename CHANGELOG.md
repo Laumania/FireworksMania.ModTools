@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
 ## [Experimental]  [v2022.11.1] - 2022-11-22
-> ### Upgrade Guide
+> ### Important Upgrade Steps
 > Backup your Unity project before you continue!
 > 
 > This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
