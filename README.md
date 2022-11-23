@@ -50,101 +50,28 @@ Fireworks Mania mods are build from inside Unity and you therefore need a empty 
 ### Naming your Unity Project
 One important thing to know when naming your project is that you can have multiple mods within a single Unity project. 
 
-This means that you might want to name the Unity project something more generic like, *"YourNickNameFireworksManiaMods"*, *YourNickName.FireworksMania.Mods"* etc. 
+This means that you might want to name the Unity project something more generic like, *"YourNickNameFireworksManiaMods"*, *"YourNickName.FireworksMania.Mods"* etc. 
 
 These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on actual mod(s) name(s).
 
 At this point you should now have an empty Unity project that should look something like this:
 ![image](https://user-images.githubusercontent.com/1378458/138737260-cd972920-94cd-4eeb-940f-41fe5002c736.png)
 
-## 4. Install dependencies
-> As of writing, Oct. 2021, you sadly have to install these dependencies manually as there are no way to automatically include these dependencies in the Mod Tools package.
-> Fear not, it looks much more complicated than it really is.
+## 4. Install Fireworks Mania Mod Tools
+Now we need to install the actual Fireworks Mania Mod Tools.
 
-### DOTween
-Because DOTween is an Unity Asset Store package, you need to make sure it have it added to "My Assets" to install it in Unity.
-
-Go to [DOTween in a browser here](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676), be sure you are logged in and click to "Add to My Assets" button. If the blue button says "Open in Unity" you already have it in your assets and you can move on to next step.
-
-![image](https://user-images.githubusercontent.com/1378458/138900846-8c105138-d955-4ad9-84c5-ffd82cc282f9.png)
-
-Now go to the Package Manager in the Unity Editor: Window -> Package Manager
-
-![image](https://user-images.githubusercontent.com/1378458/138901793-177e0102-e32d-453d-9c12-7f3e9bc9a5bc.png)
-
-Select "My Assets".
-
-![image](https://user-images.githubusercontent.com/1378458/138901891-eb2392bc-b1e5-4326-aec4-9543173b91f6.png)
-
-Search for "DOTween", select it and press the Download button.
-
-![image](https://user-images.githubusercontent.com/1378458/138949692-1f3a146b-8b22-4a66-820f-3ff8c8813823.png)
-
-Once it's downloaded the Download button change to an Import button, press that to import the package into your Unity project.
-
-An new window will pop up showing you the files in this package, press the Import button and wait for it to complete the import.
-
-![image](https://user-images.githubusercontent.com/1378458/138950003-89dd8a4e-d78a-44a0-8d51-d9f0cbaa7274.png)
-
-Follow the instructions in the DOTween guide.
-
-![image](https://user-images.githubusercontent.com/1378458/138950084-9c78f82e-4eb2-4217-802d-e2830ef70c24.png)
-
-![image](https://user-images.githubusercontent.com/1378458/138950154-9c14bca3-53dd-46f1-82b5-2930cdb0bea1.png)
-
-![image](https://user-images.githubusercontent.com/1378458/138950195-dc1a6a65-bdd3-46f7-a0f4-0039d8952292.png)
-
-![image](https://user-images.githubusercontent.com/1378458/138950236-cd3dcbc5-2341-454c-9603-e76d90aeb693.png)
-
-![image](https://user-images.githubusercontent.com/1378458/138950293-a1360486-b225-40f4-8162-b7a53578d79e.png)
-
-You now have DOTween installed. You won't use it directly and you will not see any changes in the Unity Editor, its purely a dependency that the Fireworks Mania Mod Tools need to be able to build the project and thereby build the mods later on.
-
-### UniTask
-This dependency needs to be installed a little different, which is actually easier.
-
-Go to the Package Manager again, click the little + button and select that you want to add an git package.
-
-![image](https://user-images.githubusercontent.com/1378458/138905085-66314ab7-da3e-47a0-a418-3a974cb713b2.png)
-
-Paste the following url in and press Add: https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-
-![image](https://user-images.githubusercontent.com/1378458/138905271-262a098e-85f5-43a8-b336-25759917fd4e.png)
-
-> Troubleshooting: If you get an error saying something with "Git" when you try to add some of the below dependencies, its because you don't have Git installed on your computer. 
-> You can get git from here, install that and restart your computer: https://git-scm.com/
-
-![image](https://user-images.githubusercontent.com/1378458/138905359-08064f6f-63b8-4b4e-bc8a-65b047fdc084.png)
-
-After the installation, you should be able to see the package in the list of "Packages: In Project" and remember to clear the search field too.
-
-![image](https://user-images.githubusercontent.com/1378458/138905779-3a250d0b-5fbb-4ad0-822e-127e74096469.png)
-
-If it looks similar to the above, you are done installing UniTask and can continue.
-
-If you want to know more about UniTask, see details on UniTasks Github page https://github.com/Cysharp/UniTask#upm-package
-
-Just as a little check to make sure you are all good before moving on, it's a good idea at this point to press the little Play button to run your current project. No errors should show up in the console and it should look similar to this.
-
-![image](https://user-images.githubusercontent.com/1378458/138906746-b06d03c3-c800-4e79-ab26-4c0ac49a7d54.png)
-
-Remember to press Play again to stop it running before continuing :)
-
-## 5. Install Fireworks Mania Mod Tools
-So with all the dependencies installed and a Unity Editor being able to "Play" without errors, you are ready to continue.
-
-Now we need to install the actual Fireworks Mania Mod Tools. The installation is exactly as we did before with the git package.
+Go to the Package Manager, click the little + button and select that you want to add an git package.
 
 ![image](https://user-images.githubusercontent.com/1378458/138907247-a5e8d7d9-6318-4997-87b4-526839aa3301.png)
 
 Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
 
-> If you want to use the experimental branch, use this url:
+> For experimental branch, use this url:
 > https://github.com/Laumania/FireworksMania.ModTools.git#experimental
 
 ![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
 
-![image](https://user-images.githubusercontent.com/1378458/138907625-188d9548-4fc3-4fd0-bd21-8663755ab91a.png)
+![image](https://user-images.githubusercontent.com/1378458/203601491-86803483-48e0-4984-b0d2-0636cf34f669.png)
 
 Once it's done installing you might see a few errors in the console.
 
