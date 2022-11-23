@@ -45,6 +45,7 @@ Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9
 ### Added
 - DayNightCycleTriggerBehavior - Behavior that fires Unity Events upon day and night changes so you can ex. turn on and off lights
   - *This is the behavior used on the streetlights in Town and City to turn them on/off* 
+- Added some validations to when building the mod, so you get a warning if your scene includes a camera or a Directional light. It won't stop the build, just warn you in the console
 
 
 
