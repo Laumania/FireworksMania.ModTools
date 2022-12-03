@@ -9,6 +9,15 @@ Make sure you have a [backup of your project before upgrading!](https://github.c
 
 Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
+## [Experimental]  [v2022.11.4] - 2022-12-03
+
+### Added
+- Added Unity Events to Fuse and ExplosionPhysicsForceEffect components. This enables you to do various stuff when these events trigger, like showing/hiding an gameobject, call a method on a custom script etc.
+
+### Changed
+- Had to remove some of the Environment settings on the MapDefinition as it wasn't working correctly for now. I hopefully get back to make them work at a later date, but for Dec. 2022 release, I can't make it
+
+
 ## [Experimental]  [v2022.11.1] - 2022-11-22
 > ### Important upgrade steps
 > Backup your Unity project before you continue!
