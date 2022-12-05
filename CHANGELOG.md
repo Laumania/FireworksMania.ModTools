@@ -9,6 +9,12 @@ Make sure you have a [backup of your project before upgrading!](https://github.c
 
 Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
 
+## [Experimental]  [v2022.12.1] - 2022-12-05
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+
+### Added
+- Added back "Lighting Settings" and "Sky Settings" to the MapDefinition. I will make some videos at a later point to show what they do in game, as you cannot see the effect until your map is loaded in game
+
 ## [Experimental]  [v2022.11.4] - 2022-12-03
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 ### Added
