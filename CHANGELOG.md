@@ -3,11 +3,19 @@ All notable changes to Fireworks Mania Mod Tools will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## How to upgrade Mod Tools package
+[How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
-Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+## [Experimental]  [v2022.12.2] - 2022-12-09
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
-Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+### Added
+- New setting on MapDefinitions for "ObjectCatcherDepth", see tooltip to figure out what it does
+
+### Changed
+- Updated some of the "Effect" prefabs in an attempt to fix the "black" smoke that can happen from time to time
+
+### Fixed
+- Fixed bug where DayNightCycleTriggerBehavior didn't trigger events at map load
 
 ## [Experimental]  [v2022.12.1] - 2022-12-05
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
@@ -180,4 +188,8 @@ This behavior have the events OnBeginUse (triggered when E is pressed) and OnEnd
 - Upgraded to Unity 2021.1.20f1
 - Enabled a setting to allow the game to try and load mods build with older versions. It might fail, but I assume it will also work in many cases and I think it's better to attempt to load a mod in the game, then proactively avoid loading mods build with older version each time the game/Unity is updated. Time will tell how this works out
 
+## [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+
+Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
