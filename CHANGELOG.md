@@ -188,7 +188,7 @@ This behavior have the events OnBeginUse (triggered when E is pressed) and OnEnd
 - Upgraded to Unity 2021.1.20f1
 - Enabled a setting to allow the game to try and load mods build with older versions. It might fail, but I assume it will also work in many cases and I think it's better to attempt to load a mod in the game, then proactively avoid loading mods build with older version each time the game/Unity is updated. Time will tell how this works out
 
-## [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
+## How to upgrade Mod Tools package
 
 Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
 
