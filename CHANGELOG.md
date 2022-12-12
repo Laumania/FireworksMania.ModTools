@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [Experimental]  [v2022.12.3] - 2022-12-12
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+
+### Added
+- Added SunIntensityCurve and MoonIntensityCurve to MapDefinition 
+
 ## [Experimental]  [v2022.12.2] - 2022-12-09
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
