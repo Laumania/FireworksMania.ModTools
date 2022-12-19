@@ -50,7 +50,7 @@ Fireworks Mania mods are build from inside Unity and you therefore need a empty 
 ### Naming your Unity Project
 One important thing to know when naming your project is that you can have multiple mods within a single Unity project. 
 
-This means that you might want to name the Unity project something more generic like, *"YourNickNameFireworksManiaMods"*, *"YourNickName.FireworksMania.Mods"* etc. 
+This means that you might want to name the Unity project something more generic like, *"YourNickNameFireworksManiaMods"*, *"YourNickName.FireworksMania.Mods"* or simply *"FireworksMania.Mods"*.
 
 These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on actual mod(s) name(s).
 
