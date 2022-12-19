@@ -1,5 +1,3 @@
-> DISCLAIMER (2022-12-19): FIREWORKS MANIA MOD TOOLS HAVE BEEN UPDATED AND I'M WORKING ON SOME NEW GETTING STARTED VIDEOS. MEANWHILE THE [OLD GETTING STARTED VIDEO](https://www.youtube.com/watch?v=sZh6gOC2AdA&list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck&index=1) CAN STILL BE USED AND IS STILL RELEVANT, EXCEPT FOR THE PART WHERE THE DEPENDENCIES UNITASK AND DOTWEEN ARE INSTALLED, THIS IS NO LONGER NEEDED WHY THIS PART CAN BE SKIPPED.
-
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
