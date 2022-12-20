@@ -33,8 +33,6 @@ Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9
 > 5. Close Unity and reopen
 >    - You should now be able to build your mod(s) as normally.
 
-Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
-
 ### Added
 - Added custom map support. Create an scene with a unique name in your mod, add the "PlayerSpawnLocationPrefab" from the Mod Tools to your scene, create an MapDefinition and fill out all the fields. Now build your mod and your map should show up in the map selection UI
 - Added SunIntensityCurve and MoonIntensityCurve to MapDefinition 
