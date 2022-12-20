@@ -3,19 +3,56 @@ All notable changes to Fireworks Mania Mod Tools will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## How to upgrade Mod Tools package
+[How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
-> **IMPORTANT**: Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+## [v2022.12.3] - 2022-12-12
+Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+
+> ### Upgrade steps for Mod Tools v2022.9.6 or earlier
+> Backup your Unity project before you continue!
+> 
+> This update of the Mod Tools have the two dependencies DOTween and UniTask included. This makes it a lot easier to get started making mod, as you now only need to install the Fireworks Mania Mod Tools. However, for you who are upgrading you need to delete UniTask and DOTween from your Unity project for it to build again.
+>
+>
+> 1. Upgrade to Unity [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
+> 
+> 2. Update Fireworks Mania Mod Tools to latest version
+> 
+>    - Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+>    - *You might get some errors and warning, but just continue, they should all go await after completing all the steps*
+>   
+> 3. Uninstall UniTask
+>
+>    - Window > Package Manager > (Packages: In Project > UniTask > Press "Remove" button
+>   
+> 4. Uninstall DOTween
+>
+>    - In Unity, right click and delete folder "/Assets/Plugins/Demigiant"
+>    - In Unity, right click and delete file "/Assets/Resources/DOTweenSettings"
+>
+> 5. Close Unity and reopen
+>    - You should now be able to build your mod(s) as normally.
+
+### Added
+- Added custom map support. Create an scene with a unique name in your mod, add the "PlayerSpawnLocationPrefab" from the Mod Tools to your scene, create an MapDefinition and fill out all the fields. Now build your mod and your map should show up in the map selection UI
+- Added SunIntensityCurve and MoonIntensityCurve to MapDefinition 
+- New setting on MapDefinitions for "ObjectCatcherDepth", see tooltip to figure out what it does
+- Added back "Lighting Settings" and "Sky Settings" to the MapDefinition. I will make some videos at a later point to show what they do in game, as you cannot see the effect until your map is loaded in game
+- Added Unity Events to Fuse and ExplosionPhysicsForceEffect components. This enables you to do various stuff when these events trigger, like showing/hiding an gameobject, call a method on a custom script etc.
+- DayNightCycleTriggerBehavior - Behavior that fires Unity Events upon day and night changes so you can ex. turn on and off lights
+  - *This is the behavior used on the streetlights in Town and City to turn them on/off* 
+- Added some validations to when building the mod, so you get a warning if your scene includes a camera or a Directional light. It won't stop the build, just warn you in the console
+
+### Changed
+- Updated some of the "Effect" prefabs in an attempt to fix the "black" smoke that can happen from time to time
+- Upgraded UMod to latest version (v2.9.2)
+- Added a lot of "Environment" settings to MapDefinition so you have control over a lot more things
+  - *There is currently a challenge with some of the weather settings, so currently in v2022.11.1 of the game, these have no effect*
+
+### Fixed
+- Fixed bug where DayNightCycleTriggerBehavior didn't trigger events at map load
 
 
-In the top menu in Unity: Window->Package Manager->Select "Fireworks Mania Mod Tools" -> Click the Update button in the lower right corner.
-If you don't see this "Update" button, be sure you are on the right version of Unity as stated in the changelog below.
-
-## Troubleshooting
-
-If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
-
----
 ## [Released]  [v2022.9.6] - 2022-09-30
 **IMPORTANT**: Be sure to update Unity to version specifically [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9) (click the "Install this version with Unity Hub." in the top) **BEFORE** upgrading the Mod Tools!
 
@@ -125,4 +162,8 @@ This behavior have the events OnBeginUse (triggered when E is pressed) and OnEnd
 - Upgraded to Unity 2021.1.20f1
 - Enabled a setting to allow the game to try and load mods build with older versions. It might fail, but I assume it will also work in many cases and I think it's better to attempt to load a mod in the game, then proactively avoid loading mods build with older version each time the game/Unity is updated. Time will tell how this works out
 
+## How to upgrade Mod Tools package
 
+Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
+
+Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  

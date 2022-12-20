@@ -4,6 +4,13 @@
         <name>FireworksMania.Core</name>
     </assembly>
     <members>
+        <member name="T:FireworksMania.Core.Common.SerializableNullable`1">
+            <summary>
+            Serializable Nullable (SN) Does the same as C# System.Nullable, except it's an ordinary
+            serializable struct, allowing unity to serialize it and show it in the inspector.
+            Based on https://answers.unity.com/questions/1654475/why-doesnt-unity-property-editor-show-a-nullable-v.html
+            </summary>
+        </member>
         <member name="T:FireworksMania.Core.CoreSettings">
             <summary>
             Various game settings relevant for 'Core' classes. Initialized and updated automatic by main game.
@@ -81,6 +88,16 @@
         <member name="T:FireworksMania.Core.Messaging.MessengerEventFuseConnectionToolEnableChanged">
             <summary>
             Broadcasted when FuseConnectTool's 'Enabled' state change
+            </summary>
+        </member>
+        <member name="T:FireworksMania.Core.Messaging.MessengerEventLoadSceneCompleted">
+            <summary>
+            Broadcasted once scene have been loaded right before loading screen is removed
+            </summary>
+        </member>
+        <member name="T:FireworksMania.Core.Messaging.MessengerEventDayNightChanged">
+            <summary>
+            Broadcasted when day changes to night and night changes to day
             </summary>
         </member>
     </members>
