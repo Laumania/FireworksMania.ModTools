@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2023.1.6] - 2023-1-25
+Target Unity version: [v2021.3.16f1](https://unity3d.com/unity/whats-new/2021.3.16)
+
+### Changed
+- Upgraded to new Unity version (v2021.3.16f1), so remember to upgrade!
+
+### Fixed
+- Fixed error where Unity events was not always working in the build mod, ex. events on the DayNightTriggerBehavior
+
+
 ## [v2022.12.3] - 2022-12-12
 Target Unity version: [v2021.3.9f1](https://unity3d.com/unity/whats-new/2021.3.9)
 
