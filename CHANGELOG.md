@@ -10,6 +10,7 @@ Target Unity version: [v2021.3.16f1](https://unity3d.com/unity/whats-new/2021.3.
 
 ### Changed
 - Upgraded to new Unity version (v2021.3.16f1), so remember to upgrade!
+- A big change is how map mods are now loaded in the game. Lately I have changed the game to list custom maps differently to make it a lot faster. The reason it is faster now is that I no longer load the map mods for listing them, I am now using the mod.io meta data, like name and thumbnail. The 'downside' to that is that it means I don't have access to the MapDefinition metadata either, like thumbnail. Therefore, when loading local map mods (meaning mod from the /Mods/ folder directly, I just use a blue fallback thumbnail and the name of the mod I can get quick access to via UMod. In this version of the Mod Tools you can still set the thumbnails, but I will remove that in the future
 
 ### Fixed
 - Fixed error where Unity events was not always working in the build mod, ex. events on the DayNightTriggerBehavior
