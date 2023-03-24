@@ -1,0 +1,16 @@
+{
+    "name": "FireworksMania.Core.Editor.Temp",
+    "rootNamespace": "FireworksMania.Core.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
