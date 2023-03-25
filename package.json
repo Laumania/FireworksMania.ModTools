@@ -16,5 +16,7 @@
     ],
     "license": "Restricted use - see included license file",
     "category": "Mods",
-    "dependencies": {}
+    "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+    }
 }
