@@ -7,7 +7,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Persistence
 {
     [AddComponentMenu("Fireworks Mania/Persistence/SaveableEntity")]
-    [DisallowMultipleComponent()]
+    //[DisallowMultipleComponent()]
     public class SaveableEntity : MonoBehaviour
     {
         [SerializeField]
