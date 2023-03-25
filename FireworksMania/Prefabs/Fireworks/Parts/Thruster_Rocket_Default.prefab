@@ -136,7 +136,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4518201940728853198}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 649956930, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Script: {fileID: 11500000, guid: ea69b54ce3e858b44b5ad8db78912a48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _thrustForcePerSecond: 5500

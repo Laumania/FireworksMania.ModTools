@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -52,7 +50,9 @@ namespace FireworksMania.Core.Editor.Utilities
                 Type fileType        = AssetDatabase.GetMainAssetTypeAtPath(assetFilePath);
 
                 // Ignore all files other than Scenes and Prefabs.
-                if ((fileType == typeof(SceneAsset) || (fileType == typeof(GameObject) && fileExtension.ToLower() == ".prefab")) == false)
+                if ((fileType == typeof(SceneAsset) || 
+                    (fileType == typeof(GameObject) && fileExtension.ToLower() == ".prefab") ||
+                    (fileType == null && fileExtension.ToLower() == ".asset")) == false)
                     continue;
 
                 if ((fileType == typeof(GameObject) && fileExtension.ToLower() == ".prefab"))

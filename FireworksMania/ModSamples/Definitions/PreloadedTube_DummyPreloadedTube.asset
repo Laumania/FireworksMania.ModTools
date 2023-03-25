@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1184703327, guid: 15f2946a651cfd84c804c26926af6433, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b7029976d5733448893cd5be7a3662a, type: 3}
   m_Name: PreloadedTube_DummyPreloadedTube
   m_EditorClassIdentifier: 
   _id: PreloadedTube_DummyPreloadedTube
