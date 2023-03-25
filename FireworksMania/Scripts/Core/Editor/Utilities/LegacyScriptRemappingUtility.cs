@@ -55,6 +55,7 @@ namespace FireworksMania.Core.Editor.Utilities
             { "m_Script: {fileID: 698479103, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "IgnorePickUpBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: f6e970d9f82075e4da10075dfea8b4b3, type: 3}" } },
             { "m_Script: {fileID: 865407089, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "IgnorePhysicsToolBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 4588bc298a287624dadad4d83400d83e, type: 3}" } },
             { "m_Script: {fileID: 35166855, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "IgnoreExplosionPhysicsForcesBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 4337c1a37a18fe04cb606ba7169e57ac, type: 3}" } },
+            { "m_Script: {fileID: -1853490775, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "ErasableBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 8ae0b807dd066e84bbc726130033d20b, type: 3}" } },
         };
 
         [MenuItem("Mod Tools/Utilities/Remap legacy Core script to new Core")]
