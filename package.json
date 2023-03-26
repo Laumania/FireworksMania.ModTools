@@ -17,6 +17,7 @@
     "license": "Restricted use - see included license file",
     "category": "Mods",
     "dependencies": {
+        "com.unity.netcode.gameobjects": "1.2.0",
         "com.unity.nuget.newtonsoft-json": "3.0.2"
     }
 }
