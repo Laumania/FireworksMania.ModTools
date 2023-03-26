@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Messaging;
+using Unity.Netcode;
 using UnityEngine;
-using Messenger = FireworksMania.Core.Messaging.Messenger;
-using MessengerEventPlaySoundAtVector3 = FireworksMania.Core.Messaging.MessengerEventPlaySoundAtVector3;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/ExplosionBehavior")]
-    public class ExplosionBehavior : MonoBehaviour, IExplosion
+    public class ExplosionBehavior : NetworkBehaviour, IExplosion
     {
         [Header("General")]
         [SerializeField]
@@ -29,6 +29,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private CancellationToken _cancellationToken;
 
+        private NetworkVariable<bool> _isExploding = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
         void Awake()
         {
             if (_explosionParticleEffect == null)
@@ -44,8 +46,25 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Start()
         {
-            if (_playOnStart)
+            
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            _isExploding.OnValueChanged += async (prevValue, newValue) =>
+            {
+                if(newValue == true)
+                {
+                    await ExplodeVisualsAsync(_cancellationToken);
+                }
+            };
+
+            if(IsServer && _playOnStart)
+            {
                 Explode();
+            }
         }
 
         public async void Explode()
@@ -65,10 +84,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
-        private async UniTask ExplodeAsync(CancellationToken token)
+        private async UniTask ExplodeVisualsAsync(CancellationToken token)
         {
-            IsExploding = true;
-
             if (_forceExplosionAlwaysUp)
                 _explosionForceEffect.gameObject.transform.rotation = Quaternion.identity;
 
@@ -81,15 +98,21 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _explosionParticleEffect.gameObject.SetActive(true);
             _explosionParticleEffect.Play();
+        }
+
+        private async UniTask ExplodeAsync(CancellationToken token)
+        {
+            _isExploding.Value = true;
+
             _explosionForceEffect.ApplyExplosionForce();
 
             await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying, cancellationToken: token);
             
             token.ThrowIfCancellationRequested();
 
-            IsExploding = false;
+            _isExploding.Value = false;
         }
 
-        public bool IsExploding { get; private set; } = false;
+        public bool IsExploding { get { return _isExploding.Value; } }
     }
 }

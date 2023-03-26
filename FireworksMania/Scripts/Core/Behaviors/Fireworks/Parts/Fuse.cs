@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Persistence;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -11,7 +12,7 @@ using UnityEngine.Serialization;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/Fuse")]
-    public class Fuse : MonoBehaviour, IIgnitable, IHaveFuseConnectionPoint
+    public class Fuse : NetworkBehaviour, IIgnitable, IHaveFuseConnectionPoint
     {
         [Header("General")]
         [Range(0, 50)]

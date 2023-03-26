@@ -1,13 +1,15 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using FireworksMania.Core.Interactions;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Other/ErasableBehavior")]
-    //[DisallowMultipleComponent()]
-    public class ErasableBehavior : MonoBehaviour, IErasable
+    [DisallowMultipleComponent()]
+    public class ErasableBehavior : NetworkBehaviour, IErasable
     {
         private CancellationToken _cancellationTokentoken;
         private bool _isErasing = false;
@@ -26,6 +28,12 @@ namespace FireworksMania.Core.Behaviors
             }
         }
 
+        public override void OnNetworkDespawn()
+        {
+            EraseAsync(_cancellationTokentoken);
+            base.OnNetworkDespawn();
+        }
+
         private async UniTask EraseAsync(CancellationToken token)
         {
             await this.transform.DOShakeScale(.15f, 0.7f, 5, 50f, true).WithCancellation(token);
@@ -33,7 +41,7 @@ namespace FireworksMania.Core.Behaviors
             await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
             token.ThrowIfCancellationRequested();
 
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
     }
 }

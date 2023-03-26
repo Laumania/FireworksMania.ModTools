@@ -1,13 +1,12 @@
 ﻿using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Messaging;
+using Unity.Netcode;
 using UnityEngine;
-using Messenger = FireworksMania.Core.Messaging.Messenger;
-using MessengerEventPlaySound = FireworksMania.Core.Messaging.MessengerEventPlaySound;
-using MessengerEventStopSound = FireworksMania.Core.Messaging.MessengerEventStopSound;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/Thruster")]
-    public class Thruster : MonoBehaviour
+    public class Thruster : NetworkBehaviour
     {
         [Header("General")]
         [SerializeField]
@@ -34,9 +33,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     
         private float _curveDeltaTime = 0.0f;
         private float _remainingThrustTime;
-        private bool _isThrusting = false;
         private Transform _thrusterTransform;
         private Rigidbody _rigidbody;
+
+        private NetworkVariable<bool> _isThrusting = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         private void Awake()
         {
@@ -45,7 +45,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _thrusterTransform          = this.transform;
             _remainingThrustTime        = _thrustTime * Random.Range(0.9f, 1.1f);
-            _isThrusting                = false;
             SetEmissionOnParticleSystems(false);
         }
 
@@ -55,6 +54,26 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             this.enabled = false;
         }
 
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            _isThrusting.OnValueChanged += (prevValue, newValue) =>
+            {
+                if(newValue == true)
+                {
+                    Messenger.Broadcast(new MessengerEventPlaySound(_thrustSound, _thrusterTransform, delayBasedOnDistanceToListener: false, followTransform: true));
+                    SetEmissionOnParticleSystems(true);
+                }
+                else
+                {
+                    Messenger.Broadcast(new MessengerEventStopSound(_thrustSound, _thrusterTransform));
+                    SetEmissionOnParticleSystems(false);
+                }
+            };
+
+        }
+
         public void Setup(Rigidbody rigidbody)
         {
             _rigidbody = rigidbody;
@@ -62,7 +81,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void FixedUpdate()
         {
-            if(_isThrusting)
+            if (!IsServer)
+                return;
+
+            if(_isThrusting.Value)
             {
                 _remainingThrustTime -= Time.deltaTime;
 
@@ -83,25 +105,27 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public void TurnOn()
         {
+            if (!IsServer)
+                return;
+
             if(_rigidbody == null)
             {
                 Debug.LogError("Missing Rigidbody to apply thrust too! Did you forget to call Setup()?", this);
                 return;
             }
 
-            this.enabled = true;
-            _isThrusting = true;
-            Messenger.Broadcast(new MessengerEventPlaySound(_thrustSound, _thrusterTransform, delayBasedOnDistanceToListener: false, followTransform: true));
-            SetEmissionOnParticleSystems(true);
+            this.enabled       = true;
+            _isThrusting.Value = true;
         }
 
         public void TurnOff()
         {
-            if(_isThrusting)
+            if (!IsServer)
+                return;
+
+            if (_isThrusting.Value)
             {
-                _isThrusting = false;
-                Messenger.Broadcast(new MessengerEventStopSound(_thrustSound, _thrusterTransform));
-                SetEmissionOnParticleSystems(false);
+                _isThrusting.Value = false;
             }
 
             this.enabled = false;
@@ -120,6 +144,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             TurnOff();
         }
 
-        public bool IsThrusting => _isThrusting;
+        public bool IsThrusting => _isThrusting.Value;
     }
 }
