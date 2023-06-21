@@ -46,11 +46,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _rigidbody = this.gameObject.AddComponent<Rigidbody>();
         }
 
-        protected override void Start()
-        {
-            base.Start();
-        }
-
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
             if (token.IsCancellationRequested)
@@ -64,7 +59,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _explosion.Explode();
             await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
 
-            Destroy(this.gameObject);
+            if(IsServer)
+                Destroy(this.gameObject);
         }
 
         private void DisableRigidBodyAndColliders()

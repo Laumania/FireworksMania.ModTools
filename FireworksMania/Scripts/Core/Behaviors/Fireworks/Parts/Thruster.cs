@@ -139,9 +139,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 _effect.Stop();
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             TurnOff();
+            base.OnDestroy();
         }
 
         public bool IsThrusting => _isThrusting.Value;

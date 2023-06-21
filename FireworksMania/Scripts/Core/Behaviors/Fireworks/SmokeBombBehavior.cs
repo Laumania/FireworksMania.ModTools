@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
 using UnityEngine;
 
@@ -40,11 +41,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             StopAllEffects();
         }
 
-        protected override void Start()
-        {
-            base.Start();
-        }
-
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -55,6 +51,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
+            _smokeEffect.SetRandomSeed(_effectSeed.Value);
             _smokeEffect.gameObject.SetActive(true);
             _smokeEffect.Play(true);
             _ignitionExplosionEffect.ApplyExplosionForce(false, false, true);
@@ -71,7 +68,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void StopAllEffects()
         {
-            _smokeEffect.Stop();
+            _smokeEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _smokeEffect.gameObject.SetActive(false);
         }
     }

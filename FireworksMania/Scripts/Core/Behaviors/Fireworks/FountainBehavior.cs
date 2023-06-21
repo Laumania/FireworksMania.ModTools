@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
 using UnityEngine;
 
@@ -37,12 +38,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void StopEffect()
         {
-            _effect.Stop();
+            _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
+            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
             _effect.Play(true);
 
@@ -59,7 +61,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 await DestroyFireworkAsync(token);
         }
 
-        protected override void OnDestroy()
+        public override void OnDestroy()
         {
             Messenger.Broadcast(new MessengerEventStopSound(_coreSound, this.transform));
             

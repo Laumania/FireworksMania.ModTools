@@ -6,12 +6,14 @@ using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Persistence;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
-    public abstract class BaseFireworkBehavior : MonoBehaviour, IHaveObjectInfo, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
+    public abstract class BaseFireworkBehavior : NetworkBehaviour, IHaveObjectInfo, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
         [FormerlySerializedAs("_metadata")]
@@ -25,6 +27,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private SaveableEntity _saveableEntity;
 
         public Action<BaseFireworkBehavior> OnDestroyed;
+
+        protected NetworkVariable<bool> _isLaunching = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        protected NetworkVariable<byte> _effectSeed  = new NetworkVariable<byte>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         protected virtual void Awake()
         {
@@ -47,6 +52,25 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _gameObject                     = this.gameObject;
             _fuse.SaveableEntityOwner       = _saveableEntity;
             _cancellationTokentoken         = this.GetCancellationTokenOnDestroy();
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            if (IsServer)
+            {
+                _effectSeed.Value = (byte)Random.Range(0, 254);
+            }
+
+            _isLaunching.OnValueChanged += (prevValue, newValue) =>
+            {
+                if(prevValue == false && newValue == true)
+                    LaunchInternalAsync(_cancellationTokentoken).Forget();
+            };
+
+            if(_isLaunching.Value)
+                LaunchInternalAsync(_cancellationTokentoken).Forget();
         }
 
         protected virtual void OnValidate()
@@ -104,15 +128,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _fuse.OnFuseCompleted += OnFuseCompleted;
         }
 
-        protected virtual void OnDestroy()
+        public override void OnDestroy()
         {
             if(_fuse != null)
                 _fuse.OnFuseCompleted -= OnFuseCompleted;
+
+            base.OnDestroy();
         }
 
-        private async void OnFuseCompleted()
+        private void OnFuseCompleted()
         {
-            await LaunchInternalAsync(_cancellationTokentoken).SuppressCancellationThrow();
+            if(IsServer)
+                _isLaunching.Value = true;
         }
 
         protected virtual async UniTask DestroyFireworkAsync(CancellationToken token)
@@ -127,14 +154,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private async UniTask DestroyFireworkAnimatedAsync(CancellationToken token)
         {
+            if (!IsServer)
+                return;
+#if UNITY_EDITOR
+            Debug.LogWarning("Todo: Implement nice destroy animation in DestroyFireworkAnimatedAsync", this);
+#endif
             await this.transform.DOShakeScale(.3f, 0.5f, 5, 50f, true).WithCancellation(token);
             token.ThrowIfCancellationRequested();
             await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
             token.ThrowIfCancellationRequested();
 
             OnDestroyed?.Invoke(this);
-
+            
             Destroy(this.gameObject);
+            
         }
 
         public virtual CustomEntityComponentData CaptureState()
@@ -198,6 +231,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
         public IFuseConnectionPoint ConnectionPoint   => _fuse.ConnectionPoint;
         public bool Enabled                           => _fuse.Enabled;
+        public bool IsIgnited                         => _isLaunching.Value;
     }
 
     [Serializable]

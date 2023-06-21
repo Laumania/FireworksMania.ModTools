@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Common;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
@@ -33,11 +34,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             StopAllEffects();
         }
 
-        protected override void Start()
-        {
-            base.Start();
-        }
-
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -53,6 +49,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _model.SetActive(false);
 
             _effect.transform.rotation = Quaternion.identity;
+            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
             _effect.Play(true);
 
@@ -64,7 +61,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void StopAllEffects()
         {
-            _effect.Stop();
+            _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
     }

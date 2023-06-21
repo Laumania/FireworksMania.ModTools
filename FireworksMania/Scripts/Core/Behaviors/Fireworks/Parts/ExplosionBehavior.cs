@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
 using Unity.Netcode;
 using UnityEngine;
@@ -24,9 +25,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [GameSound]
         [SerializeField]
         public string _explosionSound;
-    
-        private ExplosionPhysicsForceEffect _explosionForceEffect;
 
+        protected NetworkVariable<byte> _effectSeed = new NetworkVariable<byte>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private ExplosionPhysicsForceEffect _explosionForceEffect;
         private CancellationToken _cancellationToken;
 
         private NetworkVariable<bool> _isExploding = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -44,11 +45,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _cancellationToken = this.GetCancellationTokenOnDestroy();
         }
 
-        private void Start()
-        {
-            
-        }
-
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -61,10 +57,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 }
             };
 
-            if(IsServer && _playOnStart)
+            if(IsServer)
             {
-                Explode();
+                _effectSeed.Value = (byte)Random.Range(0, 254);
+
+                if(_playOnStart)
+                    Explode();
             }
+
+            _effectSeed.OnValueChanged += (prevValue, newValue) =>
+            {
+                _explosionParticleEffect.SetRandomSeed(newValue);
+            };
+
+            _explosionParticleEffect.SetRandomSeed(_effectSeed.Value);
         }
 
         public async void Explode()
@@ -97,11 +103,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             token.ThrowIfCancellationRequested();
 
             _explosionParticleEffect.gameObject.SetActive(true);
-            _explosionParticleEffect.Play();
+            _explosionParticleEffect.Play(true);
         }
 
         private async UniTask ExplodeAsync(CancellationToken token)
         {
+            if (!IsServer)
+                return;
+
             _isExploding.Value = true;
 
             _explosionForceEffect.ApplyExplosionForce();

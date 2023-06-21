@@ -28,18 +28,24 @@ namespace FireworksMania.Core.Behaviors
             }
         }
 
-        public override void OnNetworkDespawn()
+        public override async void OnNetworkDespawn()
         {
-            EraseAsync(_cancellationTokentoken);
-            base.OnNetworkDespawn();
+            await EraseAsync(_cancellationTokentoken).ContinueWith(() =>
+            {
+                base.OnNetworkDespawn();
+            });
         }
 
         private async UniTask EraseAsync(CancellationToken token)
         {
-            await this.transform.DOShakeScale(.15f, 0.7f, 5, 50f, true).WithCancellation(token);
-            token.ThrowIfCancellationRequested();
-            await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
-            token.ThrowIfCancellationRequested();
+#if UNITY_EDITOR
+            Debug.LogWarning("Todo: Implement nice Erase animation in ErasableBehavior", this);
+#endif
+
+            //await this.transform.DOShakeScale(.15f, 0.7f, 5, 50f, true).WithCancellation(token);
+            //token.ThrowIfCancellationRequested();
+            //await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
+            //token.ThrowIfCancellationRequested();
 
             //Destroy(this.gameObject);
         }

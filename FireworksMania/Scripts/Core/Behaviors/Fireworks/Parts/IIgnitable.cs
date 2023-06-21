@@ -8,5 +8,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         void Ignite(float ignitionForce);
         void IgniteInstant();
         bool Enabled { get; }
+        bool IsIgnited { get; }
     }
 }

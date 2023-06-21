@@ -56,6 +56,8 @@ namespace FireworksMania.Core.Editor.Utilities
             { "m_Script: {fileID: 865407089, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "IgnorePhysicsToolBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 4588bc298a287624dadad4d83400d83e, type: 3}" } },
             { "m_Script: {fileID: 35166855, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "IgnoreExplosionPhysicsForcesBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 4337c1a37a18fe04cb606ba7169e57ac, type: 3}" } },
             { "m_Script: {fileID: -1853490775, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "ErasableBehavior", ReplacementText = "m_Script: {fileID: 11500000, guid: 8ae0b807dd066e84bbc726130033d20b, type: 3}" } },
+            { "m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}", new ScriptReplacementData() { LegacyScriptName = "ClientNetworkTransform", ReplacementText = "m_Script: {fileID: 11500000, guid: 0364e93a79feea3488c32a7132a7b558, type: 3}" } },
+            { "m_Script: {fileID: -457894799, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "GameReferenceManager", ReplacementText = "m_Script: {fileID: 11500000, guid: 17f9f398e264371489e3652d7275b32b, type: 3}" } },
         };
 
         [MenuItem("Mod Tools/Utilities/Remap legacy Core script to new Core")]

@@ -47,6 +47,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private CancellationToken _token;
 
+        private readonly NetworkVariable<bool> _isIgnited              = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private readonly NetworkVariable<bool> _isUsed                 = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private readonly NetworkVariable<bool> _isIgnitionVisualsShown = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        private bool _clientRequestForIgnitionSend = false;
+
         private void Awake()
         {
             if (_fuseConnectionPoint == null || _fuseConnectionPoint.Equals(null))
@@ -68,7 +74,28 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 Debug.LogError("Missing at ParticleSystem", this);
             }
 
-            Extinguish();
+            SetEmissionOnParticleSystems(false);
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            _isIgnitionVisualsShown.OnValueChanged += (prevValue, newValue) =>
+            {
+                if(newValue == true)
+                {
+                    Messenger.Broadcast(new MessengerEventPlaySound(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
+                    SetEmissionOnParticleSystems(true);
+                }
+                else
+                {
+                    Messenger.Broadcast(new MessengerEventStopSound(_fuseIgnitedSound, this.transform));
+                    SetEmissionOnParticleSystems(false);
+                }
+            };
+
+            SetEmissionOnParticleSystems(false);
         }
 
         private void OnValidate()
@@ -118,6 +145,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void InternalIgnite(float ignitionForce, bool instantIgnite)
         {
+            if (_clientRequestForIgnitionSend || _isIgnited.Value)
+                return;
+
             SaveableEntityOwner.SetIsValidForSaving(false);
             
             if (_token.IsCancellationRequested)
@@ -138,24 +168,24 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_remainingFuseTime > 0f)
                 CalculateRemainingFuseTime(ignitionForce);
 
-            TryStartIgnitionAsync(_token).SuppressCancellationThrow();
+            _clientRequestForIgnitionSend = true;
+            RequestIgniteServerRpc();
         }
 
-        private async UniTask TryStartIgnitionAsync(CancellationToken token)
+        [ServerRpc(RequireOwnership = false)]
+        private void RequestIgniteServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            if (IsIgnited == false && IsUsed == false)
+            if (_isIgnited.Value == false && _isUsed.Value == false)
             {
-                IsIgnited = true;
-
+                _isIgnited.Value = true;
+                
                 if (_remainingFuseTime > 0f)
-                {
-                    Messenger.Broadcast(new MessengerEventPlaySound(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
-                    SetEmissionOnParticleSystems(true);
-                }
+                    _isIgnitionVisualsShown.Value = true;
 
-                await IgniteAsync(token);
+                IgniteAsync(_token).Forget();
             }
         }
+        
 
         private void CalculateRemainingFuseTime(float ignitionForce)
         {
@@ -164,10 +194,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public void Extinguish()
         {
-            Messenger.Broadcast(new MessengerEventStopSound(_fuseIgnitedSound, this.transform));
-            SetEmissionOnParticleSystems(false);
-
-            IsIgnited = false;
+            if (IsServer)
+            {
+                _isIgnitionVisualsShown.Value = false;
+                _isIgnited.Value = false;
+            }
 
             if(IsUsed == false && _remainingFuseTime > 0f)
                 SaveableEntityOwner.SetIsValidForSaving(true);
@@ -175,8 +206,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private async UniTask IgniteAsync(CancellationToken token)
         {
+            if (!IsServer)
+            {
+                Debug.Log("Fuse IgniteAsync skipped as this is not the server");
+                return;
+            }
+
             OnFuseIgnited?.Invoke();
             _onFuseIgnited?.Invoke();
+            OnFuseIgnitedClientRpc();
 
             if(_remainingFuseTime > 0f)
             {
@@ -189,10 +227,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             OnFuseCompleted?.Invoke();
             _onFuseCompleted?.Invoke();
-        
-            IsUsed = true;
+            OnFuseCompletedClientRpc();
+
+            _isUsed.Value = true;
             Extinguish();
-            this.gameObject.SetActive(false);
+            //this.gameObject.SetActive(false);
+        }
+
+        [ClientRpc(Delivery = RpcDelivery.Unreliable)]
+        private void OnFuseCompletedClientRpc()
+        {
+            if (IsServer)
+                return;
+            
+            OnFuseCompleted?.Invoke();
+            _onFuseCompleted?.Invoke();
+        }
+
+        [ClientRpc(Delivery = RpcDelivery.Unreliable)]
+        private void OnFuseIgnitedClientRpc()
+        {
+            if (IsServer)
+                return;
+            
+            OnFuseIgnited?.Invoke();
+            _onFuseIgnited?.Invoke();
         }
 
         private void SetEmissionOnParticleSystems(bool enableEmission)
@@ -203,8 +262,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 _particleSystem.Stop();
         }
 
-        public bool IsIgnited                       { get; private set; }
-        public bool IsUsed                          { get; private set; }
+        public bool IsIgnited => _isIgnited.Value;
+        public bool IsUsed    => _isUsed.Value;
         public SaveableEntity SaveableEntityOwner   { get; set; }
 
         public Transform IgnitePositionTransform    => _fuseConnectionPoint.Transform;
