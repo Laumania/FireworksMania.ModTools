@@ -44,8 +44,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
-            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
+            _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
             Messenger.Broadcast(new MessengerEventPlaySound(_coreSound, this.transform, followTransform: true));

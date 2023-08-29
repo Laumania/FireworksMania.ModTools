@@ -167,4 +167,16 @@ namespace FireworksMania.Core.Messaging
 
         public bool IsDay { get; }
     }
+
+    public class MessengerEventApplyShakeEffect
+    {
+        public MessengerEventApplyShakeEffect(float effectRange, Vector3 effectPosition)
+        {
+            EffectRange    = effectRange;
+            EffectPosition = effectPosition;
+        }
+
+        public float EffectRange      { get; }
+        public Vector3 EffectPosition { get; }
+    }
 }

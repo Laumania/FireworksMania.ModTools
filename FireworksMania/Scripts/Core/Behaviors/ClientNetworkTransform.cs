@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode.Components;
 using UnityEngine;
 
-namespace FireworksMania.Core
+namespace FireworksMania.Core.Common
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Client Network Transform")]
     [DisallowMultipleComponent]

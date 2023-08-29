@@ -48,8 +48,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             _OnLaunched?.Invoke();
 
-            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
+            _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
             ApplyRecoilForce();

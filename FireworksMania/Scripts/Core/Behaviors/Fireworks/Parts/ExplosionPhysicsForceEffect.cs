@@ -3,9 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
-using Messenger = FireworksMania.Core.Messaging.Messenger;
-using MessengerEventApplyExplosionForce = FireworksMania.Core.Messaging.MessengerEventApplyExplosionForce;
-using MessengerEventApplyIgnitableForce = FireworksMania.Core.Messaging.MessengerEventApplyIgnitableForce;
+using FireworksMania.Core.Messaging;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
@@ -147,26 +145,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void HandleShakeEffect(Vector3 position)
         {
             var shakeRange  = CalculateShakeRange();
-            var foundCount  = UnityEngine.Physics.OverlapSphereNonAlloc(position, shakeRange, _nonAllocColliderArray, _affectedLayers);
-
-            for (int i = 0; i < foundCount; i++)
-            {
-                var currentCollider = _nonAllocColliderArray[i];
-                if (currentCollider.gameObject.CompareTag("Player"))
-                {
-                    var shakeable = currentCollider.GetComponent<IShakeable>();
-
-                    if (shakeable == null)
-                        break;
-
-                    var distance  = Vector3.Distance(position, shakeable.Position);
-                    var trauma    = 1f - ((distance / shakeRange));
-                    shakeable.InduceStress(trauma);
-
-                    //Debug.Log($"Trauma: '{trauma}'");
-                    break;
-                }
-            }   
+            Messenger.Broadcast(new MessengerEventApplyShakeEffect(shakeRange, position));
         }
 
         private void HandleDebris(Vector3 position)
@@ -210,11 +189,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             foreach (var rigidBody in foundDistinctRigidbodies)
             {
-                //We don't want to add physics forces to the Player
-                if (rigidBody.gameObject.CompareTag("Player"))
-                    continue;
-
-                var rangeMultiplier = CalculateRangeMultiplier(position, rigidBody.ClosestPointOnBounds(position));
+                var rangeMultiplier      = CalculateRangeMultiplier(position, rigidBody.ClosestPointOnBounds(position));
 
                 if (_igniteSurroundingIgnitables && CoreSettings.EnableIgnitionForces && applyIgnition)
                 {
@@ -229,7 +204,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 if (applyPhysicsForce && CoreSettings.EnableExplosionPhysicsForces && ShouldApplyPhysicsForcesToRigidbody(rigidBody))
                 {
-                    if (_ignoreKinematic)
+                    if (_ignoreKinematic && rigidBody.CompareTag("Player") == false)
                         rigidBody.isKinematic = false;
 
                     var actualExplosionForce = _explosionForce * rangeMultiplier;

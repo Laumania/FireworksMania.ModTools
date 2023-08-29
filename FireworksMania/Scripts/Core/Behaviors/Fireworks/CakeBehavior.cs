@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Common;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
@@ -44,8 +45,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
-            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
+            _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
             await UniTask.WaitWhile(() => _effect.IsAlive() || _effect.isPlaying, cancellationToken: token);

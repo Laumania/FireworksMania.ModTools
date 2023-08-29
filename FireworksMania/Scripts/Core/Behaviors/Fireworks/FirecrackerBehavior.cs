@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using UnityEngine;
-using ExplosionBehavior = FireworksMania.Core.Behaviors.Fireworks.Parts.ExplosionBehavior;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {

@@ -28,8 +28,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public Action<BaseFireworkBehavior> OnDestroyed;
 
-        protected NetworkVariable<bool> _isLaunching = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        protected NetworkVariable<byte> _effectSeed  = new NetworkVariable<byte>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        protected NetworkVariable<LaunchState> _launchState      = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         protected virtual void Awake()
         {
@@ -58,18 +57,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             base.OnNetworkSpawn();
 
-            if (IsServer)
+            _launchState.OnValueChanged += (prevValue, newValue) =>
             {
-                _effectSeed.Value = (byte)Random.Range(0, 254);
-            }
-
-            _isLaunching.OnValueChanged += (prevValue, newValue) =>
-            {
-                if(prevValue == false && newValue == true)
+                if (prevValue.IsLaunched == false && newValue.IsLaunched == true)
                     LaunchInternalAsync(_cancellationTokentoken).Forget();
             };
 
-            if(_isLaunching.Value)
+            if(_launchState.Value.IsLaunched)
                 LaunchInternalAsync(_cancellationTokentoken).Forget();
         }
 
@@ -139,7 +133,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private void OnFuseCompleted()
         {
             if(IsServer)
-                _isLaunching.Value = true;
+            {
+                _launchState.Value = new LaunchState()
+                {
+                    IsLaunched             = true,
+                    ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat,
+                    Seed                   = (byte)Random.Range(0, 254)
+                };
+            }
         }
 
         protected virtual async UniTask DestroyFireworkAsync(CancellationToken token)
@@ -224,6 +225,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             return _fuse;
         }
 
+        protected float GetLaunchTimeDifference()
+        {
+            return this.NetworkManager.ServerTime.TimeAsFloat - _launchState.Value.ServerStartTimeAsFloat;
+        }
+
         public string SaveableComponentTypeId         => this.GetType().Name;
         public string Name                            => _entityDefinition.ItemName;
         public GameObject GameObject                  => _gameObject;
@@ -231,7 +237,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
         public IFuseConnectionPoint ConnectionPoint   => _fuse.ConnectionPoint;
         public bool Enabled                           => _fuse.Enabled;
-        public bool IsIgnited                         => _isLaunching.Value;
+        public bool IsIgnited                         => _launchState.Value.IsLaunched;
     }
 
     [Serializable]
@@ -241,4 +247,36 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public SerializableRotation Rotation;
         public bool IsKinematic;
     }
+
+    [Serializable]
+    public struct LaunchState : INetworkSerializable, System.IEquatable<LaunchState>
+    {
+        public bool IsLaunched;
+        public float ServerStartTimeAsFloat;
+        public byte Seed;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            if (serializer.IsReader)
+            {
+                var reader = serializer.GetFastBufferReader();
+                reader.ReadValueSafe(out IsLaunched);
+                reader.ReadValueSafe(out ServerStartTimeAsFloat);
+                reader.ReadValueSafe(out Seed);
+            }
+            else
+            {
+                var writer = serializer.GetFastBufferWriter();
+                writer.WriteValueSafe(IsLaunched);
+                writer.WriteValueSafe(ServerStartTimeAsFloat);
+                writer.WriteValueSafe(Seed);
+            }
+        }
+
+        public bool Equals(LaunchState other)
+        {
+            return IsLaunched == other.IsLaunched && ServerStartTimeAsFloat == other.ServerStartTimeAsFloat && Seed == other.Seed;
+        }
+    }
+
 }

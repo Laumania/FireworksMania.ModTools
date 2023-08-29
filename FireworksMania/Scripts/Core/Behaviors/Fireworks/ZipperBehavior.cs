@@ -49,8 +49,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _model.SetActive(false);
 
             _effect.transform.rotation = Quaternion.identity;
-            _effect.SetRandomSeed(_effectSeed.Value);
             _effect.gameObject.SetActive(true);
+            _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
             await UniTask.WaitWhile(() => _effect.IsAlive() || _effect.isPlaying, cancellationToken: token);

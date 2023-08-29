@@ -26,11 +26,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [SerializeField]
         public string _explosionSound;
 
-        protected NetworkVariable<byte> _effectSeed = new NetworkVariable<byte>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private ExplosionPhysicsForceEffect _explosionForceEffect;
         private CancellationToken _cancellationToken;
-
-        private NetworkVariable<bool> _isExploding = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private NetworkVariable<LaunchState> _launchState = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         void Awake()
         {
@@ -49,9 +47,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             base.OnNetworkSpawn();
 
-            _isExploding.OnValueChanged += async (prevValue, newValue) =>
+            _launchState.OnValueChanged += async (prevValue, newValue) =>
             {
-                if(newValue == true)
+                if(newValue.IsLaunched == true)
                 {
                     await ExplodeVisualsAsync(_cancellationToken);
                 }
@@ -59,18 +57,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if(IsServer)
             {
-                _effectSeed.Value = (byte)Random.Range(0, 254);
-
                 if(_playOnStart)
                     Explode();
             }
 
-            _effectSeed.OnValueChanged += (prevValue, newValue) =>
-            {
-                _explosionParticleEffect.SetRandomSeed(newValue);
-            };
+            if (_launchState.Value.IsLaunched)
+                ExplodeVisualsAsync(_cancellationToken).Forget();
+        }
 
-            _explosionParticleEffect.SetRandomSeed(_effectSeed.Value);
+        protected float GetLaunchTimeDifference()
+        {
+            return this.NetworkManager.ServerTime.TimeAsFloat - _launchState.Value.ServerStartTimeAsFloat;
         }
 
         public async void Explode()
@@ -103,6 +100,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             token.ThrowIfCancellationRequested();
 
             _explosionParticleEffect.gameObject.SetActive(true);
+            _explosionParticleEffect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _explosionParticleEffect.Play(true);
         }
 
@@ -111,7 +109,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (!IsServer)
                 return;
 
-            _isExploding.Value = true;
+            _launchState.Value = new LaunchState()
+            {
+                IsLaunched             = true,
+                Seed                   = (byte)Random.Range(0, 254),
+                ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat
+            };
 
             _explosionForceEffect.ApplyExplosionForce();
 
@@ -119,9 +122,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             
             token.ThrowIfCancellationRequested();
 
-            _isExploding.Value = false;
+            var prevValue = _launchState.Value;
+            _launchState.Value = new LaunchState()
+            {
+                IsLaunched             = false,
+                Seed                   = prevValue.Seed,
+                ServerStartTimeAsFloat = prevValue.ServerStartTimeAsFloat
+            };
         }
 
-        public bool IsExploding { get { return _isExploding.Value; } }
+        public bool IsExploding { get { return _launchState.Value.IsLaunched; } }
     }
 }

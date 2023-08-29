@@ -51,8 +51,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
-            _smokeEffect.SetRandomSeed(_effectSeed.Value);
             _smokeEffect.gameObject.SetActive(true);
+            _smokeEffect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _smokeEffect.Play(true);
             _ignitionExplosionEffect.ApplyExplosionForce(false, false, true);
 
