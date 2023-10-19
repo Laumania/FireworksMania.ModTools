@@ -7,5 +7,6 @@ namespace FireworksMania.Core
 {
     public class FMNetworkBehaviour : NetworkBehaviour
     {
+        protected NetworkVariable<int> _internalCounter = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     }
 }
