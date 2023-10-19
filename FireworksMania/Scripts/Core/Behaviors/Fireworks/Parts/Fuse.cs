@@ -230,13 +230,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             OnFuseCompletedClientRpc();
 
             _isUsed.Value = true;
-            Extinguish();
-            //this.gameObject.SetActive(false);
+            Extinguish();            
         }
 
         [ClientRpc(Delivery = RpcDelivery.Unreliable)]
         private void OnFuseCompletedClientRpc()
         {
+            this.gameObject.SetActive(false);
+
             if (IsServer)
                 return;
             
