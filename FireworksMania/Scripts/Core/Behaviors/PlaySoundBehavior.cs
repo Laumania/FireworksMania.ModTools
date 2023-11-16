@@ -28,6 +28,11 @@ namespace FireworksMania.Core.Behaviors
             Messenger.Broadcast(new MessengerEventPlaySound(_sound, this.transform, followTransform: _followTransform));
         }
 
+        private void OnDestroy()
+        {
+            StopSound();
+        }
+
         public void StopSound()
         {
             Messenger.Broadcast(new MessengerEventStopSound(_sound, this.transform));

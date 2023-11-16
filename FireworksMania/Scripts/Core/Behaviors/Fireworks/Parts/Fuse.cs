@@ -83,16 +83,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _isIgnitionVisualsShown.OnValueChanged += (prevValue, newValue) =>
             {
-                if(newValue == true)
-                {
-                    Messenger.Broadcast(new MessengerEventPlaySound(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
-                    SetEmissionOnParticleSystems(true);
-                }
-                else
-                {
-                    Messenger.Broadcast(new MessengerEventStopSound(_fuseIgnitedSound, this.transform));
-                    SetEmissionOnParticleSystems(false);
-                }
+                SetEmissionOnParticleSystems(newValue);
             };
 
             SetEmissionOnParticleSystems(false);
@@ -169,23 +160,38 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 CalculateRemainingFuseTime(ignitionForce);
 
             _clientRequestForIgnitionSend = true;
-            RequestIgniteServerRpc();
+
+            if (IsServer)
+                RequestIgniteServerOnly();
+            else
+                RequestIgniteServerRpc();   
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void RequestIgniteServerRpc(ServerRpcParams serverRpcParams = default)
+        private void RequestIgniteServerRpc()
         {
+            RequestIgniteServerOnly();
+        }
+
+        private void RequestIgniteServerOnly()
+        {
+            if (IsServer == false)
+            {
+                Debug.LogError("Unable to call RequestIgniteServerOnly if not IsServer");
+                return;
+            }
+
             if (_isIgnited.Value == false && _isUsed.Value == false)
             {
                 _isIgnited.Value = true;
-                
+
                 if (_remainingFuseTime > 0f)
                     _isIgnitionVisualsShown.Value = true;
 
                 IgniteAsync(_token).Forget();
             }
         }
-        
+
 
         private void CalculateRemainingFuseTime(float ignitionForce)
         {
@@ -233,9 +239,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Extinguish();            
         }
 
-        [ClientRpc(Delivery = RpcDelivery.Unreliable)]
+        [ClientRpc(Delivery = RpcDelivery.Reliable)]
         private void OnFuseCompletedClientRpc()
         {
+            SetEmissionOnParticleSystems(false);
             this.gameObject.SetActive(false);
 
             if (IsServer)
@@ -245,7 +252,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _onFuseCompleted?.Invoke();
         }
 
-        [ClientRpc(Delivery = RpcDelivery.Unreliable)]
+        [ClientRpc(Delivery = RpcDelivery.Reliable)]
         private void OnFuseIgnitedClientRpc()
         {
             if (IsServer)
@@ -258,9 +265,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void SetEmissionOnParticleSystems(bool enableEmission)
         {
             if (enableEmission)
+            {
                 _particleSystem.Play(true);
+                Messenger.Broadcast(new MessengerEventPlaySound(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
+            }
             else
+            {
                 _particleSystem.Stop();
+                Messenger.Broadcast(new MessengerEventStopSound(_fuseIgnitedSound, this.transform));
+            }
         }
 
         public bool IsIgnited => _isIgnited.Value;
