@@ -5,7 +5,7 @@
         "name": "Laumania ApS",
         "url": "https://github.com/Laumania/FireworksMania.ModTools"
     },
-    "version": "2023.11.3",
+    "version": "2023.12.2",
     "unity": "2022.3",
     "description": "Mod Tools requiered for creating mods for Fireworks Mania",
     "documentationUrl": "https://github.com/Laumania/FireworksMania.ModTools",
@@ -17,7 +17,7 @@
     "license": "Restricted use - see included license file",
     "category": "Mods",
     "dependencies": {
-        "com.unity.netcode.gameobjects": "1.6.0",
+        "com.unity.netcode.gameobjects": "1.7.1",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.cinemachine": "2.9.7",
         "com.unity.inputsystem": "1.7.0",
