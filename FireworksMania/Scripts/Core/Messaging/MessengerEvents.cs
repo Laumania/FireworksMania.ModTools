@@ -179,4 +179,14 @@ namespace FireworksMania.Core.Messaging
         public float EffectRange      { get; }
         public Vector3 EffectPosition { get; }
     }
+
+    public class MessengerEventExecuteConsoleCommand
+    {
+        public MessengerEventExecuteConsoleCommand(string command)
+        {
+            Command = command;
+        }
+
+        public string Command { get; private set; }
+    }
 }

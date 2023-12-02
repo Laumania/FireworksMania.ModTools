@@ -14,6 +14,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public Action<Vector3> OnParticleSpawned;
         public Action<Vector3> OnParticleDestroyed;
 
+        private bool _hasBeenAliveOnce = false;
+
         private void Start()
         {
             _parentParticleSystem = this.GetComponent<ParticleSystem>();
@@ -29,6 +31,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Update()
         {
+            if(_hasBeenAliveOnce && _parentParticleSystem.IsAlive(false) == false)
+            {
+                this.enabled = false;
+                //Debug.Log($"{nameof(ParticleSystemObserver)} on {this.gameObject.name} has been emitting particle once and stopped again, so this {nameof(ParticleSystemObserver)} will now be disabled for performance reasons.", this);
+            }
+
+            if (_hasBeenAliveOnce == false && _parentParticleSystem.IsAlive(false))
+                _hasBeenAliveOnce = true;
+
+            if (_parentParticleSystem.IsAlive(false) == false)
+                return;
+
             if (OnParticleSpawned == null && OnParticleDestroyed == null)
                 return;
 

@@ -149,7 +149,9 @@ namespace FireworksMania.Core.Messaging
             }
             else
             {
+#if LOG_ALL_MESSAGES
                 throw new ListenerException(string.Format("Attempting to remove listener for type \"{0}\" but Messenger doesn't know about this event type.", eventType));
+#endif
             }
         }
 
@@ -191,7 +193,7 @@ namespace FireworksMania.Core.Messaging
             {
             }
         }
-        #endregion
+#endregion
 
         #region AddListener
 
