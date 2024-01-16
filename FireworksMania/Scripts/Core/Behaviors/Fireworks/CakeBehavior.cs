@@ -27,7 +27,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_effect == null)
                 Debug.LogError($"Missing particle effects in {nameof(CakeBehavior)}!");
 
+            AvoidLoopingEffect();
             StopAllEffects();
+        }
+
+        private void AvoidLoopingEffect()
+        {
+            var mainParticleSystem = _effect.main;
+            mainParticleSystem.loop = false;
         }
 
         protected override void OnValidate()

@@ -9,6 +9,11 @@ namespace FireworksMania.Core.Common
     [DisallowMultipleComponent]
     public class ClientNetworkTransform : NetworkTransform
     {
+        private void Start()
+        {
+            this.UseHalfFloatPrecision = true;
+        }
+
         protected override bool OnIsServerAuthoritative()
         {
             return false;

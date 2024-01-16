@@ -46,6 +46,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public Action OnFuseIgnited;
 
         private CancellationToken _token;
+        private MeshRenderer[] _meshRenderer;
+        private Collider[] _colliders;
 
         private readonly NetworkVariable<bool> _isIgnited              = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private readonly NetworkVariable<bool> _isUsed                 = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -62,7 +64,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
 
             _fuseConnectionPoint.Setup(this);
-
+            _meshRenderer      = this.GetComponentsInChildren<MeshRenderer>();
+            _colliders         = this.GetComponentsInChildren<Collider>();
             _remainingFuseTime = _fuseTime;
             _token             = this.gameObject.GetCancellationTokenOnDestroy();
         }
@@ -243,7 +246,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void OnFuseCompletedClientRpc()
         {
             SetEmissionOnParticleSystems(false);
-            this.gameObject.SetActive(false);
+
+            if(_meshRenderer != null)
+                foreach (var renderer in _meshRenderer)
+                    renderer.enabled = false;
+
+            if(_colliders != null)
+                foreach (var collider in _colliders)    
+                    collider.enabled = false;
 
             if (IsServer)
                 return;

@@ -40,6 +40,7 @@ namespace FireworksMania.Core.Behaviors
         {
 #if UNITY_EDITOR
             Debug.LogWarning("Todo: Implement nice Erase animation in ErasableBehavior", this);
+            await UniTask.CompletedTask;
 #endif
 
             //await this.transform.DOShakeScale(.15f, 0.7f, 5, 50f, true).WithCancellation(token);

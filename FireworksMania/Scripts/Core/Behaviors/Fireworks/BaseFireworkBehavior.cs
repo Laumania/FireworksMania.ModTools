@@ -38,6 +38,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
+            if(_fuse == null)
+            {
+                Debug.LogError($"Missing {nameof(Fuse)} on '{this.gameObject.name}' - this is not gonna work! Make sure this fireworks have a fuse.", this);
+                this.enabled = false;
+                return;
+            }
+
             if (this.GetComponent<IErasable>() == null)
                 this.gameObject.AddComponent<ErasableBehavior>();
 
@@ -212,11 +219,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public void Ignite(float ignitionForce)
         {
+            if (_fuse == null)
+            {
+                Debug.LogError($"Trying to call Ignite on '{this.gameObject.name}' but Fuse is null... that's a problem - trying to delete firework to avoid further issues");
+
+                if (NetworkManager.IsServer)
+                    GameObject.Destroy(this.gameObject);
+
+                return;
+            }
+
             _fuse.Ignite(ignitionForce);
         }
 
         public void IgniteInstant()
         {
+            if (_fuse == null)
+            {
+                Debug.LogError($"Trying to call Ignite on '{this.gameObject.name}' but Fuse is null... that's a problem - trying to delete firework to avoid further issues");
+                
+                if(NetworkManager.IsServer)
+                    GameObject.Destroy(this.gameObject);
+
+                return;
+            }
+
             _fuse.IgniteInstant();
         }
 
