@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
-## [v2024.3.1] - 2024-3-23 (BETA)
+## [v2024.3.1] - 2024-3-23 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 
 >**IMPORTANT**: As this is a beta and there is no upgrade guide yet, please use this version in a new Unity Project. Do not upgrade to this version in your existing mod project - for now.
