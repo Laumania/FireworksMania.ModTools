@@ -14,6 +14,8 @@ In general there are a lot of changes in this version of the Mod Tools so I'm no
 
 ### Added
 - First draft of native Shell and Mortar support. I'll share a private video for you closed beta guys of how Shell and Mortars work in this version
+- Added weather "Dark Cloudy" so it can now be set on MapDefinitions
+- Added 3 Footstep Physics material, that can be used on ground colliders to change the footstep sound of players
 
 ### Changed
 - I changed the namespace of the CharacterDefinition, which means character mods build with previous version won't work with v2024-3-1 of the game. Luckily it's easy you fix, just rebuild your character mod with this version of the Mod Tools and it will work again.
