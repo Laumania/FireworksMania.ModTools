@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.3.1] - 2024-3-23 (BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+>**IMPORTANT**: As this is a beta and there is no upgrade guide yet, please use this version in a new Unity Project. Do not upgrade to this version in your existing mod project - for now.
+
+In general there are a lot of changes in this version of the Mod Tools so I'm not listing all here, only the important parts.
+
+### Added
+- First draft of native Shell and Mortar support. I'll share a private video for you closed beta guys of how Shell and Mortars work in this version
+
+### Changed
+- I changed the namespace of the CharacterDefinition, which means character mods build with previous version won't work with v2024-3-1 of the game. Luckily it's easy you fix, just rebuild your character mod with this version of the Mod Tools and it will work again.
+
+
+
 ## [v2023.1.6] - 2023-1-25
 Target Unity version: [v2021.3.16f1](https://unity3d.com/unity/whats-new/2021.3.16)
 
