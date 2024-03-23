@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
-    public abstract class BaseFireworkBehavior : NetworkBehaviour, IHaveObjectInfo, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
+    public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
         [FormerlySerializedAs("_metadata")]
@@ -23,12 +23,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected Fuse _fuse;
         protected CancellationToken _cancellationTokentoken;
 
-        private GameObject _gameObject;
         private SaveableEntity _saveableEntity;
 
         public Action<BaseFireworkBehavior> OnDestroyed;
 
-        protected NetworkVariable<LaunchState> _launchState      = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        protected NetworkVariable<LaunchState> _launchState = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         protected virtual void Awake()
         {
@@ -55,9 +54,21 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
-            _gameObject                     = this.gameObject;
             _fuse.SaveableEntityOwner       = _saveableEntity;
             _cancellationTokentoken         = this.GetCancellationTokenOnDestroy();
+        }
+
+        protected virtual void Start()
+        {
+            _fuse.OnFuseCompleted += OnFuseCompleted;
+        }
+
+        public override void OnDestroy()
+        {
+            if (_fuse != null)
+                _fuse.OnFuseCompleted -= OnFuseCompleted;
+
+            base.OnDestroy();
         }
 
         public override void OnNetworkSpawn()
@@ -66,6 +77,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _launchState.OnValueChanged += (prevValue, newValue) =>
             {
+                //NetworkLog.LogInfo($"[{NetworkManager.Singleton.LocalClientId}] _launchState.OnValueChanged newValue.IsLaunched {newValue.IsLaunched}");
                 if (prevValue.IsLaunched == false && newValue.IsLaunched == true)
                     LaunchInternalAsync(_cancellationTokentoken).Forget();
             };
@@ -103,10 +115,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _saveableEntity = this.gameObject.AddComponent<SaveableEntity>();
             }
 
-            if (_saveableEntity.EntityDefinition != null && _saveableEntity.EntityDefinition.Id != _entityDefinition.Id)
-            {
-                Debug.LogError($"'{nameof(BaseEntityDefinition)}' was different on '{_saveableEntity.GetType().Name}' on '{this.gameObject.name}', excepted '{_entityDefinition.Id}' but was '{_saveableEntity.EntityDefinition.Id}', please fix else save/load won't work", this);
-            }
+            _saveableEntity.SetEntityDefinition(_entityDefinition);
+
+            //if (_saveableEntity.EntityDefinition != null && _saveableEntity.EntityDefinition.Id != _entityDefinition.Id)
+            //{
+            //    Debug.LogError($"'{nameof(BaseEntityDefinition)}' was different on '{_saveableEntity.GetType().Name}' on '{this.gameObject.name}', excepted '{_entityDefinition.Id}' but was '{_saveableEntity.EntityDefinition.Id}', please fix else save/load won't work", this);
+            //}
         }
 
         private void ValidateErasableBehavior()
@@ -124,19 +138,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
         }
 
-        protected virtual void Start()
-        {
-            _fuse.OnFuseCompleted += OnFuseCompleted;
-        }
-
-        public override void OnDestroy()
-        {
-            if(_fuse != null)
-                _fuse.OnFuseCompleted -= OnFuseCompleted;
-
-            base.OnDestroy();
-        }
-
         private void OnFuseCompleted()
         {
             if(IsServer)
@@ -147,6 +148,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                     ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat,
                     Seed                   = (byte)Random.Range(0, 254)
                 };
+            }
+        }
+
+        protected virtual void ResetLaunchState()
+        {
+            if (IsServer)
+            {
+                _launchState.Value = default;
             }
         }
 
@@ -217,7 +226,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 rigidbody.isKinematic = isKinematic;
         }
 
-        public void Ignite(float ignitionForce)
+        public virtual void Ignite(float ignitionForce)
         {
             if (_fuse == null)
             {
@@ -232,7 +241,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _fuse.Ignite(ignitionForce);
         }
 
-        public void IgniteInstant()
+        public virtual void IgniteInstant()
         {
             if (_fuse == null)
             {
@@ -247,7 +256,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _fuse.IgniteInstant();
         }
 
-        public Fuse GetFuse()
+        public virtual Fuse GetFuse()
         {
             return _fuse;
         }
@@ -257,14 +266,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             return this.NetworkManager.ServerTime.TimeAsFloat - _launchState.Value.ServerStartTimeAsFloat;
         }
 
-        public string SaveableComponentTypeId         => this.GetType().Name;
-        public string Name                            => _entityDefinition.ItemName;
-        public GameObject GameObject                  => _gameObject;
-        public BaseEntityDefinition EntityDefinition  => _entityDefinition;
-        public Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
-        public IFuseConnectionPoint ConnectionPoint   => _fuse.ConnectionPoint;
-        public bool Enabled                           => _fuse.Enabled;
-        public bool IsIgnited                         => _launchState.Value.IsLaunched;
+        public string SaveableComponentTypeId                 => this.GetType().Name;
+        public virtual string Name                            => _entityDefinition.ItemName;
+        public GameObject GameObject                          => this.gameObject;
+        public BaseEntityDefinition EntityDefinition          => _entityDefinition;
+        public virtual Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
+        public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
+        public virtual bool Enabled                           => _fuse.Enabled;
+        public virtual bool IsIgnited                         => _launchState.Value.IsLaunched;
     }
 
     [Serializable]

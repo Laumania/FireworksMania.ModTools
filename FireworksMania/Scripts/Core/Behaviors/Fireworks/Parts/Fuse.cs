@@ -22,6 +22,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [Tooltip("Amount of IgnitionForce that is needed before the fuse ignites")]
         [SerializeField]
         private float _ignitionThreshold = 50f;
+        private float _initialIgnitionThredhold;
 
         [SerializeField]
         [FormerlySerializedAs("_ignitePosition")]
@@ -64,10 +65,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
 
             _fuseConnectionPoint.Setup(this);
-            _meshRenderer      = this.GetComponentsInChildren<MeshRenderer>();
-            _colliders         = this.GetComponentsInChildren<Collider>();
-            _remainingFuseTime = _fuseTime;
-            _token             = this.gameObject.GetCancellationTokenOnDestroy();
+            _meshRenderer             = this.GetComponentsInChildren<MeshRenderer>();
+            _colliders                = this.GetComponentsInChildren<Collider>();
+            _remainingFuseTime        = _fuseTime;
+            _token                    = this.gameObject.GetCancellationTokenOnDestroy();
+            _initialIgnitionThredhold = _ignitionThreshold;
         }
 
         private void Start()
@@ -195,6 +197,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
+        public void ResetFuse()
+        {
+            _remainingFuseTime            = _fuseTime;
+            _ignitionThreshold            = _initialIgnitionThredhold;
+            _clientRequestForIgnitionSend = false;
+
+            if (!IsServer)
+                return;
+
+            _isIgnited.Value             = false;
+            _isIgnitionVisualsShown.Value= false;
+            _isUsed.Value                = false;
+        }
 
         private void CalculateRemainingFuseTime(float ignitionForce)
         {
@@ -234,11 +249,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 }, cancellationToken: token);
             }
 
+            _isUsed.Value = true;
+
             OnFuseCompleted?.Invoke();
             _onFuseCompleted?.Invoke();
             OnFuseCompletedClientRpc();
-
-            _isUsed.Value = true;
+            
             Extinguish();            
         }
 

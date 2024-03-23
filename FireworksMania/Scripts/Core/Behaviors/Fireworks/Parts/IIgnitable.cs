@@ -7,7 +7,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         Transform IgnitePositionTransform { get; }
         void Ignite(float ignitionForce);
         void IgniteInstant();
-        bool Enabled { get; }
-        bool IsIgnited { get; }
+        bool Enabled                      { get; }
+        bool IsIgnited                    { get; }
     }
 }

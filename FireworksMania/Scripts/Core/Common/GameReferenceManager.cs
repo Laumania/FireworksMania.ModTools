@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using IFuseConnectionTool = FireworksMania.Core.Tools.IFuseConnectionTool;
 
 namespace FireworksMania.Core.Common
 {
+    [Obsolete("This isn't really working anymore in multiplayer - if you run into this reach out to me (Laumania) as I'm in doubt how many use this.", true)]
     public class GameReferenceManager : MonoBehaviour
     {
         private void Awake()

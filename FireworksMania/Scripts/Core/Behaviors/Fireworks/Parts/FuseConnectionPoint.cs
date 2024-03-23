@@ -90,7 +90,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Messenger.RemoveListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
 
             if (_fuse != null)
-                _fuse.OnFuseIgnited                             -= HideActiveIndicator;
+                _fuse.OnFuseIgnited -= HideActiveIndicator;
         }
 
         public Fuse Fuse           => _fuse;

@@ -25,7 +25,6 @@ MonoBehaviour:
   - CodyB_KokkenRulle_Explosion_Deep
   - DefaultImpact
   - drinks_glasses_touching_003
-  - EraserTool_Erase
   - Exp_Basic explosionB_Os
   - EXP_Firecracker_A
   - EXP_Firecracker_B
@@ -45,7 +44,6 @@ MonoBehaviour:
   - EXP_StrobeBob_TakeOff_Os_001
   - EXP_Suburb_GasStationPump_Os_001
   - FAN Air Conditioner, Hard Metal Grinding Noise, Hum, Buzz, LOOP
-  - Fast Whoosh
   - FireworkRocketLaunch_1
   - FireworkRocketLaunch_13
   - FireworkRocketLaunch_6
@@ -109,3 +107,13 @@ MonoBehaviour:
   - Torch_Small_End
   - TOY_Squeeky_Bright_mono
   - Zipper_Launch
+  - EraserToolEraseSound
+  - DefaultFootstepSound
+  - GrassFootstepSound
+  - WoodFootstepSound
+  - JumpSound
+  - LandSound
+  - PlayerPerspectiveSwitchSound
+  - Shell_Load_Large
+  - Shell_Load_Medium
+  - Shell_Load_Small

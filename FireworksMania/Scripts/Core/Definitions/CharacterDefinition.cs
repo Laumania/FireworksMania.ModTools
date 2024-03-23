@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
 
-namespace FireworksMania.Core.Assets.FireworksMania.Scripts.Core.Definitions
+namespace FireworksMania.Core.Definitions
 {
     [CreateAssetMenu(fileName = "New Character Definition", menuName = "Fireworks Mania/Definitions/Character Definition")]
     public class CharacterDefinition : ScriptableObject

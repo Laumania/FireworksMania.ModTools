@@ -7,11 +7,11 @@ using UnityEngine;
 namespace FireworksMania.Core.Persistence
 {
     [AddComponentMenu("Fireworks Mania/Persistence/SaveableEntity")]
-    //[DisallowMultipleComponent()]
     public class SaveableEntity : MonoBehaviour
     {
         [SerializeField]
         [Tooltip("If not set specific in editor, will try and find via IHaveBaseEntityDefinition interface component")]
+        [HideInInspector]
         private BaseEntityDefinition _entityDefinition;
 
         public string EntityInstanceId { get; private set; } = Guid.NewGuid().ToString();
@@ -19,29 +19,23 @@ namespace FireworksMania.Core.Persistence
         private void Awake()
         {
             TrySetEntityDefinitionFromParent();
-
-            if (_entityDefinition == null)
-                Debug.LogError($"Missing 'BaseEntityDefintion' for GameObject '{this.gameObject.name}' - this will be a problem when this entity needs to be loaded!", this);
-        }
-
-        void OnValidate()
-        {
-            if (Application.isPlaying)
-                return;
-
-            TrySetEntityDefinitionFromParent();
-
-            if (_entityDefinition == null)
-            {
-                Debug.LogWarning($"'{nameof(BaseEntityDefinition)}' is missing on '{this.GetType().Name}' on '{this.gameObject.name}', please fix else save/load won't work", this);
-            }
         }
 
         private void TrySetEntityDefinitionFromParent()
         {
             var entityDefinitionFromParent = GetComponent<IHaveBaseEntityDefinition>()?.EntityDefinition;
             if (entityDefinitionFromParent != null && _entityDefinition != entityDefinitionFromParent)
-                _entityDefinition = entityDefinitionFromParent;
+                SetEntityDefinition(entityDefinitionFromParent);
+
+            if (_entityDefinition == null)
+            {
+                Debug.LogError($"'{nameof(BaseEntityDefinition)}' is missing on component '{this.GetType().Name}' on '{this.gameObject.name}', please fix else save/load won't work", this.gameObject);
+            }
+        }
+
+        internal void SetEntityDefinition(BaseEntityDefinition entityDefinition)
+        {
+            _entityDefinition = entityDefinition;
         }
 
         public SaveableEntityData CaptureState()
@@ -72,13 +66,6 @@ namespace FireworksMania.Core.Persistence
 
             return result;
         }
-
-#if UNITY_EDITOR
-        internal void SetEntityDefinition(FireworkEntityDefinition entityDefinition)
-        {
-            _entityDefinition = entityDefinition;
-        }
-#endif
 
         public void RestoreState(SaveableEntityData stateToRestore)
         {
