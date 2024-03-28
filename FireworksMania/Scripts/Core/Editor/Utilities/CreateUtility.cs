@@ -106,34 +106,28 @@ namespace FireworksMania.Core.Editor.Utilities
 
     public static class CreatePartsUtility
     {
-        [MenuItem("GameObject/Fireworks Mania/Parts/Common/Standard Fuse", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Parts/Common/Standard Fuse Prefab", priority = 1)]
         public static void CreateStandardFuse(MenuCommand menuCommand)
         {
             CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/FuseStandardPrefab", menuCommand.context as GameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Parts/Common/Standard Invisible Fuse", priority = 1)]
-        public static void CreateInvisibleStandardFuse(MenuCommand menuCommand)
+        [MenuItem("GameObject/Fireworks Mania/Parts/Mortar/Unwrapped Shell Fuse Pivot Position Prefab", priority = 1)]
+        public static void CreateUnwrappedShellFusePivotPositionPrefab(MenuCommand menuCommand)
         {
-            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/FuseStandardInvisiblePrefab", menuCommand.context as GameObject);
+            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/UnwrappedShellFusePivotPositionPrefab", menuCommand.context as GameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Parts/Shell/Shell Fuse 3 inch 01", priority = 1)]
-        public static void CreateShellFuse01(MenuCommand menuCommand)
+        [MenuItem("GameObject/Fireworks Mania/Parts/Mortar/Mortar Top Prefab", priority = 1)]
+        public static void CreateMortarTopPrefab(MenuCommand menuCommand)
         {
-            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/ShellFuse_3inch_01_Prefab", menuCommand.context as GameObject);
+            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/MortarTubeTopPrefab", menuCommand.context as GameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Parts/Mortar/Shell Fuse Pivot Position", priority = 1)]
-        public static void CreateMortarShellFusePivotPosition(MenuCommand menuCommand)
+        [MenuItem("GameObject/Fireworks Mania/Parts/Mortar/Mortar Bottom Prefab", priority = 1)]
+        public static void CreateMortarBottomPrefab(MenuCommand menuCommand)
         {
-            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/ShellFusePivotPositionPrefab", menuCommand.context as GameObject);
-        }
-
-        [MenuItem("GameObject/Fireworks Mania/Parts/Mortar/Mortar Tube Entry And Launch Position", priority = 1)]
-        public static void CreateMortarTubeEntryLaunchPosition(MenuCommand menuCommand)
-        {
-            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/MortarTubeEntryAndLaunchPositionPrefab", menuCommand.context as GameObject);
+            CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/MortarTubeBottomPrefab", menuCommand.context as GameObject);
         }
     }
 
@@ -173,7 +167,12 @@ namespace FireworksMania.Core.Editor.Utilities
 
         private static GameObject CreatePrefab(string path)
         {
-            return PrefabUtility.InstantiatePrefab(Resources.Load(path)) as GameObject;
+            var resource = Resources.Load(path);
+
+            if (resource == null)
+                throw new UnityException($"Unable to load requested resource '{path}'");
+
+            return PrefabUtility.InstantiatePrefab(resource) as GameObject;
         }
 
         private static void Place(GameObject gameObject)

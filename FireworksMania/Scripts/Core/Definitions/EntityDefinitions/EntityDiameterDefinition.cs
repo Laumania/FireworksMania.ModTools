@@ -9,7 +9,9 @@ using UnityEngine.Serialization;
 
 namespace FireworksMania.Core.Definitions.EntityDefinitions
 {
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
     [CreateAssetMenu(fileName = "New Entity Diameter Definition", menuName = "Fireworks Mania/Definitions/Internal/Entity Diameter Definition")]
+#endif
     public class EntityDiameterDefinition : ScriptableObject
     {
         [SerializeField]

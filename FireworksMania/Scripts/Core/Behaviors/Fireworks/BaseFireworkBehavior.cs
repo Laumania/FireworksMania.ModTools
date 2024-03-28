@@ -16,9 +16,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
     public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
+        [HideInInspector]
         [FormerlySerializedAs("_metadata")]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
+
         [SerializeField]
         protected Fuse _fuse;
         protected CancellationToken _cancellationTokentoken;
@@ -115,12 +117,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _saveableEntity = this.gameObject.AddComponent<SaveableEntity>();
             }
 
-            _saveableEntity.SetEntityDefinition(_entityDefinition);
-
-            //if (_saveableEntity.EntityDefinition != null && _saveableEntity.EntityDefinition.Id != _entityDefinition.Id)
-            //{
-            //    Debug.LogError($"'{nameof(BaseEntityDefinition)}' was different on '{_saveableEntity.GetType().Name}' on '{this.gameObject.name}', excepted '{_entityDefinition.Id}' but was '{_saveableEntity.EntityDefinition.Id}', please fix else save/load won't work", this);
-            //}
+            _saveableEntity.EntityDefinition = _entityDefinition;
         }
 
         private void ValidateErasableBehavior()
@@ -269,7 +266,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public string SaveableComponentTypeId                 => this.GetType().Name;
         public virtual string Name                            => _entityDefinition.ItemName;
         public GameObject GameObject                          => this.gameObject;
-        public BaseEntityDefinition EntityDefinition          => _entityDefinition;
+        public BaseEntityDefinition EntityDefinition
+        {
+            get => _entityDefinition;
+            set => _entityDefinition = (FireworkEntityDefinition)value;
+        }
+
         public virtual Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
         public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
         public virtual bool Enabled                           => _fuse.Enabled;

@@ -3,7 +3,9 @@ using UnityEngine;
 
 namespace FireworksMania.Core.Definitions.EntityDefinitions
 {
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
     [CreateAssetMenu(fileName = "New Entity Definition Type", menuName = "Fireworks Mania/Definitions/Internal/Entity Definition Type")]
+#endif
     public class EntityDefinitionType : ScriptableObject
     {
         [SerializeField]

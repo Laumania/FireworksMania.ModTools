@@ -44,12 +44,12 @@ GameObject:
   - component: {fileID: 8453730370021739489}
   - component: {fileID: 8581215208042181873}
   m_Layer: 0
-  m_Name: ShellFuse_3inch_01_Prefab
+  m_Name: UnwrappedShellFuse_3inch_01_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9046820641967622328
 Transform:
   m_ObjectHideFlags: 0

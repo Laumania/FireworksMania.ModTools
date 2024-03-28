@@ -7,7 +7,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Persistence
 {
     [AddComponentMenu("Fireworks Mania/Persistence/SaveableEntity")]
-    public class SaveableEntity : MonoBehaviour
+    public class SaveableEntity : MonoBehaviour, IHaveBaseEntityDefinition
     {
         [SerializeField]
         [Tooltip("If not set specific in editor, will try and find via IHaveBaseEntityDefinition interface component")]
@@ -25,17 +25,12 @@ namespace FireworksMania.Core.Persistence
         {
             var entityDefinitionFromParent = GetComponent<IHaveBaseEntityDefinition>()?.EntityDefinition;
             if (entityDefinitionFromParent != null && _entityDefinition != entityDefinitionFromParent)
-                SetEntityDefinition(entityDefinitionFromParent);
+                this.EntityDefinition = entityDefinitionFromParent;
 
             if (_entityDefinition == null)
             {
                 Debug.LogError($"'{nameof(BaseEntityDefinition)}' is missing on component '{this.GetType().Name}' on '{this.gameObject.name}', please fix else save/load won't work", this.gameObject);
             }
-        }
-
-        internal void SetEntityDefinition(BaseEntityDefinition entityDefinition)
-        {
-            _entityDefinition = entityDefinition;
         }
 
         public SaveableEntityData CaptureState()
@@ -99,7 +94,12 @@ namespace FireworksMania.Core.Persistence
             IsValidForSaving = isValid;
         }
 
-        public BaseEntityDefinition EntityDefinition => _entityDefinition;
+        public BaseEntityDefinition EntityDefinition
+        {
+            get => _entityDefinition;
+            set => _entityDefinition = value;
+        }
+
         public bool IsValidForSaving { get; private set; } = true;
     }
 

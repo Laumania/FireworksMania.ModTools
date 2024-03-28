@@ -2,7 +2,7 @@
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
-    public class ShellFusePivotPosition : MonoBehaviour
+    public class UnwrappedShellFusePivotPosition : MonoBehaviour
     {
         [SerializeField]
         [HideInInspector]
@@ -13,7 +13,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (_gizmoRendermesh != null)
             {
-                Gizmos.color = Color.green;
+                Gizmos.color = Color.yellow;
                 _gizmoRendermesh.RecalculateNormals();
                 Gizmos.DrawWireMesh(_gizmoRendermesh, this.transform.position, this.transform.rotation);
             }

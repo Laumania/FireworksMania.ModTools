@@ -310,5 +310,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public IFuseConnectionPoint ConnectionPoint => _fuseConnectionPoint;
 
         public bool Enabled => IsUsed == false && this.enabled;
+
+        public float FuseTime
+        {
+            get => _fuseTime;
+            set => _fuseTime = value;
+        }
     }
 }

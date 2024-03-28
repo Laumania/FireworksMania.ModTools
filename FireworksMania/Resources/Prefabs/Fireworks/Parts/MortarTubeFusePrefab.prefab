@@ -4876,7 +4876,7 @@ GameObject:
   - component: {fileID: 6144272925971947556}
   - component: {fileID: 3116727498570949722}
   m_Layer: 9
-  m_Name: FuseStandardInvisiblePrefab
+  m_Name: MortarTubeFusePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

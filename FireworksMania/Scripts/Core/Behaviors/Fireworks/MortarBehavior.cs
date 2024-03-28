@@ -20,6 +20,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
     public class MortarBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable
     {
         [Header("General")]
+        [HideInInspector]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
         
@@ -28,10 +29,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [SerializeField]
         private EntityDiameterDefinition _diameter;
         [SerializeField]
+        [HideInInspector]
         [Tooltip("A Mortar need to have at least one MortarTube. This list is auto populated based on child gameobjects with a MortarTube component on it.")]
         private MortarTube[] _mortarTubes;
 
-        private void Start()
+        private void Awake()
         {
             if (_mortarTubes == null || _mortarTubes.Length == 0)
             {
@@ -64,7 +66,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
                     if (GetComponent<SaveableEntity>() != null)
                     {
-                        GetComponent<SaveableEntity>().SetEntityDefinition(_entityDefinition);
+                        GetComponent<SaveableEntity>().EntityDefinition = _entityDefinition;
                     }
                 }
             };
@@ -94,7 +96,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public string Name                                     => _entityDefinition.ItemName;
         public GameObject GameObject                           => this.gameObject;
         public string SaveableComponentTypeId                  => this.GetType().Name;
-        public BaseEntityDefinition EntityDefinition           => _entityDefinition;
+        public BaseEntityDefinition EntityDefinition
+        {
+            get => _entityDefinition;
+            set => _entityDefinition = (FireworkEntityDefinition)value;
+        }
+
         public Transform IgnitePositionTransform               => null;
         public bool Enabled                                    => false;
         public bool IsIgnited                                  => _mortarTubes.Any(x => x.IsIgnited);

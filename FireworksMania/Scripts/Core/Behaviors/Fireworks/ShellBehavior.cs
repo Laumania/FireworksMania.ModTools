@@ -21,10 +21,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [SerializeField]        
         private ParticleSystem _effect;
         private ParticleSystem.MainModule _mainModule;
+
+        [Header("Prefabs for launch from Mortar")]
+        [Tooltip("Prefab of the launch effect used when shell is loaded into a mortartube")]
         [SerializeField]
         private ParticleSystem _launchEffectPrefab;
+
         [SerializeField]
-        private ShellFuse _shellFuse;
+        [Tooltip("Prefab of the unwrapped shell fuse used when shell is loaded into a mortartube")]
+        //[SearchContext("t=UnwrappedShellFuse t=prefab", "asset", SearchViewFlags.GridView)] //Note: This sadly doesn't allow me to search in Packages which is needed in modders Unity as the Mod Tools is installed as a package - bummer!
+        private GameObject _unwrappedShellFusePrefab;
 
         private Rigidbody _rigidbody;
         private Collider[] _colliders; //Todo: Could this be populated in Editor maybe - as it won't really change?
@@ -41,8 +47,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _mainModule            = _effect.main;
             _mainModule.loop       = false;
             _mainModule.startSpeed = _groundLaunchForce;
-
-            _shellFuse.gameObject.SetActive(false);
         }
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
@@ -62,8 +66,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             await DestroyFireworkAsync(token);
             token.ThrowIfCancellationRequested();
         }
-        
-        protected void DisableRigidBodyAndColliders()
+
+        private void DisableRigidBodyAndColliders()
         {
             _rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
             _rigidbody.isKinematic = true;
@@ -84,16 +88,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                     base.OnValidate();
 
                     if (_diameter == null)
-                        Debug.LogError($"Missing {nameof(EntityDiameterDefinition)} on {this.gameObject.name}", this);
+                    {
+                        Debug.LogError($"Missing {nameof(EntityDiameterDefinition)} on {this.gameObject.name}", this.gameObject);
+                        return;
+                    }
+
+                    if (_unwrappedShellFusePrefab == null)
+                    {
+                        Debug.LogError($"Missing {nameof(UnwrappedShellFusePrefab)} on {this.gameObject.name}", this.gameObject);
+                        return;
+                    }
+
+                    if (_unwrappedShellFusePrefab.GetComponent<UnwrappedShellFuse>() == null)
+                    {
+                        Debug.LogError($"Prefab referenced in {nameof(UnwrappedShellFusePrefab)} on {this.gameObject.name} does not seem to have the '{nameof(UnwrappedShellFuse)}' component on it - which is required", this.gameObject);
+                        return;
+                    }
                 }
             };
         }
 #endif
 
-        public ParticleSystem LaunchEffectPrefab              => _launchEffectPrefab;
-        public ParticleSystem Effect                          => _effect;
-        public ShellFuse ShellFuse                            => _shellFuse;
-        public EntityDiameterDefinition DiameterDefinition    => _diameter;
-        public override bool IsIgnited                        => _fuse.IsIgnited;
+        public ParticleSystem LaunchEffectPrefab                              => _launchEffectPrefab;
+        public ParticleSystem Effect                                          => _effect;
+        public UnwrappedShellFuse UnwrappedShellFusePrefab                    => _unwrappedShellFusePrefab.GetComponent<UnwrappedShellFuse>();
+        public EntityDiameterDefinition DiameterDefinition                    => _diameter;
+        public override bool IsIgnited                                        => _fuse.IsIgnited;
     }
 }

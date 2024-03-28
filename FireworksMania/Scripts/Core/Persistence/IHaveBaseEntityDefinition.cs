@@ -4,6 +4,6 @@ namespace FireworksMania.Core.Persistence
 {
     public interface IHaveBaseEntityDefinition
     {
-        BaseEntityDefinition EntityDefinition { get; }
+        BaseEntityDefinition EntityDefinition { get; set; }
     }
 }

@@ -14,28 +14,35 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Search;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/MortarTube")]
     public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
+        [Header("Size")]
         [SerializeField]
         [Tooltip("The diameter of the mortar tube. This is used to calculate if a shell will fit")]
         private EntityDiameterDefinition _diameter;
-        
-        [SerializeField]
-        [Tooltip("This defines where the shell is put into the tube and where it is shot out")]
-        private MortarTubeEntryAndLaunchPosition _entryAndLaunchPosition;
-        
-        [SerializeField]
-        [Tooltip("Position at the edge of the tube where the shell fuse should be placed")]
-        private ShellFusePivotPosition _shellFusePivotPosition;
-        
-        [SerializeField]
-        [Tooltip("The position of this fuse is not important as it will be moved dynamically to the ignite position of the ShellFuse provided by the Shell put into the MortarTube. Hint: You typically want to use the 'Fuse Invisible' for this, as its only there for the functionality and not the visual")]
-        private Fuse _fuse;
 
+        [Header("Parts")]
+        [SerializeField]
+        [Tooltip("Defines where the shell is put into the tube and where it is shot out")]
+        private MortarTubeTop _mortarTubeTop;
+
+        [SerializeField]
+        [Tooltip("Defines the position of the shell when it is fully loaded into the tube. Aka at the bottom of the tube")]
+        private MortarTubeBottom _mortarTubeBottom;
+
+        [Header("Unwrapped Shell Fuse")]
+        [SerializeField]
+        [Tooltip("Defines the position on the tube where the unwrapped shell fuse pivots/hang over the edge of the tube")]
+        private UnwrappedShellFusePivotPosition _unwrappedShellFusePivotPosition;
+
+        private Fuse _mortarInternalFuse;
+
+        [Header("Sound")]
         [SerializeField]
         [Tooltip("Sound played when a shell enters the tube")]
         [GameSound]
@@ -44,15 +51,32 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private ShellBehavior _shellBehaviorFromPrefab;
         private ParticleSystem _shellEffect;
         private ParticleSystem _launchEffect;
-        private ShellFuse _shellFuse;
+        private UnwrappedShellFuse _shellFuse;
 
         private SaveableEntity _saveableEntity;
                 
         private NetworkVariable<MortarTubeState> _tubeState = new NetworkVariable<MortarTubeState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        protected void Start()
+        private void Awake()
         {
-            if (_fuse == null)
+            InstantiateMortarTubeFuse();
+            
+        }
+
+        private void InstantiateMortarTubeFuse()
+        {
+            var mortarTubeFusePrefabPath = "Prefabs/Fireworks/Parts/MortarTubeFusePrefab";
+            var resource                 = Resources.Load<GameObject>(mortarTubeFusePrefabPath);
+
+            if (resource == null)
+                throw new UnityException($"Unable to instantiate '{mortarTubeFusePrefabPath}' on '{this.gameObject.name}'");
+
+            _mortarInternalFuse = Instantiate(resource, this.transform).GetComponent<Fuse>();
+        }
+
+        private void Start()
+        {
+            if (_mortarInternalFuse == null)
             {
                 Debug.LogError($"Missing {nameof(Fuse)} on '{this.gameObject.name}' - this is not gonna work! Make sure this fireworks have a fuse.", this);
                 this.enabled = false;
@@ -66,22 +90,22 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             }
 
-            _fuse.SaveableEntityOwner = _saveableEntity;
+            _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
 
             if (IsServer)
-                _fuse.IgniteWithoutFuseTime(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
+                _mortarInternalFuse.IgniteWithoutFuseTime(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
 
-            _fuse.OnFuseCompleted += OnFuseCompleted;
-            _entryAndLaunchPosition.OnTriggerEnterAction += OnTriggerEnterMortarTube;
+            _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
+            _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
         }
 
         public override void OnDestroy()
         {
-            if (_fuse != null)
-                _fuse.OnFuseCompleted -= OnFuseCompleted;
+            if (_mortarInternalFuse != null)
+                _mortarInternalFuse.OnFuseCompleted -= OnFuseCompleted;
 
-            if(_entryAndLaunchPosition != null)
-                _entryAndLaunchPosition.OnTriggerEnterAction -= OnTriggerEnterMortarTube;
+            if(_mortarTubeTop != null)
+                _mortarTubeTop.OnTriggerEnterAction -= OnTriggerEnterMortarTube;
 
             base.OnDestroy();
         }
@@ -135,24 +159,28 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _shellBehaviorFromPrefab = entityDefinition.PrefabGameObject.GetComponent<ShellBehavior>();
 
             _launchEffect                    = Instantiate(_shellBehaviorFromPrefab.LaunchEffectPrefab, this.transform);
-            _launchEffect.transform.position = _entryAndLaunchPosition.transform.position;
-            _launchEffect.transform.rotation = _entryAndLaunchPosition.transform.rotation;
+            _launchEffect.transform.position = _mortarTubeTop.transform.position;
+            _launchEffect.transform.rotation = _mortarTubeTop.transform.rotation;
             _launchEffect.gameObject.SetActive(false);
 
             _shellEffect                    = Instantiate(_shellBehaviorFromPrefab.Effect, this.transform);
-            _shellEffect.transform.position = _entryAndLaunchPosition.transform.position;
-            _shellEffect.transform.rotation = _entryAndLaunchPosition.transform.rotation;
+            _shellEffect.transform.position = _mortarTubeTop.transform.position;
+            _shellEffect.transform.rotation = _mortarTubeTop.transform.rotation;
             _shellEffect.gameObject.SetActive(false);
 
-            _shellFuse                    = Instantiate(_shellBehaviorFromPrefab.ShellFuse, this.transform);
-            _shellFuse.transform.position = _shellFusePivotPosition.transform.position;
-            _shellFuse.transform.rotation = _shellFusePivotPosition.transform.rotation;
+            _shellFuse                    = Instantiate(_shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
+            _shellFuse.transform.position = _unwrappedShellFusePivotPosition.transform.position;
+            _shellFuse.transform.rotation = _unwrappedShellFusePivotPosition.transform.rotation;
             _shellFuse.gameObject.SetActive(true);
 
-            _fuse.transform.position = _shellFuse.IgnitePosition.position;
-            _fuse.transform.rotation = _shellFuse.IgnitePosition.rotation;
+            _mortarInternalFuse.transform.position = _shellFuse.IgnitePosition.position;
+            _mortarInternalFuse.transform.rotation = _shellFuse.IgnitePosition.rotation;
 
-            _fuse.ResetFuse();
+            var actualShellFuse = _shellBehaviorFromPrefab.GetFuse();
+            if (actualShellFuse != null)
+                _mortarInternalFuse.FuseTime = actualShellFuse.FuseTime;
+            
+            _mortarInternalFuse.ResetFuse();
 
             if(!IsServer)
                 PlayShellLoadSound();
@@ -210,10 +238,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                     PlayShellLoadSound();
 
-                    await shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_entryAndLaunchPosition.transform.rotation, 0.2f);
-                    await shellBehaviorToLoad.gameObject.transform.DOMove(_entryAndLaunchPosition.transform.position, 0.2f);
+                    await shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f);
+                    await shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f);
 
-                    await shellBehaviorToLoad.gameObject.transform.DOMove(_entryAndLaunchPosition.transform.position - (_entryAndLaunchPosition.transform.up * 0.7f), 2f);
+                    await shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 2f);
 
                     _tubeState.Value = new MortarTubeState()
                     {
@@ -232,7 +260,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void PlayShellLoadSound()
         {
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _entryAndLaunchPosition.transform.position));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _mortarTubeTop.transform.position));
         }
 
         private IEnumerator DestroyWhenFinishedPlayingCoroutine(ParticleSystem shellEffect, ParticleSystem launchEffect)
@@ -246,19 +274,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public void Ignite(float ignitionForce)
         {
             if (IsShellLoaded)
-                _fuse.Ignite(ignitionForce);
+                _mortarInternalFuse.Ignite(ignitionForce);
         }
 
         public void IgniteInstant()
         {
             if (IsShellLoaded)
-                _fuse.IgniteInstant();
+                _mortarInternalFuse.IgniteInstant();
         }
 
         public Fuse GetFuse()
         {
             if (IsShellLoaded)
-                return _fuse;
+                return _mortarInternalFuse;
             
             return null;
         }
@@ -282,10 +310,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         }
 
         private bool IsShellLoaded                            => _shellBehaviorFromPrefab != null;
-        public Transform IgnitePositionTransform              => IsShellLoaded ? _fuse.transform : null;
+        public Transform IgnitePositionTransform              => IsShellLoaded ? _mortarInternalFuse.transform : null;
         public bool Enabled                                   => IsShellLoaded;
-        public bool IsIgnited                                 => _tubeState.Value.IsLaunched; //_fuse.IsIgnited || _launchState.Value.IsLaunched;
-        public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
+        public bool IsIgnited                                 => _tubeState.Value.IsLaunched;
+        public IFuseConnectionPoint ConnectionPoint           => _mortarInternalFuse.ConnectionPoint;
         public EntityDiameterDefinition DiameterDefinition    => _diameter;
     }
 

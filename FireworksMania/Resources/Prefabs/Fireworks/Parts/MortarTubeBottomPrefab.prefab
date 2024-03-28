@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1342774078413199351
+--- !u!1 &4159411600523011772
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6380642295974686647}
-  - component: {fileID: 6331494917639889436}
+  - component: {fileID: 5911139720238048159}
+  - component: {fileID: 1978514341489056236}
   m_Layer: 0
-  m_Name: ShellFusePivotPositionPrefab
+  m_Name: MortarTubeBottomPrefab
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6380642295974686647
+--- !u!4 &5911139720238048159
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342774078413199351}
+  m_GameObject: {fileID: 4159411600523011772}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.062, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6331494917639889436
+--- !u!114 &1978514341489056236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342774078413199351}
+  m_GameObject: {fileID: 4159411600523011772}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb94d01d8c8bfc34e9aa4b5c354fc335, type: 3}
+  m_Script: {fileID: 11500000, guid: 27b08d8cd83045647aba687ed17fa1f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gizmoRendermesh: {fileID: -6728989773710616886, guid: 68a829f51c9742540b1dc302228b850a,
-    type: 3}

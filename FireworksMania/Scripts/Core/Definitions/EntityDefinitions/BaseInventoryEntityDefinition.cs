@@ -1,5 +1,6 @@
 using FireworksMania.Core.Behaviors.Fireworks;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Persistence;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -42,11 +43,18 @@ namespace FireworksMania.Core.Definitions.EntityDefinitions
                         return;
                     }
 
-                    var baseFireworksBehavior = this.PrefabGameObject.GetComponent<BaseFireworkBehavior>();
-                    if (baseFireworksBehavior != null)
+
+                    var componentsWithEntityDefinition = this.PrefabGameObject.GetComponents<IHaveBaseEntityDefinition>();
+                    foreach (var haveBaseEntityDefinition in componentsWithEntityDefinition)
                     {
-                        if (baseFireworksBehavior.EntityDefinition != this)
-                            Debug.LogError($"EntityDefinition '{this.name}' have '{baseFireworksBehavior.gameObject.name}' as it's Prefab, but '{baseFireworksBehavior.gameObject.name}' doesn't have '{this.name}' as it's '{nameof(BaseEntityDefinition)}' - this mismatch need to be fixed!", this);
+                        if (haveBaseEntityDefinition != null && haveBaseEntityDefinition.EntityDefinition != this)
+                        {
+                            haveBaseEntityDefinition.EntityDefinition = this;
+
+                            Debug.Log($"Changed '{nameof(haveBaseEntityDefinition.EntityDefinition)}' on '{this.PrefabGameObject.gameObject.name}' to '{this.name}'", this.PrefabGameObject.gameObject);
+
+                            UnityEditor.EditorUtility.SetDirty(this.PrefabGameObject.gameObject);
+                        }
                     }
                 }
             };
