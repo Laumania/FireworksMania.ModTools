@@ -12,10 +12,16 @@ Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.
 
 ### Added
 - Added "rightclick Template" for easier creation of your own UnwrappedShellFuse Prefab
+- Added logic to the fuse time set on the fuse on the shell is carried over to also be the same fusetime on the fuse once the shell is loaded into a mortar
 
 ### Changed
-- Simplified how Shells and Mortars are structured so it's hopefully a bit easier to understand
+- Simplified how Shells and Mortars are structured so it's hopefully a bit easier to understand - this is a big change!
+- Changed logic so EntityDefinition is set automatically on the prefab you drag into the Prefab field of a Fireworks/Prop EntityDefinition. Should work, but won't be possible to really test until we have blueprints in the game again
+- Changed "UnwrappedShellFuse gizmo from green to yellow, as green made it look like a collider
 
+### Fixed
+- Fixed the issue where you could see "Internal" things when you right click in the Project pane
+- Fixed particle system of the current default "Launch 3inch effect" so the particles are set in World and not Local
 
 ## [v2024.3.1] - 2024-3-23 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
