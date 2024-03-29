@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
-## [v2024.3.2] - 2024-3-23 (CLOSED BETA)
+## [v2024.3.2] - 2024-3-29 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 
 >**IMPORTANT**: I haven't spend time not breaking previous version of shells and mortars. So the ones made with previous version won't work. Delete them and start over if the fastest way to continue.
