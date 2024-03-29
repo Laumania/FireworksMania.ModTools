@@ -7,94 +7,101 @@ namespace FireworksMania.Core.Editor.Utilities
 {
     public static class CreateModTemplatesUtility
     {
-        [MenuItem("GameObject/Fireworks Mania/Templates/Mortar 3 Inch Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Mortar 3 Inch Template", priority = 1)]
         public static void CreateMortarTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Mortar_3inch_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Mortar Rack 6 Inch Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Mortar Rack 6 Inch Template", priority = 1)]
         public static void CreateMortarRackTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Mortar_6inch_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Cake Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Cake Template", priority = 1)]
         public static void CreateCakeTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Cake_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Firecracker Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Firecracker Template", priority = 1)]
         public static void CreateFirecrackerTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Firecracker_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Fountains Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Fountains Template", priority = 1)]
         public static void CreateFountainsTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Fountain_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/PreloadedTube Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/PreloadedTube Template", priority = 1)]
         public static void CreatePreloadedTubeTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/PreloadedTube_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Rocket Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Rocket Template", priority = 1)]
         public static void CreateRocketTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Rocket_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Roman Candle Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Roman Candle Template", priority = 1)]
         public static void CreateRomanCandleTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/RomanCandle_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Smoke Bomb Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Smoke Bomb Template", priority = 1)]
         public static void CreateSmokeBombTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/SmokeBomb_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Whistler Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Whistler Template", priority = 1)]
         public static void CreateWhistlerTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Whistler_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Zipper Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Zipper Template", priority = 1)]
         public static void CreateZipperTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Zipper_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Shell 3 Inch Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Shell 3 Inch Template", priority = 1)]
         public static void CreateShell3InchTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Shell_3inch_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 
-        [MenuItem("GameObject/Fireworks Mania/Templates/Shell 6 Inch Template", priority = 1)]
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Shell 6 Inch Template", priority = 1)]
         public static void CreateShell6InchTemplate(MenuCommand menuCommand)
         {
             var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/Shell_6inch_Template_Prefab", menuCommand.context as GameObject);
+            ConvertToTemplate(gameObject);
+        }
+
+        [MenuItem("GameObject/Fireworks Mania/Templates/Parts/Unwrapped Shell Fuse Template", priority = 1)]
+        public static void CreateUnwrappedShellFuseTemplate(MenuCommand menuCommand)
+        {
+            var gameObject = CreateUtility.CreatePrefabAsChild("ModSamples/Prefabs/UnwrappedShellFuse_Template_Prefab", menuCommand.context as GameObject);
             ConvertToTemplate(gameObject);
         }
 

@@ -99,6 +99,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
+            if (_fuse == null)
+            {
+                Debug.LogError($"Missing {nameof(Fuse)} on '{this.gameObject.name}' - this is not gonna work! Make sure this fireworks have a fuse.", this);
+                return;
+            }
+
             ValidateErasableBehavior();
             ValidateSaveableEntity();
         }
