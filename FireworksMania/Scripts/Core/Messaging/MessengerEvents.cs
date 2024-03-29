@@ -189,4 +189,16 @@ namespace FireworksMania.Core.Messaging
 
         public string Command { get; private set; }
     }
+
+    public class MessengerEventShowNotification
+    {
+        public MessengerEventShowNotification(string title, string message)
+        {
+            Title   = title;
+            Message = message;
+        }
+
+        public string Title   { get; }
+        public string Message { get; }
+    }
 }
