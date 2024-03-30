@@ -677,9 +677,9 @@ MonoBehaviour:
   _entityDefinition: {fileID: 11400000, guid: c2598ff635b2cb44e868d8db57ce36de, type: 2}
   _diameter: {fileID: 11400000, guid: bc7026cb9717ddf488a367ffeb176633, type: 2}
   _mortarTubes:
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 6671963240770016076}
+  - {fileID: 2190311968570897199}
+  - {fileID: 2013218799889684512}
 --- !u!114 &4588621395743208333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,10 +743,10 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2201424296091111136}
   serializedVersion: 4
-  m_Mass: 5
-  m_Drag: 0
+  m_Mass: 20
+  m_Drag: 0.05
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 0, y: -0.2, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:

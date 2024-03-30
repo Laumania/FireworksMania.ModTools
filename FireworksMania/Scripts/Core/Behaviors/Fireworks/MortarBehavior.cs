@@ -23,7 +23,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [HideInInspector]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
-        
 
         [Header("Mortar Settings")]
         [SerializeField]
@@ -33,6 +32,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [Tooltip("A Mortar need to have at least one MortarTube. This list is auto populated based on child gameobjects with a MortarTube component on it.")]
         private MortarTube[] _mortarTubes;
 
+        private Rigidbody _rigidbody;
+
         private void Awake()
         {
             if (_mortarTubes == null || _mortarTubes.Length == 0)
@@ -41,7 +42,34 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 this.enabled = false;
                 return;
             }
+
+            _rigidbody = GetComponent<Rigidbody>();
+
+            SetupMortarTubes();
         }
+
+        public override void OnDestroy()
+        {
+            foreach (var mortarTube in _mortarTubes)
+                mortarTube.OnShellLaunched -= MortarTube_OnShellLaunched;
+            
+            base.OnDestroy();
+        }
+
+        private void SetupMortarTubes()
+        {
+            foreach (var mortarTube in _mortarTubes)
+                mortarTube.OnShellLaunched += MortarTube_OnShellLaunched;
+        }
+
+        private void MortarTube_OnShellLaunched(Transform mortarTubeTransform, ShellBehavior shellBehavior)
+        {
+            if (IsServer && shellBehavior.Recoil > 0f)
+            {
+                _rigidbody.AddForceAtPosition(mortarTubeTransform.up * -1f * shellBehavior.Recoil, mortarTubeTransform.position, ForceMode.Impulse);
+            }
+        }
+
 
 #if UNITY_EDITOR
         private void OnValidate()

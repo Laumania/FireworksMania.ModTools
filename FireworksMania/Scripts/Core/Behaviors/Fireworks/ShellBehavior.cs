@@ -66,7 +66,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             await DestroyFireworkAsync(token);
             token.ThrowIfCancellationRequested();
         }
-
+        
         private void DisableRigidBodyAndColliders()
         {
             _rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
@@ -114,5 +114,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public UnwrappedShellFuse UnwrappedShellFusePrefab                    => _unwrappedShellFusePrefab.GetComponent<UnwrappedShellFuse>();
         public EntityDiameterDefinition DiameterDefinition                    => _diameter;
         public override bool IsIgnited                                        => _fuse.IsIgnited;
+        public float Recoil                                                   => _effect.main.startSpeed.Evaluate(0);
     }
 }

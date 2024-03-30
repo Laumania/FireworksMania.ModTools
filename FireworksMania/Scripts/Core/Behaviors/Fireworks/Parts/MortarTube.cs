@@ -6,21 +6,21 @@ using FireworksMania.Core.Persistence;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using DG.Tweening;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Search;
+using Random = UnityEngine.Random;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/MortarTube")]
     public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
+        internal event Action<Transform, ShellBehavior> OnShellLaunched;
+
         [Header("Size")]
         [SerializeField]
         [Tooltip("The diameter of the mortar tube. This is used to calculate if a shell will fit")]
@@ -56,6 +56,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private SaveableEntity _saveableEntity;
                 
         private NetworkVariable<MortarTubeState> _tubeState = new NetworkVariable<MortarTubeState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        
+        private Dictionary<int, Rigidbody> _otherObjectsInTube = new Dictionary<int, Rigidbody>();
 
         private void Awake()
         {
@@ -168,6 +170,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _shellEffect.transform.rotation = _mortarTubeTop.transform.rotation;
             _shellEffect.gameObject.SetActive(false);
 
+            var mainEffect           = _shellEffect.main;
+            var calculatedStartSpeed = mainEffect.startSpeed.Evaluate(0) * CalculateStartSpeedForceMultiplier(this.DiameterDefinition.Diameter, _shellBehaviorFromPrefab.DiameterDefinition.Diameter);
+            mainEffect.startSpeed    = calculatedStartSpeed;
+
             _shellFuse                    = Instantiate(_shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
             _shellFuse.transform.position = _unwrappedShellFusePivotPosition.transform.position;
             _shellFuse.transform.rotation = _unwrappedShellFusePivotPosition.transform.rotation;
@@ -186,6 +192,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 PlayShellLoadSound();
         }
 
+        private float CalculateStartSpeedForceMultiplier(float mortarTubeDiameter, float shellDiameter)
+        {
+            var rawResult = shellDiameter / mortarTubeDiameter;
+
+            if (rawResult < 1f) //If not perfect fit, we decrease the startspeed multiplayer even more
+                rawResult *= 0.5f;
+
+            return Mathf.Clamp(rawResult, 0.1f, 1f);
+        }
+
         private void LaunchInternally()
         {
             if (IsShellLoaded)
@@ -200,6 +216,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 Destroy(_shellFuse.gameObject);
                 StartCoroutine(DestroyWhenFinishedPlayingCoroutine(_shellEffect, _launchEffect));
+
+                OnShellLaunched?.Invoke(this.transform, _shellBehaviorFromPrefab);
+
+                ShootOutOtherObjectsInTube();
 
                 _shellBehaviorFromPrefab = null;
                 _launchEffect = null;
@@ -258,6 +278,46 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
+        private void ShootOutOtherObjectsInTube()
+        {
+            if (!IsServer)
+                return;
+
+            var shellBehavior = _shellBehaviorFromPrefab;
+            foreach (var otherObjectRigidbody in _otherObjectsInTube.Values)
+            {
+                if(otherObjectRigidbody == null)
+                    continue;
+
+                if (otherObjectRigidbody.GetComponent<IIgnitable>() != null)
+                    otherObjectRigidbody.GetComponent<IIgnitable>().IgniteInstant();
+
+                otherObjectRigidbody.transform.position = ((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 2f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f));
+                otherObjectRigidbody.AddExplosionForce(shellBehavior.Recoil * 5f, _mortarTubeBottom.transform.position, _mortarTubeTop.DetectionRadius * 2f, 0.4f, ForceMode.Impulse);
+            }
+            _otherObjectsInTube.Clear();
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!IsServer)
+                return;
+            if (other.GetComponent<Rigidbody>() != null)
+            {
+                _otherObjectsInTube.TryAdd(other.gameObject.GetInstanceID(), other.GetComponent<Rigidbody>());
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!IsServer)
+                return;
+
+            if (_otherObjectsInTube.ContainsKey(other.gameObject.GetInstanceID()))
+            {
+                _otherObjectsInTube.Remove(other.gameObject.GetInstanceID());
+            }
+        }
+
         private void PlayShellLoadSound()
         {
             Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _mortarTubeTop.transform.position));
@@ -285,10 +345,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public Fuse GetFuse()
         {
-            if (IsShellLoaded)
-                return _mortarInternalFuse;
+            //if (IsShellLoaded)
+            //    return _mortarInternalFuse;
             
-            return null;
+            return _mortarInternalFuse;
         }
 
 #if UNITY_EDITOR

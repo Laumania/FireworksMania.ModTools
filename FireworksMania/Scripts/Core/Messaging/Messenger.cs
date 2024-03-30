@@ -157,7 +157,7 @@ namespace FireworksMania.Core.Messaging
 
         private static void OnListenerRemoved(string eventType)
         {
-            if (_eventTable[eventType] == null)
+            if (_eventTable.ContainsKey(eventType) && _eventTable[eventType] == null)
             {
                 _eventTable.Remove(eventType);
             }
@@ -244,11 +244,14 @@ namespace FireworksMania.Core.Messaging
         /// <typeparam name="T"></typeparam>
         /// <param name="handler"></param>
         //Single parameter
-        static public void RemoveListener<T>(Callback<T> handler)
+        public static void RemoveListener<T>(Callback<T> handler)
         {
             var eventId = GetEventId<T>();
             OnListenerRemoving(eventId, handler);
-            _eventTable[eventId] = (Callback<T>)_eventTable[eventId] - handler;
+
+            if (_eventTable.ContainsKey(eventId))
+                _eventTable[eventId] = (Callback<T>)_eventTable[eventId] - handler;
+
             OnListenerRemoved(eventId);
         }
         #endregion

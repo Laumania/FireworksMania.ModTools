@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.3.3] - 2024-3-29 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Changed
+- Updated some of the ModSample Templates to make sure the effects are setup correctly etc. 
+
 ## [v2024.3.2] - 2024-3-29 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 

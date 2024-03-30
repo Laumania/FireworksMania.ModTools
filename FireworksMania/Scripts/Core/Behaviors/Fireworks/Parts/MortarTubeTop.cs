@@ -11,6 +11,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     {
         public event Action<Collider> OnTriggerEnterAction;
 
+        private SphereCollider _sphereCollider;
+
+        private void Awake()
+        {
+            _sphereCollider = GetComponent<SphereCollider>();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             OnTriggerEnterAction?.Invoke(other);
@@ -41,5 +48,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             };
         }
 #endif
+
+        internal float DetectionRadius => _sphereCollider != null ? _sphereCollider.radius : 0.5f;
     }
 }
