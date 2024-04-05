@@ -20,8 +20,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
     public class MortarBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable
     {
         [Header("General")]
-        [HideInInspector]
+        //[HideInInspector]
         [SerializeField]
+        [Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         private FireworkEntityDefinition _entityDefinition;
 
         [Header("Mortar Settings")]

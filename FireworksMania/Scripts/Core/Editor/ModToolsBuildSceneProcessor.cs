@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace FireworksMania.Core.Editor
 {
     [UModBuildProcessor(".unity")]
-    public class BuildAssetSceneProcessor : BuildEngineProcessor
+    public class ModToolsBuildSceneProcessor : BuildEngineProcessor
     {
         public override void ProcessAsset(BuildContext context, BuildPipelineAsset asset)
         {

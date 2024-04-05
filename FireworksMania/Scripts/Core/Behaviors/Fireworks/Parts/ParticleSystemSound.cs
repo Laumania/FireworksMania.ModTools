@@ -9,27 +9,35 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/ParticleSystemSound")]
     public class ParticleSystemSound : MonoBehaviour
     {
-        [Header("General")]
+        [Header("Spawn Sound")]
         [GameSound]
         [SerializeField]
-        public string _particleSpawnedSound;
+        [Tooltip("Sound played for each <color=green>spawned</color> particle in the ParticleSystem")]
+        private string _particleSpawnedSound;
+        
         [SerializeField]
+        [Tooltip("Will only play the sound once and only at the first event. This is useful if the ParticleSystem spawns a lot of particles and you only want to play a single sound.")]
         private bool _playSingleSpawnSound = false;
+
+
+        [Header("Destroy Sound")]
         [GameSound]
         [SerializeField]
-        [Tooltip("Will only play the sound once and only at the first event")]
+        [Tooltip("Sound played for each <color=red>destroyed / death</color> particle in the ParticleSystem")]
         private string _particleDestroyedSound;
+
         [SerializeField]
-        [Tooltip("Will only play the sound once and only at the first event")]
+        [Tooltip("Will only play the sound once and only at the first event. This is useful if the ParticleSystem spawns a lot of particles and you only want to play a single sound.")]
         private bool _playSingleDestroySound = false;
 
+
         private ParticleSystemObserver _particleObserver;
-        private const string _soundGroupNoneValue = "[None]";
+        protected const string _soundGroupNoneValue = "[None]";
 
         private bool _havePlayedDestroySound = false;
-        private bool _havePlayedSpawnySound = false;
+        private bool _havePlayedSpawnSound   = false;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _particleObserver = this.GetComponent<ParticleSystemObserver>();
             if (_particleObserver == null)
@@ -66,7 +74,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _particleObserver.OnParticleDestroyed -= PlayDestroyedSound;
         }
 
-        private void PlayDestroyedSound(Vector3 particlePosition)
+        protected virtual void PlayDestroyedSound(Vector3 particlePosition)
         {
             if (_playSingleDestroySound && _havePlayedDestroySound)
                 return;
@@ -76,14 +84,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _havePlayedDestroySound = true;
         }
 
-        private void PlaySpawnedSound(Vector3 particlePosition)
+        protected virtual void PlaySpawnedSound(Vector3 particlePosition)
         {
-            if (_playSingleSpawnSound && _havePlayedSpawnySound)
+            if (_playSingleSpawnSound && _havePlayedSpawnSound)
                 return;
 
             Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_particleSpawnedSound, particlePosition, delayBasedOnDistanceToListener: true));
 
-            _havePlayedSpawnySound = true;
+            _havePlayedSpawnSound = true;
         }
     }
 }

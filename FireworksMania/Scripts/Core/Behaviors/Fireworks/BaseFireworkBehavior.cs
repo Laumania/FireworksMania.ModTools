@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
@@ -16,8 +17,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
     public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
-        [HideInInspector]
+        //[HideInInspector]
+        //[ReadOnly]
         [FormerlySerializedAs("_metadata")]
+        [Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
 
@@ -114,7 +117,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             var saveableComponents = GetComponents<SaveableEntity>();
             if (saveableComponents.Length > 1)
             {
-                Debug.LogError($"'{this.EntityDefinition?.Id}' have '{saveableComponents.Length}' '{nameof(SaveableEntity)}'s' - it can have one and only one - please delete so only one is left else it will be saved multiple times in blueprints", this);
+                Debug.LogError($"'{this.EntityDefinition?.Id}' have '{saveableComponents.Length}' '{nameof(SaveableEntity)}'s' - it can have one and only one - please delete so only one is left else it will be saved multiple times in blueprints", this.gameObject);
             }
 
             _saveableEntity = GetComponent<SaveableEntity>();
@@ -137,7 +140,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             
             if (erasableComponents.Length > 1)
             {
-                Debug.LogWarning($"'{this.EntityDefinition?.Id}' have '{erasableComponents.Length}' '{nameof(ErasableBehavior)}'s' it should have one and onlye one - removing all the extra ones", this);
+                Debug.LogWarning($"'{this.EntityDefinition?.Id}' have '{erasableComponents.Length}' '{nameof(ErasableBehavior)}'s' it should have one and only one - removing all the extra ones", this.gameObject);
             }
         }
 

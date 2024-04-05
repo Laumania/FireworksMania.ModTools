@@ -24818,7 +24818,7 @@ GameObject:
   - component: {fileID: 6279151499371373184}
   - component: {fileID: 1575725605898337619}
   - component: {fileID: 8999756767588254310}
-  - component: {fileID: 643930580227289880}
+  - component: {fileID: 1909699495173926535}
   - component: {fileID: 2754144142532714002}
   m_Layer: 0
   m_Name: Effect
@@ -29738,7 +29738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e20a3d12f75858845a23338c4929c13a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &643930580227289880
+--- !u!114 &1909699495173926535
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29747,13 +29747,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4290959263678104123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ef7c1ac7b563ad449f6e03abec85dd4, type: 3}
+  m_Script: {fileID: 11500000, guid: 725b05ef52c87ef4e9612e7c5783f741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _particleSpawnedSound: EXP_RomanCandlePuff_Os
+  _particleSpawnedSound: EXP_Firecracker_A
   _playSingleSpawnSound: 1
   _particleDestroyedSound: EXP_RomanCandleExplosion
-  _playSingleDestroySound: 0
+  _playSingleDestroySound: 1
+  _particleSpawnedInMortarSound: EXP_RomanCandlePuff_Os
+  _playSingleSpawnedInMortarSound: 1
 --- !u!114 &2754144142532714002
 MonoBehaviour:
   m_ObjectHideFlags: 0

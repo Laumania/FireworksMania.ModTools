@@ -168,6 +168,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _shellEffect                    = Instantiate(_shellBehaviorFromPrefab.Effect, this.transform);
             _shellEffect.transform.position = _mortarTubeTop.transform.position;
             _shellEffect.transform.rotation = _mortarTubeTop.transform.rotation;
+            MarkEffectAsInMortarTube(_shellEffect);
             _shellEffect.gameObject.SetActive(false);
 
             var mainEffect           = _shellEffect.main;
@@ -190,6 +191,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if(!IsServer)
                 PlayShellLoadSound();
+        }
+
+        private void MarkEffectAsInMortarTube(ParticleSystem effect)
+        {
+            foreach (var shellSound in effect.GetComponentsInChildren<ParticleSystemShellSound>())
+                shellSound.IsInMortarTube = true;
         }
 
         private float CalculateStartSpeedForceMultiplier(float mortarTubeDiameter, float shellDiameter)

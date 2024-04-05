@@ -54,6 +54,7 @@ namespace FireworksMania.Core.Definitions.EntityDefinitions
                             Debug.Log($"Changed '{nameof(haveBaseEntityDefinition.EntityDefinition)}' on '{this.PrefabGameObject.gameObject.name}' to '{this.name}'", this.PrefabGameObject.gameObject);
 
                             UnityEditor.EditorUtility.SetDirty(this.PrefabGameObject.gameObject);
+                            UnityEditor.EditorUtility.SetDirty(this);
                         }
                     }
                 }
