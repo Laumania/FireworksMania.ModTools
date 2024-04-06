@@ -1,4 +1,6 @@
-﻿using FireworksMania.Core.Definitions.EntityDefinitions;
+﻿using FireworksMania.Core.Behaviors.Fireworks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
+using FireworksMania.Core.Persistence;
 using UMod.BuildEngine;
 using UMod.BuildPipeline;
 using UMod.BuildPipeline.Build;
@@ -28,6 +30,28 @@ namespace FireworksMania.Core.Editor
                 Debug.LogError(errorMessage, baseEntityDefinition);
                 context.FailBuild(errorMessage);
                 return;
+            }
+
+
+            var prefabComponentsWithEntityDefinition = baseEntityDefinition.PrefabGameObject.GetComponents<IHaveBaseEntityDefinition>();
+            foreach (var haveBaseEntityDefinition in prefabComponentsWithEntityDefinition)
+            {
+                if (haveBaseEntityDefinition.EntityDefinition == null)
+                {
+                    var errorMessage = $"'{baseEntityDefinition.PrefabGameObject.name}' (Prefab) is missing reference to an EntityDefinition";
+                    Debug.LogError(errorMessage, baseEntityDefinition.PrefabGameObject);
+                    context.FailBuild(errorMessage);
+                    return;
+                }
+
+                if (haveBaseEntityDefinition.EntityDefinition != baseEntityDefinition)
+                {
+                    var errorMessage = $"'{baseEntityDefinition.PrefabGameObject.name}' (Prefab) is not referencing '{baseEntityDefinition.name}' (EntityDefinition) which is should, as '{baseEntityDefinition.name}' is referencing '{baseEntityDefinition.PrefabGameObject.name}'";
+                    Debug.LogError(errorMessage + " (Click to select Prefab)", baseEntityDefinition.PrefabGameObject);
+                    Debug.LogError(errorMessage + " (Click to select EntityDefinition)", baseEntityDefinition);
+                    context.FailBuild(errorMessage);
+                    return;
+                }
             }
 
             if (baseEntityDefinition is BaseInventoryEntityDefinition baseInventoryEntityDefinition)

@@ -43,20 +43,19 @@ namespace FireworksMania.Core.Definitions.EntityDefinitions
                         return;
                     }
 
+                    //var componentsWithEntityDefinition = this.PrefabGameObject.GetComponents<IHaveBaseEntityDefinition>();
+                    //foreach (var haveBaseEntityDefinition in componentsWithEntityDefinition)
+                    //{
+                    //    if (haveBaseEntityDefinition != null && haveBaseEntityDefinition.EntityDefinition != this)
+                    //    {
+                    //        haveBaseEntityDefinition.EntityDefinition = this;
 
-                    var componentsWithEntityDefinition = this.PrefabGameObject.GetComponents<IHaveBaseEntityDefinition>();
-                    foreach (var haveBaseEntityDefinition in componentsWithEntityDefinition)
-                    {
-                        if (haveBaseEntityDefinition != null && haveBaseEntityDefinition.EntityDefinition != this)
-                        {
-                            haveBaseEntityDefinition.EntityDefinition = this;
+                    //        Debug.Log($"Changed '{nameof(haveBaseEntityDefinition.EntityDefinition)}' on '{this.PrefabGameObject.gameObject.name}' to '{this.name}'", this.PrefabGameObject.gameObject);
 
-                            Debug.Log($"Changed '{nameof(haveBaseEntityDefinition.EntityDefinition)}' on '{this.PrefabGameObject.gameObject.name}' to '{this.name}'", this.PrefabGameObject.gameObject);
-
-                            UnityEditor.EditorUtility.SetDirty(this.PrefabGameObject.gameObject);
-                            UnityEditor.EditorUtility.SetDirty(this);
-                        }
-                    }
+                    //        UnityEditor.EditorUtility.SetDirty(this.PrefabGameObject.gameObject);
+                    //        UnityEditor.EditorUtility.SetDirty(this);
+                    //    }
+                    //}
                 }
             };
 #endif

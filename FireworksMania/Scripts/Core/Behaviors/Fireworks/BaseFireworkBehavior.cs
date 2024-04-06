@@ -20,7 +20,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         //[HideInInspector]
         //[ReadOnly]
         [FormerlySerializedAs("_metadata")]
-        [Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
+        //[Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
 
@@ -108,8 +108,29 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
+            ValidateEntityDefinitionReference();
             ValidateErasableBehavior();
             ValidateSaveableEntity();
+        }
+
+
+        private void ValidateEntityDefinitionReference()
+        {
+            //Remove logic for now... can't make it work properly for now
+
+            //if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this.gameObject) == false ||
+            //    UnityEditor.PrefabUtility.IsPartOfPrefabInstance(this.gameObject))
+            //    return;
+
+            //if (_entityDefinition.PrefabGameObject != null && 
+            //    _entityDefinition.PrefabGameObject != this.gameObject && 
+            //    GameObject.ReferenceEquals(_entityDefinition.PrefabGameObject, this.gameObject) == false)
+            //{
+            //    Debug.LogWarning($"'{this.gameObject.name}' got its reference to '{_entityDefinition.name}' (EntityDefinition) removed as '{_entityDefinition.name}' does not reference '{this.gameObject.name}' as its Prefab.", this.gameObject);
+            //    _entityDefinition = null;
+
+            //    UnityEditor.EditorUtility.SetDirty(this.gameObject);
+            //}
         }
 
         private void ValidateSaveableEntity()
@@ -127,6 +148,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
 
             _saveableEntity.EntityDefinition = _entityDefinition;
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this.gameObject);
+#endif
+
         }
 
         private void ValidateErasableBehavior()
@@ -136,6 +161,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             {
                 this.gameObject.AddComponent<ErasableBehavior>();
                 Debug.Log($"Added required '{nameof(ErasableBehavior)}' to this entity can be removed via the Eraser Tool in game", this.gameObject);
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this.gameObject);
+#endif
             }
             
             if (erasableComponents.Length > 1)

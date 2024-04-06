@@ -22,7 +22,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [Header("General")]
         //[HideInInspector]
         [SerializeField]
-        [Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
+        //[Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         private FireworkEntityDefinition _entityDefinition;
 
         [Header("Mortar Settings")]
