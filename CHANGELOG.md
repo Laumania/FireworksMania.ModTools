@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.4.1] - 2024-4-06 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Added
+- Added new ParticlSystemShellSound that can be used on Shells instead of the normal ParticleSystemSound. This new component gives the option to have a different launch sounds depending on if shell is fired on ground or from a mortar. (Also updated ModSample Shell templates to use it)
+- Added more validation upon build of a mod. So don't be worried if you suddently get errors when building the mod. Read the error messages, because its because the Mod Tools are now smarter in knowing what works and what doesn't, so it tried to stop you from building, if it can see an issue that it knows will be an issue in game anyway at runtime
+
+### Changed
+- Reverted back some of the logic I tested out that should set references between EntityDefinitions and Prefabs and visa versa, as it didn't work as expected. This also means the EntityDefinition fields are now visible again on firework behaviors
+
+### Fixed
+- The above new validation running when mod it build, should prevent that issue where two or more shells had the same effect. Just rebuild the mod and you will get an error telling what the problem is
+
+
 ## [v2024.3.3] - 2024-3-29 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 
