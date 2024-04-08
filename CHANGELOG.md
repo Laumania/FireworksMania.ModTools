@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.4.2] - 2024-4-08 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Added
+- Added support for custom fuse effects on UnwrappedShellFuses. Basically it's just using the same effect and sound as on the fuse you put on the regular Shell. So the effect you set on your shell, is the one that will be used on your custom fuse. However, due to this change, the rotation of the "IgnitePosition" on the UnwrappedShellFuse becomes important. On a regular fuse and on the UnwrappedShellFuse you will now see an yellow arrow pointing in the "forward" direction of the fuse. So make sure it's pointing in the right direction. Look at the UnwrappedShellFuse template if in doubt
+
+### Fixed
+- The issue with Prefabs being marked as edited for no reason, should partly be fixed. I have fixed my code, but NGO seems to NEED to have "Network Object" as the first component on the GameObject - so it will move it and thereby update your prefab, just by clicking on it. If it prompts you something about prefab being edited, just press the "Keep Changes" button and it shouldn't happen again
+
+
 ## [v2024.4.1] - 2024-4-06 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 

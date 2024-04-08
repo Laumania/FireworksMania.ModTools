@@ -51,7 +51,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private ShellBehavior _shellBehaviorFromPrefab;
         private ParticleSystem _shellEffect;
         private ParticleSystem _launchEffect;
-        private UnwrappedShellFuse _shellFuse;
+        private UnwrappedShellFuse _shellUnwrappedFuse;
 
         private SaveableEntity _saveableEntity;
                 
@@ -132,8 +132,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void OnMortarTubeStateChanged(MortarTubeState prevState, MortarTubeState newState)
         {
             Setup(newState.ShellEntityId.ToString());
-            
-            if (prevState.IsLaunched == false && newState.IsLaunched == true)
+
+            if (_tubeState.Value.IsLaunched)
                 LaunchInternally();
         }
 
@@ -175,22 +175,26 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             var calculatedStartSpeed = mainEffect.startSpeed.Evaluate(0) * CalculateStartSpeedForceMultiplier(this.DiameterDefinition.Diameter, _shellBehaviorFromPrefab.DiameterDefinition.Diameter);
             mainEffect.startSpeed    = calculatedStartSpeed;
 
-            _shellFuse                    = Instantiate(_shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
-            _shellFuse.transform.position = _unwrappedShellFusePivotPosition.transform.position;
-            _shellFuse.transform.rotation = _unwrappedShellFusePivotPosition.transform.rotation;
-            _shellFuse.gameObject.SetActive(true);
+            _shellUnwrappedFuse                    = Instantiate(_shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
+            _shellUnwrappedFuse.transform.position = _unwrappedShellFusePivotPosition.transform.position;
+            _shellUnwrappedFuse.transform.rotation = _unwrappedShellFusePivotPosition.transform.rotation;
+            _shellUnwrappedFuse.gameObject.SetActive(true);
 
-            _mortarInternalFuse.transform.position = _shellFuse.IgnitePosition.position;
-            _mortarInternalFuse.transform.rotation = _shellFuse.IgnitePosition.rotation;
+            _mortarInternalFuse.transform.position = _shellUnwrappedFuse.IgnitePosition.position;
+            _mortarInternalFuse.transform.rotation = _shellUnwrappedFuse.IgnitePosition.rotation;
 
             var actualShellFuse = _shellBehaviorFromPrefab.GetFuse();
             if (actualShellFuse != null)
+            {
                 _mortarInternalFuse.FuseTime = actualShellFuse.FuseTime;
+                
+                var fuseEffect = Instantiate(actualShellFuse.Effect, _shellUnwrappedFuse.transform);
+                fuseEffect.transform.position = _shellUnwrappedFuse.IgnitePosition.position;
+                fuseEffect.transform.rotation = _shellUnwrappedFuse.IgnitePosition.rotation;
+                _mortarInternalFuse.ReplaceEffect(fuseEffect, actualShellFuse.IgniteSound);
+            }
             
             _mortarInternalFuse.ResetFuse();
-
-            if(!IsServer)
-                PlayShellLoadSound();
         }
 
         private void MarkEffectAsInMortarTube(ParticleSystem effect)
@@ -221,7 +225,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 _shellEffect.SetRandomSeed(_tubeState.Value.Seed, GetLaunchTimeDifference());
                 _shellEffect.Play(true);
 
-                Destroy(_shellFuse.gameObject);
+                Destroy(_shellUnwrappedFuse.gameObject);
                 StartCoroutine(DestroyWhenFinishedPlayingCoroutine(_shellEffect, _launchEffect));
 
                 OnShellLaunched?.Invoke(this.transform, _shellBehaviorFromPrefab);
@@ -263,7 +267,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         Destroy(collider);
                     }
 
-                    PlayShellLoadSound();
+                    PlayShellLoadSoundClientRpc();
 
                     await shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f);
                     await shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f);
@@ -296,11 +300,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if(otherObjectRigidbody == null)
                     continue;
 
+                if (otherObjectRigidbody.GetComponent<IHaveFuse>() != null)
+                {
+                    var fuse      = otherObjectRigidbody.GetComponent<IHaveFuse>().GetFuse();
+                    fuse.FuseTime *= Random.Range(0.05f, 0.5f);
+                }
+
                 if (otherObjectRigidbody.GetComponent<IIgnitable>() != null)
                     otherObjectRigidbody.GetComponent<IIgnitable>().IgniteInstant();
 
-                otherObjectRigidbody.transform.position = ((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 2f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f));
-                otherObjectRigidbody.AddExplosionForce(shellBehavior.Recoil * 5f, _mortarTubeBottom.transform.position, _mortarTubeTop.DetectionRadius * 2f, 0.4f, ForceMode.Impulse);
+                otherObjectRigidbody.isKinematic = false;
+                otherObjectRigidbody.transform.position = ((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f));
+                otherObjectRigidbody.AddExplosionForce(shellBehavior.Recoil * 10f, _mortarTubeTop.transform.position - (_mortarTubeTop.DetectionRadius * Vector3.one), _mortarTubeTop.DetectionRadius * 7f, 0.45f, ForceMode.Impulse);
             }
             _otherObjectsInTube.Clear();
         }
@@ -325,7 +336,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
-        private void PlayShellLoadSound()
+        [ClientRpc]
+        private void PlayShellLoadSoundClientRpc()
         {
             Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _mortarTubeTop.transform.position));
         }

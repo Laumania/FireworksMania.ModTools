@@ -28,7 +28,7 @@ namespace FireworksMania.Core.Editor.PropertyDrawers
                 case SerializedPropertyType.ObjectReference:
                     if (prop.boxedValue is ScriptableObject scriptableObject)
                     {
-                        valueStr = scriptableObject.name;
+                        valueStr = $"{scriptableObject.name} ({scriptableObject.GetType().Name})";
                     }
                     break;
                 default:

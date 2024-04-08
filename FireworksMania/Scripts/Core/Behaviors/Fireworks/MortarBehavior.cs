@@ -67,7 +67,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             if (IsServer && shellBehavior.Recoil > 0f)
             {
-                _rigidbody.AddForceAtPosition(mortarTubeTransform.up * -1f * shellBehavior.Recoil, mortarTubeTransform.position, ForceMode.Impulse);
+                _rigidbody.AddForceAtPosition(mortarTubeTransform.up * -1f * shellBehavior.Recoil * 0.5f, mortarTubeTransform.position, ForceMode.Impulse);
             }
         }
 

@@ -64,20 +64,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             }
 
+            if (_particleSystem == null)
+            {
+                Debug.LogError("Missing at ParticleSystem", this);
+                return;
+            }
+
             _fuseConnectionPoint.Setup(this);
             _meshRenderer             = this.GetComponentsInChildren<MeshRenderer>();
             _colliders                = this.GetComponentsInChildren<Collider>();
             _remainingFuseTime        = _fuseTime;
             _token                    = this.gameObject.GetCancellationTokenOnDestroy();
             _initialIgnitionThredhold = _ignitionThreshold;
-        }
-
-        private void Start()
-        {
-            if (_particleSystem == null)
-            {
-                Debug.LogError("Missing at ParticleSystem", this);
-            }
 
             SetEmissionOnParticleSystems(false);
         }
@@ -91,7 +89,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 SetEmissionOnParticleSystems(newValue);
             };
 
-            SetEmissionOnParticleSystems(false);
+            SetEmissionOnParticleSystems(_isIgnitionVisualsShown.Value);
         }
 
         private void OnValidate()
@@ -202,6 +200,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _remainingFuseTime            = _fuseTime;
             _ignitionThreshold            = _initialIgnitionThredhold;
             _clientRequestForIgnitionSend = false;
+            SetEmissionOnParticleSystems(false);
 
             if (!IsServer)
                 return;
@@ -302,6 +301,27 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
+        internal void ReplaceEffect(ParticleSystem newEffect, string igniteSound = null)
+        {
+            if (_particleSystem != newEffect)
+            {
+                if(_particleSystem != null)
+                    GameObject.Destroy(_particleSystem);
+
+                _particleSystem = newEffect;
+            }
+
+            if (igniteSound != null)
+                _fuseIgnitedSound = igniteSound;
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            FireworksMania.Core.Utilities.GizmosUtility.DrawArrow(this.transform.position, this.transform.up, Color.yellow, 0.1f, 0.05f);
+        }
+#endif
+
         public bool IsIgnited => _isIgnited.Value;
         public bool IsUsed    => _isUsed.Value;
         public SaveableEntity SaveableEntityOwner   { get; set; }
@@ -316,5 +336,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             get => _fuseTime;
             set => _fuseTime = value;
         }
+
+        internal ParticleSystem Effect => _particleSystem;
+        internal string IgniteSound => _fuseIgnitedSound;
     }
 }

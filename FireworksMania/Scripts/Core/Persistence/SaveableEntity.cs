@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -11,7 +12,8 @@ namespace FireworksMania.Core.Persistence
     {
         [SerializeField]
         [Tooltip("If not set specific in editor, will try and find via IHaveBaseEntityDefinition interface component")]
-        [HideInInspector]
+        //[HideInInspector]
+        [ReadOnly]
         private BaseEntityDefinition _entityDefinition;
 
         public string EntityInstanceId { get; private set; } = Guid.NewGuid().ToString();

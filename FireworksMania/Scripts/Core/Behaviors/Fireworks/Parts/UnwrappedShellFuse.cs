@@ -8,12 +8,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     public class UnwrappedShellFuse : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("Defines the position on the unwrapped shell fuse where the ignite tool should ignite it")]
+        [Tooltip("Defines the position and rotation on the unwrapped shell fuse where the ignite tool should ignite it and the fuse burning effect is shown")]
         private Transform _ignitePosition;
 
         public Transform IgnitePosition => _ignitePosition;
 
 #if UNITY_EDITOR
+
+        private void OnDrawGizmos()
+        {
+            if(_ignitePosition != null)
+                FireworksMania.Core.Utilities.GizmosUtility.DrawArrow(_ignitePosition.position, _ignitePosition.up, Color.yellow, 0.1f, 0.05f);
+        }
+
         private void OnValidate()
         {
             UnityEditor.EditorApplication.delayCall += () =>

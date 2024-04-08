@@ -17,10 +17,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
     public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
-        //[HideInInspector]
-        //[ReadOnly]
         [FormerlySerializedAs("_metadata")]
-        //[Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         [SerializeField]
         private FireworkEntityDefinition _entityDefinition;
 
@@ -108,9 +105,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
-            ValidateEntityDefinitionReference();
-            ValidateErasableBehavior();
-            ValidateSaveableEntity();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (this != null)
+                {
+                    ValidateEntityDefinitionReference();
+                    ValidateErasableBehavior();
+                    ValidateSaveableEntity();
+                }
+            };
+#endif
         }
 
 
@@ -135,10 +140,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void ValidateSaveableEntity()
         {
+#if UNITY_EDITOR
             var saveableComponents = GetComponents<SaveableEntity>();
             if (saveableComponents.Length > 1)
             {
                 Debug.LogError($"'{this.EntityDefinition?.Id}' have '{saveableComponents.Length}' '{nameof(SaveableEntity)}'s' - it can have one and only one - please delete so only one is left else it will be saved multiple times in blueprints", this.gameObject);
+                return;
             }
 
             _saveableEntity = GetComponent<SaveableEntity>();
@@ -147,29 +154,33 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _saveableEntity = this.gameObject.AddComponent<SaveableEntity>();
             }
 
-            _saveableEntity.EntityDefinition = _entityDefinition;
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this.gameObject);
+            if (_saveableEntity.EntityDefinition != _entityDefinition)
+            {
+                Debug.Log("ValidateSaveableEntity marked as dirty", this.gameObject);
+                _saveableEntity.EntityDefinition = _entityDefinition;
+                UnityEditor.EditorUtility.SetDirty(this.gameObject);
+            }
 #endif
-
         }
 
         private void ValidateErasableBehavior()
         {
+#if UNITY_EDITOR
             var erasableComponents = GetComponents<ErasableBehavior>();
             if (erasableComponents.Length == 0)
             {
                 this.gameObject.AddComponent<ErasableBehavior>();
-                Debug.Log($"Added required '{nameof(ErasableBehavior)}' to this entity can be removed via the Eraser Tool in game", this.gameObject);
-#if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(this.gameObject);
-#endif
+
+                Debug.Log($"Added required '{nameof(ErasableBehavior)}' to this entity can be removed via the Eraser Tool in game", this.gameObject);
             }
             
             if (erasableComponents.Length > 1)
             {
                 Debug.LogWarning($"'{this.EntityDefinition?.Id}' have '{erasableComponents.Length}' '{nameof(ErasableBehavior)}'s' it should have one and only one - removing all the extra ones", this.gameObject);
+                return;
             }
+#endif
         }
 
         private void OnFuseCompleted()
