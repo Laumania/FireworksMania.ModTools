@@ -14,7 +14,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_gizmoRendermesh != null)
             {
                 Gizmos.color = Color.yellow;
-                _gizmoRendermesh.RecalculateNormals();
+
+                if(Application.isPlaying == false)
+                    _gizmoRendermesh.RecalculateNormals();
+                
                 Gizmos.DrawWireMesh(_gizmoRendermesh, this.transform.position, this.transform.rotation);
             }
         }

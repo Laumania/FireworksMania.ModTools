@@ -293,8 +293,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (!IsServer)
                 return;
-
-            var shellBehavior = _shellBehaviorFromPrefab;
+            
+            var shellBehavior        = _shellBehaviorFromPrefab;
+            var originExplosionForce = shellBehavior.Recoil * 30f;
+            var explosionRadius      = Vector3.Distance(_mortarTubeBottom.transform.position, _mortarTubeTop.transform.position) * 2.5f;
             foreach (var otherObjectRigidbody in _otherObjectsInTube.Values)
             {
                 if(otherObjectRigidbody == null)
@@ -310,8 +312,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     otherObjectRigidbody.GetComponent<IIgnitable>().IgniteInstant();
 
                 otherObjectRigidbody.isKinematic = false;
-                otherObjectRigidbody.transform.position = ((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f));
-                otherObjectRigidbody.AddExplosionForce(shellBehavior.Recoil * 10f, _mortarTubeTop.transform.position - (_mortarTubeTop.DetectionRadius * Vector3.one), _mortarTubeTop.DetectionRadius * 7f, 0.45f, ForceMode.Impulse);
+                otherObjectRigidbody.MovePosition(((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f)));
+
+                var relativeToMassExplosionForce = originExplosionForce * Mathf.Clamp(otherObjectRigidbody.mass / originExplosionForce, .05f, 1f);
+                otherObjectRigidbody.AddExplosionForce(relativeToMassExplosionForce, _mortarTubeBottom.transform.position, explosionRadius, 0.45f, ForceMode.Impulse);
             }
             _otherObjectsInTube.Clear();
         }
@@ -319,7 +323,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (!IsServer)
                 return;
-            if (other.GetComponent<Rigidbody>() != null)
+            var rigidBody = other.GetComponent<Rigidbody>();
+            if (rigidBody != null && rigidBody.GetComponent<MortarBehavior>() == null)
             {
                 _otherObjectsInTube.TryAdd(other.gameObject.GetInstanceID(), other.GetComponent<Rigidbody>());
             }

@@ -136,6 +136,12 @@ namespace FireworksMania.Core.Editor.Utilities
         {
             CreateUtility.CreatePrefabAsChild("Prefabs/Fireworks/Parts/MortarTubeBottomPrefab", menuCommand.context as GameObject);
         }
+
+        [MenuItem("GameObject/Fireworks Mania/Maps/Player Spawn Location Prefab", priority = 1)]
+        public static void CreatePlayerSpawnLocationPrefab(MenuCommand menuCommand)
+        {
+            CreateUtility.CreatePrefabAsChild("Prefabs/PlayerSpawnLocationPrefab", menuCommand.context as GameObject);
+        }
     }
 
     public static class CreateUtility

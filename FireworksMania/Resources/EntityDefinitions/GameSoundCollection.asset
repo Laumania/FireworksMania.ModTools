@@ -114,6 +114,12 @@ MonoBehaviour:
   - JumpSound
   - LandSound
   - PlayerPerspectiveSwitchSound
+  - Shell_2inch_Explode_Small
+  - Shell_2inch_Launch_Small
+  - Shell_4inch_Explode_Small
+  - Shell_4inch_Launch_Small
+  - Shell_6inch_Explode_Small
+  - Shell_6inch_Launch_Small
   - Shell_Load_Large
   - Shell_Load_Medium
   - Shell_Load_Small

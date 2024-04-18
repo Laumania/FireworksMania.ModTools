@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.4.4] - 2024-4-18 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+### Added
+- Added new "Create Menu" item for adding "PlayerSpawnLocationPrefab" to make it easier to add to a map
+- Added new Shell launch effect prefab in various sizes that can be used if you do not want to create your own
+- Added new Shell launch and explode sounds that are natively in the game
+
+### Fixed
+- Fixed issue where a lot of warning were written to the log in Unity when "UnwrappedShellFuse" Gizmo was rendered in Play Mode
+
+
 ## [v2024.4.2] - 2024-4-08 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 

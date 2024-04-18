@@ -269,8 +269,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.7
-      minScalar: 0.6
+      scalar: 1.8
+      minScalar: 0.7
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4894,7 +4894,7 @@ GameObject:
   - component: {fileID: 4683693477425409131}
   - component: {fileID: 5147461181590929103}
   m_Layer: 0
-  m_Name: Shell_3inch_Launch_Effect_Prefab
+  m_Name: Shell_4inch_Launch_Effect_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4909,7 +4909,7 @@ Transform:
   m_GameObject: {fileID: 3573555176963534130}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.262, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5171,8 +5171,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.6
-      minScalar: 0.4
+      scalar: 0.5
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -8768,7 +8768,7 @@ ParticleSystem:
     enabled: 1
     subEmitters:
     - serializedVersion: 3
-      emitter: {fileID: 0}
+      emitter: {fileID: 7884445702818000581}
       type: 0
       properties: 0
       emitProbability: 1
@@ -10071,8 +10071,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.5
-      minScalar: 0.5
+      scalar: 1.8
+      minScalar: 0.7
       maxCurve:
         serializedVersion: 2
         m_Curve:
