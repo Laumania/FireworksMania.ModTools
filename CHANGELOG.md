@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.4.5] - 2024-4-22 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+### Added
+- Added new feature where you can set "ModelMeshRenderer" on a ShellBehavior. It will try and set it automatically, both in Unity but also in game at runtime, if its not already set. If it picked a wrong MeshRenderer, you can drag in the right one
+
+### Changed
+- In relation to the new ModelMeshRenderer, both Shell templates in Mod Tools have been updated to have this set too
+
 ## [v2024.4.4] - 2024-4-18 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 

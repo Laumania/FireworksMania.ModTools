@@ -13,7 +13,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private EntityDiameterDefinition _diameter;
 
         [SerializeField]
-        protected GameObject _model;
+        private GameObject _model;
+        [SerializeField]
+        [Tooltip("Reference to the MeshRenderer of the actual shell model. Used to render shell loaded in the mortar.")]
+        private MeshRenderer _modelMeshRenderer;
 
         [Header("Effect Settings")]
         [SerializeField]
@@ -78,6 +81,32 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
         }
 
+        private MeshRenderer TryGetModelMeshRenderer()
+        {
+            if(_modelMeshRenderer != null)
+                return _modelMeshRenderer;
+
+            foreach (Transform modelChildTransform in _model.transform)
+            {
+                if(modelChildTransform == null)
+                    continue;
+
+                if (modelChildTransform.GetComponent<Fuse>() == null) //We don't want to find the fuse's MeshRenderer
+                {
+                    _modelMeshRenderer = modelChildTransform.GetComponentInChildren<MeshRenderer>();
+                    if (_modelMeshRenderer != null)
+                        return _modelMeshRenderer;
+                }
+            }
+
+            return _modelMeshRenderer;
+        }
+
+        private UnwrappedShellFuse TryGetUnwrappedShellFuse()
+        {
+            return _unwrappedShellFusePrefab.GetComponent<UnwrappedShellFuse>();
+        }
+
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
@@ -104,6 +133,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                         Debug.LogError($"Prefab referenced in {nameof(UnwrappedShellFusePrefab)} on {this.gameObject.name} does not seem to have the '{nameof(UnwrappedShellFuse)}' component on it - which is required", this.gameObject);
                         return;
                     }
+
+                    if (_modelMeshRenderer == null)
+                    {
+                        _modelMeshRenderer = TryGetModelMeshRenderer();
+
+                        if (_modelMeshRenderer != null)
+                        {
+                            Debug.Log($"Attempted to set {nameof(ModelMeshRenderer)} on {this.gameObject.name} automatically as none was specified. Set it to the GameObject '{_modelMeshRenderer.gameObject.name}'", this.gameObject);
+                            UnityEditor.EditorUtility.SetDirty(this.gameObject);
+                        }
+                    }
                 }
             };
         }
@@ -111,8 +151,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public ParticleSystem LaunchEffectPrefab                              => _launchEffectPrefab;
         public ParticleSystem Effect                                          => _effect;
-        public UnwrappedShellFuse UnwrappedShellFusePrefab                    => _unwrappedShellFusePrefab.GetComponent<UnwrappedShellFuse>();
+        public UnwrappedShellFuse UnwrappedShellFusePrefab                    => TryGetUnwrappedShellFuse();
         public EntityDiameterDefinition DiameterDefinition                    => _diameter;
+        public MeshRenderer ModelMeshRenderer                                 => TryGetModelMeshRenderer();
         public override bool IsIgnited                                        => _fuse.IsIgnited;
         public float Recoil                                                   => _effect.main.startSpeed.Evaluate(0);
     }

@@ -14603,7 +14603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 801810760
+  GlobalObjectIdHash: 3872200485
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -14627,6 +14627,7 @@ MonoBehaviour:
   _fuse: {fileID: 8315471663955291223}
   _diameter: {fileID: 11400000, guid: bc7026cb9717ddf488a367ffeb176633, type: 2}
   _model: {fileID: 6548831925572674773}
+  _modelMeshRenderer: {fileID: 2689650136534959322}
   _groundLaunchForce: 10
   _effect: {fileID: 4905879425170513085}
   _launchEffectPrefab: {fileID: 4683693477425409131, guid: 19c5bd26451b5a341a57e1e22ce75f02,
@@ -29669,7 +29670,7 @@ MonoBehaviour:
   _ignoreRigidbodies: []
   _affectedLayers:
     serializedVersion: 2
-    m_Bits: 5633
+    m_Bits: 0
   _igniteSurroundingIgnitables: 1
   _enableShakeEffect: 1
   _shakeRangeMultipler: 3
@@ -49516,6 +49517,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9cd8d5d44aa3334c95caabe5db1f5d4, type: 3}
+--- !u!23 &2689650136534959322 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: d9cd8d5d44aa3334c95caabe5db1f5d4,
+    type: 3}
+  m_PrefabInstance: {fileID: 3644004931479656542}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3825986351457681333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d9cd8d5d44aa3334c95caabe5db1f5d4,

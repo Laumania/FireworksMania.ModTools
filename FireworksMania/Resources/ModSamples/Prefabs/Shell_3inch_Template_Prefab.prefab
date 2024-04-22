@@ -19618,7 +19618,7 @@ MonoBehaviour:
   _ignoreRigidbodies: []
   _affectedLayers:
     serializedVersion: 2
-    m_Bits: 5633
+    m_Bits: 0
   _igniteSurroundingIgnitables: 1
   _enableShakeEffect: 1
   _shakeRangeMultipler: 3
@@ -24651,6 +24651,7 @@ MonoBehaviour:
   _fuse: {fileID: 4033544215138457956}
   _diameter: {fileID: 11400000, guid: 06cd6e41cb864ed4a81ef1dcaf1e9c1e, type: 2}
   _model: {fileID: 6548831925572674773}
+  _modelMeshRenderer: {fileID: 2443190452727819585}
   _groundLaunchForce: 10
   _effect: {fileID: 6279151499371373184}
   _launchEffectPrefab: {fileID: 4683693477425409131, guid: 19c5bd26451b5a341a57e1e22ce75f02,
@@ -49390,6 +49391,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3e277c4dd3708944bbd99ef0976f7b6, type: 3}
+--- !u!23 &2443190452727819585 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: e3e277c4dd3708944bbd99ef0976f7b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 3901913211432415685}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3579473405762098734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e3e277c4dd3708944bbd99ef0976f7b6,

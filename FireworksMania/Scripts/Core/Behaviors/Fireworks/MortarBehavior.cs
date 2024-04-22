@@ -17,7 +17,7 @@ using UnityEngine.Serialization;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/MortarBehavior")]
-    public class MortarBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable
+    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable
     {
         [Header("General")]
         //[HideInInspector]
@@ -60,7 +60,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private void SetupMortarTubes()
         {
             foreach (var mortarTube in _mortarTubes)
+            {
                 mortarTube.OnShellLaunched += MortarTube_OnShellLaunched;
+                mortarTube.ParentEntityDefinition = this._entityDefinition;
+            }
         }
 
         private void MortarTube_OnShellLaunched(Transform mortarTubeTransform, ShellBehavior shellBehavior)

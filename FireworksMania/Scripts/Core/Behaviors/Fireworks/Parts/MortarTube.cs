@@ -6,6 +6,7 @@ using FireworksMania.Core.Persistence;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
@@ -13,11 +14,12 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using FireworksMania.Core.Interactions;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/MortarTube")]
-    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
+    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint, IAmGameObject
     {
         internal event Action<Transform, ShellBehavior> OnShellLaunched;
 
@@ -52,6 +54,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private ParticleSystem _shellEffect;
         private ParticleSystem _launchEffect;
         private UnwrappedShellFuse _shellUnwrappedFuse;
+        private GameObject _loadedShellMesh;
 
         private SaveableEntity _saveableEntity;
                 
@@ -62,7 +65,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void Awake()
         {
             InstantiateMortarTubeFuse();
-            
         }
 
         private void InstantiateMortarTubeFuse()
@@ -183,6 +185,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _mortarInternalFuse.transform.position = _shellUnwrappedFuse.IgnitePosition.position;
             _mortarInternalFuse.transform.rotation = _shellUnwrappedFuse.IgnitePosition.rotation;
 
+            if (_shellBehaviorFromPrefab.ModelMeshRenderer != null)
+            {
+                _loadedShellMesh = Instantiate(_shellBehaviorFromPrefab.ModelMeshRenderer.gameObject, this.transform);
+
+                foreach (var componentsInChild in _loadedShellMesh.GetComponentsInChildren<Collider>())
+                    componentsInChild.enabled = false;
+
+                _loadedShellMesh.transform.position = _mortarTubeBottom.transform.position;
+                _loadedShellMesh.transform.rotation = _mortarTubeBottom.transform.rotation;
+            }
+
             var actualShellFuse = _shellBehaviorFromPrefab.GetFuse();
             if (actualShellFuse != null)
             {
@@ -208,7 +221,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             var rawResult = shellDiameter / mortarTubeDiameter;
 
             if (rawResult < 1f) //If not perfect fit, we decrease the startspeed multiplayer even more
-                rawResult *= 0.5f;
+                rawResult *= 0.75f;
 
             return Mathf.Clamp(rawResult, 0.1f, 1f);
         }
@@ -226,6 +239,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 _shellEffect.Play(true);
 
                 Destroy(_shellUnwrappedFuse.gameObject);
+                Destroy(_loadedShellMesh.gameObject);
                 StartCoroutine(DestroyWhenFinishedPlayingCoroutine(_shellEffect, _launchEffect));
 
                 OnShellLaunched?.Invoke(this.transform, _shellBehaviorFromPrefab);
@@ -233,8 +247,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 ShootOutOtherObjectsInTube();
 
                 _shellBehaviorFromPrefab = null;
-                _launchEffect = null;
-                _shellEffect = null;
+                _launchEffect            = null;
+                _shellEffect             = null;
+                _loadedShellMesh         = null;
             }
             else
                 Debug.LogWarning($"Unable to launch '{this.gameObject.name}' due to missing effects, some of them are null...can't explain it");
@@ -393,12 +408,28 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return this.NetworkManager.ServerTime.TimeAsFloat - _tubeState.Value.ServerStartTimeAsFloat;
         }
 
+        private string GenerateObjectNameWithOptionalShellName()
+        {
+            if(IsShellLoaded && _shellBehaviorFromPrefab.EntityDefinition is FireworkEntityDefinition fireworkEntityDefinition)
+                return $"{this.ParentEntityDefinition.ItemName}{Environment.NewLine}({fireworkEntityDefinition.ItemName})";
+
+            return this.ParentEntityDefinition.ItemName;
+        }
+
         private bool IsShellLoaded                            => _shellBehaviorFromPrefab != null;
         public Transform IgnitePositionTransform              => IsShellLoaded ? _mortarInternalFuse.transform : null;
         public bool Enabled                                   => IsShellLoaded;
         public bool IsIgnited                                 => _tubeState.Value.IsLaunched;
         public IFuseConnectionPoint ConnectionPoint           => _mortarInternalFuse.ConnectionPoint;
         public EntityDiameterDefinition DiameterDefinition    => _diameter;
+        public string Name                                    => GenerateObjectNameWithOptionalShellName();
+        public GameObject GameObject                          => this.gameObject;
+
+        internal FireworkEntityDefinition ParentEntityDefinition
+        {
+            get;
+            set;
+        }
     }
 
     [Serializable]
