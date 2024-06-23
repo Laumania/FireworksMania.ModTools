@@ -45,7 +45,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _rigidbody = this.GetComponent<Rigidbody>();
             _colliders = _rigidbody.GetComponents<Collider>();
 
-            _effect.Stop();
+            _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            _effect.gameObject.SetActive(false);
 
             _mainModule            = _effect.main;
             _mainModule.loop       = false;

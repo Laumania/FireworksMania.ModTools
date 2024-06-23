@@ -9,7 +9,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     public class ParticleSystemObserver : MonoBehaviour
     {
         private IDictionary<uint, ParticleSystem.Particle> _trackedParticles = new Dictionary<uint, ParticleSystem.Particle>();
-        private ParticleSystem _parentParticleSystem;
+        private ParticleSystem _observedParticleSystem;
 
         public Action<Vector3> OnParticleSpawned;
         public Action<Vector3> OnParticleDestroyed;
@@ -18,8 +18,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Start()
         {
-            _parentParticleSystem = this.GetComponent<ParticleSystem>();
-            if (_parentParticleSystem == null)
+            _observedParticleSystem = this.GetComponent<ParticleSystem>();
+            if (_observedParticleSystem == null)
                 Debug.LogError($"Missing ParticleSystem on {nameof(ParticleSystemObserver)}", this);
         }
 
@@ -31,23 +31,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Update()
         {
-            if(_hasBeenAliveOnce && _parentParticleSystem.IsAlive(false) == false)
+            if(_hasBeenAliveOnce && _observedParticleSystem.IsAlive(false) == false)
             {
                 this.enabled = false;
                 //Debug.Log($"{nameof(ParticleSystemObserver)} on {this.gameObject.name} has been emitting particle once and stopped again, so this {nameof(ParticleSystemObserver)} will now be disabled for performance reasons.", this);
             }
 
-            if (_hasBeenAliveOnce == false && _parentParticleSystem.IsAlive(false))
+            if (_hasBeenAliveOnce == false && _observedParticleSystem.IsAlive(false))
                 _hasBeenAliveOnce = true;
 
-            if (_parentParticleSystem.IsAlive(false) == false)
+            if (_observedParticleSystem.IsAlive(false) == false)
                 return;
 
             if (OnParticleSpawned == null && OnParticleDestroyed == null)
                 return;
 
-            var liveParticles = new ParticleSystem.Particle[_parentParticleSystem.particleCount];
-            _parentParticleSystem.GetParticles(liveParticles);
+            var liveParticles = new ParticleSystem.Particle[_observedParticleSystem.particleCount];
+            _observedParticleSystem.GetParticles(liveParticles);
 
             var particleDelta = GetParticleDelta(liveParticles);
 

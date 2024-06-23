@@ -15,6 +15,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using FireworksMania.Core.Interactions;
+using FireworksMania.Core.Utilities;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
@@ -69,13 +70,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void InstantiateMortarTubeFuse()
         {
-            var mortarTubeFusePrefabPath = "Prefabs/Fireworks/Parts/MortarTubeFusePrefab";
-            var resource                 = Resources.Load<GameObject>(mortarTubeFusePrefabPath);
+            var mortarTubeFusePrefabPath     = "Prefabs/Fireworks/Parts/MortarTubeFusePrefab";
+            var mortarTubeFusePrefabResource = Resources.Load<GameObject>(mortarTubeFusePrefabPath);
 
-            if (resource == null)
-                throw new UnityException($"Unable to instantiate '{mortarTubeFusePrefabPath}' on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(mortarTubeFusePrefabResource);
 
-            _mortarInternalFuse = Instantiate(resource, this.transform).GetComponent<Fuse>();
+            _mortarInternalFuse = Instantiate(mortarTubeFusePrefabResource, this.transform).GetComponent<Fuse>();
         }
 
         private void Start()
@@ -297,7 +297,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         ShellEntityId          = shellBehaviorToLoad.EntityDefinition.Id
                     };
 
-                    Destroy(shellBehaviorToLoad.gameObject);
+                    shellBehaviorToLoad.gameObject.DestroyOrDespawn();
 
                     _isShellLoadingInProgress = false;
                 }
@@ -419,7 +419,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private bool IsShellLoaded                            => _shellBehaviorFromPrefab != null;
         public Transform IgnitePositionTransform              => IsShellLoaded ? _mortarInternalFuse.transform : null;
         public bool Enabled                                   => IsShellLoaded;
-        public bool IsIgnited                                 => _tubeState.Value.IsLaunched;
+        public bool IsIgnited                                 => _tubeState.Value.IsLaunched || _mortarInternalFuse.IsIgnited;
         public IFuseConnectionPoint ConnectionPoint           => _mortarInternalFuse.ConnectionPoint;
         public EntityDiameterDefinition DiameterDefinition    => _diameter;
         public string Name                                    => GenerateObjectNameWithOptionalShellName();

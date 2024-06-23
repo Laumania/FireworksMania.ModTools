@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
@@ -7,6 +8,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/FuseConnectionPoint")]
     public class FuseConnectionPoint : MonoBehaviour, IFuseConnectionPoint
     {
+        //Hacky way to show fuse connection points if FuseConnectionTool is in hand at spawn time - for shells in mortars
+        public static bool IsFuseConnectionToolEnabled = false;
+
         [SerializeField]
         private GameObject _activeIndicator;
 
@@ -17,28 +21,30 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Awake()
         {
-            if (_activeIndicator == null)
-            {
-                Debug.LogError($"Missing active indicator on '{this.name}'", this);
-                return;
-            }
-            
+            Preconditions.CheckNotNull(_activeIndicator);
             HideActiveIndicator();
         }
 
         private void Start()
         {
-            if (_fuse == null)
-            {
-                Debug.LogError($"Missing Fuse on '{this.name}'", this);
-                return;
-            }
+            Preconditions.CheckNotNull(_fuse);
+            
             _fuse.OnFuseIgnited += HideActiveIndicator;
 
             if(_activeIndicator != null)
                 Messenger.AddListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
+
+            ForceRefresh();
         }
 
+        public void ForceRefresh()
+        {
+            if (IsFuseConnectionToolEnabled && _fuse.IsUsed == false)
+                ShowActiveIndicator();
+            else
+                HideActiveIndicator();
+        }
+        
         private void FuseConnectionPoint_FuseConnectionToolEnableChanged(MessengerEventFuseConnectionToolEnableChanged arg)
         {
             if (arg.Enabled)

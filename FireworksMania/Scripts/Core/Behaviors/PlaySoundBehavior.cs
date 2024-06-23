@@ -17,6 +17,8 @@ namespace FireworksMania.Core.Behaviors
         [SerializeField]
         private bool _followTransform = false;
 
+        private bool _isPlaying = false;
+
         private void Start()
         {
             if (_playOnStart)
@@ -25,6 +27,7 @@ namespace FireworksMania.Core.Behaviors
 
         public void PlaySound()
         {
+            _isPlaying = true;
             Messenger.Broadcast(new MessengerEventPlaySound(_sound, this.transform, followTransform: _followTransform));
         }
 
@@ -35,7 +38,16 @@ namespace FireworksMania.Core.Behaviors
 
         public void StopSound()
         {
+            _isPlaying = false;
             Messenger.Broadcast(new MessengerEventStopSound(_sound, this.transform));
+        }
+
+        public void Toggle()
+        {
+            if(_isPlaying)
+                StopSound();
+            else
+                PlaySound();
         }
     }
 }

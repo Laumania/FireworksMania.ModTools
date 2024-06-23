@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using FireworksMania.Core.Utilities;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -17,12 +18,11 @@ using UnityEngine.Serialization;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/MortarBehavior")]
+    [SelectionBase]
     public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable
     {
         [Header("General")]
-        //[HideInInspector]
         [SerializeField]
-        //[Tooltip("This field should never been necessary to setup manually. It will be set automatically when this prefab is assigned to FireworksEntityDefinition")]
         private FireworkEntityDefinition _entityDefinition;
 
         [Header("Mortar Settings")]
@@ -117,12 +117,28 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public void Ignite(float ignitionForce)
         {
-            //Note: Do nothing here
+            GetNextIgnitable()?.Ignite(ignitionForce);
         }
 
         public void IgniteInstant()
         {
-            //Note: Do nothing here
+            GetNextIgnitable()?.IgniteInstant();
+        }
+
+        private IIgnitable GetNextIgnitable()
+        {
+            var isPickedUp = this.gameObject.GetComponent<IsPickedUp>().OrNull();
+
+            if (isPickedUp == null)
+                return null;
+
+            foreach (var mortarTube in _mortarTubes)
+            {
+                if(mortarTube.Enabled == true && mortarTube.IsIgnited == false)
+                    return mortarTube;
+            }
+
+            return null;
         }
 
         public string Name                                     => _entityDefinition.ItemName;
@@ -134,8 +150,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             set => _entityDefinition = (FireworkEntityDefinition)value;
         }
 
-        public Transform IgnitePositionTransform               => null;
-        public bool Enabled                                    => false;
+        public Transform IgnitePositionTransform               => GetNextIgnitable()?.IgnitePositionTransform;
+        public bool Enabled                                    => _mortarTubes.Any(x => x.Enabled);
         public bool IsIgnited                                  => _mortarTubes.Any(x => x.IsIgnited);
         public EntityDiameterDefinition DiameterDefinition     => _diameter;
     }

@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.6.5] - 2024-6-23 (CLOSED BETA)
+Target Unity version: [v2022.3.33f1](https://unity3d.com/unity/whats-new/2022.3.33) (**ATTENTION**: New Unity version)
+
+### Added
+- Added DestructibleBehavior. For now just know it's there, as I need to create a video to explain how it works, as there are a set of things that need to be in place for this to work. However, Im putting it in here so I can test it myself from an actual mod - so far I have only used this from within the game and there might be differences. So it's here, don't use it yet really :)
+- Add UseableNetworkBehavior, which is essentially the same as the UseableBehavior, except this is synced in multiplayer. I decided to create a new version of this, as there might be use cases for a UseableBehavior that should really only be client side
+- Added a lot of new classes and interfaces to support various new things in the game
+
+### Changed
+- Updated a lot of behavior and classes to work with NetCode, improvement etc.
+
+### Fixed
+- Fixed various bugs ;)
+
 ## [v2024.4.5] - 2024-4-22 (CLOSED BETA)
 Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
 

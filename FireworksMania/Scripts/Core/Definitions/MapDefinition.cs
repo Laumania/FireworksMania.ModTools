@@ -1,5 +1,12 @@
-﻿using System;
+﻿using FireworksMania.Core.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using FireworksMania.Core.Utilities;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 namespace FireworksMania.Core.Definitions
 {
@@ -26,6 +33,11 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private GameSettings _gameSettings;
 
+        [Header("Multiplayer Settings")]
+        [Tooltip("All objects in a map that have a NetworkObject component on them, HAVE to be a prefab instance. Add reference to the prefab itself here for it to work.")]
+        [SerializeField]
+        private List<GameObject> _networkObjectPrefabs = new List<GameObject>();
+
 
         [Header("Environment Settings")]
         [SerializeField]
@@ -39,17 +51,61 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private WeatherSettings _weatherSettings;
 
+        public void OnValidate()
+        {
+            for (var i = 0; i < _networkObjectPrefabs.Count; i++)
+            {
+                var prefab = _networkObjectPrefabs[i];
+                if (prefab != null)
+                {
+                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(), $"{nameof(MapDefinition)}: NetworkObject prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
+                }
+            }
+        }
 
-        public string SceneName                      => _sceneName;
-        public string Description                    => _description;
-        public string MapName                        => _mapName;
-        public Sprite[] Thumbnails                   => _thumbnails;
-        public LightingSettings LightingSettings     => _lightingSettings;
-        public SkySettings SkySettings               => _skySettings;
-        //public AudioSettings AudioSettings           => _audioSettings;
-        public TimeSettings TimeSettings             => _timeSettings;
-        public WeatherSettings WeatherSettings       => _weatherSettings;
-        public GameSettings GameSettings             => _gameSettings;
+#if UNITY_EDITOR
+        [ContextMenu("Populate NetworkObjectPrefabs from current open scene")]
+        void PopulateNetworkObjectPrefabsFromScene()
+        {
+            _networkObjectPrefabs.Clear();
+            //Todo: Validate that the scene that is open is also named the same as stated in _sceneName
+            var inSceneNetworkObjects = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            foreach (var networkObject in inSceneNetworkObjects)
+            {
+                if (UnityEditor.PrefabUtility.GetPrefabAssetType(networkObject.gameObject) == UnityEditor.PrefabAssetType.Regular && UnityEditor.PrefabUtility.IsOutermostPrefabInstanceRoot(networkObject.gameObject))
+                {
+                    var sourcePrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(networkObject.gameObject) as GameObject;
+                    if (sourcePrefab.OrNull() != null)
+                    {
+                        if (_networkObjectPrefabs.Contains(sourcePrefab) == false)
+                        {
+                            _networkObjectPrefabs.Add(sourcePrefab);
+                        }
+                    }
+                    else
+                        Debug.LogWarning($"Unable to find Prefab for {networkObject.gameObject.name}");
+                }
+            }
+
+            _networkObjectPrefabs = _networkObjectPrefabs.OrderBy(x => x.name).ToList();
+
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+#endif
+
+
+        public string SceneName                            => _sceneName;
+        public string Description                          => _description;
+        public string MapName                              => _mapName;
+        public Sprite[] Thumbnails                         => _thumbnails;
+        public LightingSettings LightingSettings           => _lightingSettings;
+        public SkySettings SkySettings                     => _skySettings;
+        //public AudioSettings AudioSettings               => _audioSettings;
+        public TimeSettings TimeSettings                   => _timeSettings;
+        public WeatherSettings WeatherSettings             => _weatherSettings;
+        public GameSettings GameSettings                   => _gameSettings;
+        public List<GameObject> NetworkObjectPrefabs       => _networkObjectPrefabs;
     }
 
     [Serializable]
