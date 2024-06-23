@@ -7,6 +7,7 @@ using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Persistence;
+using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,6 +15,7 @@ using Random = UnityEngine.Random;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
+    [SelectionBase]
     public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
     {
         [Header("General")]
@@ -228,8 +230,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             OnDestroyed?.Invoke(this);
             
-            Destroy(this.gameObject);
-            
+            this.gameObject.DestroyOrDespawn();
         }
 
         public virtual CustomEntityComponentData CaptureState()
@@ -278,7 +279,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 Debug.LogError($"Trying to call Ignite on '{this.gameObject.name}' but Fuse is null... that's a problem - trying to delete firework to avoid further issues");
 
                 if (NetworkManager.IsServer)
-                    GameObject.Destroy(this.gameObject);
+                    this.gameObject.DestroyOrDespawn();
 
                 return;
             }
@@ -293,7 +294,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 Debug.LogError($"Trying to call Ignite on '{this.gameObject.name}' but Fuse is null... that's a problem - trying to delete firework to avoid further issues");
                 
                 if(NetworkManager.IsServer)
-                    GameObject.Destroy(this.gameObject);
+                    this.gameObject.DestroyOrDespawn();
 
                 return;
             }

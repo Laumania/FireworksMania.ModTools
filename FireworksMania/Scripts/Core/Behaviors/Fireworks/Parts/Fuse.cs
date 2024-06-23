@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Persistence;
+using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -43,8 +44,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private UnityEvent _onFuseIgnited;
         [SerializeField]
         private UnityEvent _onFuseCompleted;
-        public Action OnFuseCompleted;
-        public Action OnFuseIgnited;
+        public event Action OnFuseCompleted;
+        public event Action OnFuseIgnited;
 
         private CancellationToken _token;
         private MeshRenderer[] _meshRenderer;
@@ -58,17 +59,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Awake()
         {
-            if (_fuseConnectionPoint == null || _fuseConnectionPoint.Equals(null))
-            {
-                Debug.LogError("Missing IFuseConnectionPoint", this);
-                return;
-            }
-
-            if (_particleSystem == null)
-            {
-                Debug.LogError("Missing at ParticleSystem", this);
-                return;
-            }
+            Preconditions.CheckNotNull(_fuseConnectionPoint);
+            Preconditions.CheckNotNull(_particleSystem);
 
             _fuseConnectionPoint.Setup(this);
             _meshRenderer             = this.GetComponentsInChildren<MeshRenderer>();
@@ -87,6 +79,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _isIgnitionVisualsShown.OnValueChanged += (prevValue, newValue) =>
             {
                 SetEmissionOnParticleSystems(newValue);
+            };
+
+            _isUsed.OnValueChanged += (prevValue, newValue) =>
+            {
+                _fuseConnectionPoint.ForceRefresh();
             };
 
             SetEmissionOnParticleSystems(_isIgnitionVisualsShown.Value);
@@ -208,6 +205,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _isIgnited.Value             = false;
             _isIgnitionVisualsShown.Value= false;
             _isUsed.Value                = false;
+            _fuseConnectionPoint.ForceRefresh();
         }
 
         private void CalculateRemainingFuseTime(float ignitionForce)

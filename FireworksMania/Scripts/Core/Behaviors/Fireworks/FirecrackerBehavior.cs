@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
@@ -60,7 +61,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
 
             if(IsServer)
-                Destroy(this.gameObject);
+                this.gameObject.DestroyOrDespawn();
         }
 
         private void DisableRigidBodyAndColliders()

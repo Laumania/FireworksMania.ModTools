@@ -1,3 +1,4 @@
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,8 +23,19 @@ namespace FireworksMania.Core.Behaviors
         private void Awake()
         {
             Messenger.AddListener<MessengerEventDayNightChanged>(OnDayNightChanged);
+            Initialize();
         }
 
+        private void Initialize()
+        {
+            var enviroSkyManager = DependencyResolver.Instance?.Get<IEnviroSkyManager>();
+            if (enviroSkyManager != null)
+            {
+                _lastIsDay = !enviroSkyManager.IsNight;
+                InternalHandlingChanges();
+            }
+        }
+        
         private void OnDestroy()
         {
             Messenger.RemoveListener<MessengerEventDayNightChanged>(OnDayNightChanged);
