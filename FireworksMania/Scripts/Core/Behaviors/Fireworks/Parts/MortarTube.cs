@@ -60,7 +60,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private SaveableEntity _saveableEntity;
                 
         private NetworkVariable<MortarTubeState> _tubeState = new NetworkVariable<MortarTubeState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        
+        private MortarTubeState? _restoredState;
+
         private Dictionary<int, Rigidbody> _otherObjectsInTube = new Dictionary<int, Rigidbody>();
 
         private void Awake()
@@ -80,19 +81,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Start()
         {
-            if (_mortarInternalFuse == null)
-            {
-                Debug.LogError($"Missing {nameof(Fuse)} on '{this.gameObject.name}' - this is not gonna work! Make sure this fireworks have a fuse.", this);
-                this.enabled = false;
-                return;
-            }
-
             _saveableEntity = GetComponentInParent<SaveableEntity>(); //Note: Test for now to see if this is a workable approach... can we be sure it always get the right one?
-            if (_saveableEntity == null)
-            {
-                Debug.LogError($"Missing '{nameof(SaveableEntity)}' which is a required component - make sure '{this.name}' have one", this);
-                return;
-            }
+            Preconditions.CheckNotNull(_mortarInternalFuse);
+            Preconditions.CheckNotNull(_saveableEntity);
 
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
 
@@ -117,6 +108,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+
+            if (_restoredState.HasValue)
+                _tubeState.Value = _restoredState.Value;
+
             _tubeState.OnValueChanged += OnMortarTubeStateChanged;
 
             Setup(_tubeState.Value.ShellEntityId.ToString());
@@ -160,6 +155,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             var entityDatabase       = DependencyResolver.Instance.Get<IEntityDefinitionDatabase>();
             var entityDefinition     = entityDatabase.GetEntityDefinition(entityDefinitionId);
+
+            if (entityDefinition == null)
+                return;
+
             _shellBehaviorFromPrefab = entityDefinition.PrefabGameObject.GetComponent<ShellBehavior>();
 
             _launchEffect                    = Instantiate(_shellBehaviorFromPrefab.LaunchEffectPrefab, this.transform);
@@ -416,6 +415,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return this.ParentEntityDefinition.ItemName;
         }
 
+        internal void RestoreTubeState(string shellEntityId)
+        {
+            _restoredState = new MortarTubeState()
+            {
+                IsLaunched             = false,
+                Seed                   = 0,
+                ServerStartTimeAsFloat = 0,
+                ShellEntityId          = shellEntityId
+            };
+        }
+
         private bool IsShellLoaded                            => _shellBehaviorFromPrefab != null;
         public Transform IgnitePositionTransform              => IsShellLoaded ? _mortarInternalFuse.transform : null;
         public bool Enabled                                   => IsShellLoaded;
@@ -424,6 +434,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public EntityDiameterDefinition DiameterDefinition    => _diameter;
         public string Name                                    => GenerateObjectNameWithOptionalShellName();
         public GameObject GameObject                          => this.gameObject;
+        public MortarTubeState TubeState                      => _tubeState.Value;
 
         internal FireworkEntityDefinition ParentEntityDefinition
         {

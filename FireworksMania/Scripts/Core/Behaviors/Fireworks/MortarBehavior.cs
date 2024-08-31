@@ -4,16 +4,11 @@ using FireworksMania.Core.Definitions;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Persistence;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using FireworksMania.Core.Utilities;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
@@ -37,16 +32,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void Awake()
         {
-            if (_mortarTubes == null || _mortarTubes.Length == 0)
-            {
-                Debug.LogError($"No MortarTubes found on {this.gameObject.name} - this is not gonna work, just saying", this.gameObject);
-                this.enabled = false;
-                return;
-            }
+            Preconditions.CheckNotNull(_mortarTubes);
+            Preconditions.CheckState(_mortarTubes.Length != 0, $"'{nameof(_mortarTubes)}' cannot be empty");
 
             _rigidbody = GetComponent<Rigidbody>();
+        }
 
+        public override void OnNetworkSpawn()
+        {
             SetupMortarTubes();
+            base.OnNetworkSpawn();
         }
 
         public override void OnDestroy()
@@ -59,10 +54,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void SetupMortarTubes()
         {
-            foreach (var mortarTube in _mortarTubes)
+            for (int i = 0; i < _mortarTubes.Length; i++)
             {
+                var mortarTube = _mortarTubes[i];
+
                 mortarTube.OnShellLaunched += MortarTube_OnShellLaunched;
                 mortarTube.ParentEntityDefinition = this._entityDefinition;
+                mortarTube.GetFuse().Index = i;
             }
         }
 
@@ -107,12 +105,27 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public CustomEntityComponentData CaptureState()
         {
-            throw new NotImplementedException();
+            var customData       = new CustomEntityComponentData();
+            var shellEntityIds   = new List<string>();
+
+            foreach (var mortarTube in _mortarTubes)
+            {
+                shellEntityIds.Add(mortarTube.TubeState.ShellEntityId.ToString());
+            }
+
+            customData.Add<List<string>>("ShellEntityIds", shellEntityIds);
+            return customData;
         }
 
         public void RestoreState(CustomEntityComponentData customComponentData)
         {
-            throw new NotImplementedException();
+            var shellEntityIds = customComponentData.Get<List<string>>("ShellEntityIds");
+
+            for (int i = 0; i < _mortarTubes.Length; i++)
+            {
+                var mortarTube = _mortarTubes[i];
+                mortarTube.RestoreTubeState(shellEntityIds[i]);
+            }
         }
 
         public void Ignite(float ignitionForce)

@@ -57,7 +57,7 @@ namespace FireworksMania.Core.Editor.Utilities
             }
         }
 
-        [MenuItem("Mod Tools/Utilities/Mark all NetworkObjects ss dirty in current scene")]
+        [MenuItem("Mod Tools/Utilities/Mark all NetworkObjects as dirty in current scene")]
         private static void MarkAllNetworkObjectsAsDirtyInCurrentScene()
         {
             var networkObjectsInScene = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);

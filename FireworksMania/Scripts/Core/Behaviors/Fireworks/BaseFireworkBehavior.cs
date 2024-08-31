@@ -235,41 +235,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public virtual CustomEntityComponentData CaptureState()
         {
-            var customData         = new CustomEntityComponentData();
-            var currentRigidbody   = this.GetComponent<Rigidbody>();
-
-            customData.Add<SerializableVector3>(nameof(BaseFireworkBehaviorData.Position), new SerializableVector3
-            {
-                X = this.transform.position.x,
-                Y = this.transform.position.y,
-                Z = this.transform.position.z
-            });
-
-            customData.Add<SerializableRotation>(nameof(BaseFireworkBehaviorData.Rotation), new SerializableRotation()
-            {
-                X = this.transform.rotation.x,
-                Y = this.transform.rotation.y,
-                Z = this.transform.rotation.z,
-                W = this.transform.rotation.w
-            });
-
-            customData.Add<bool>(nameof(BaseFireworkBehaviorData.IsKinematic), currentRigidbody != null ? currentRigidbody.isKinematic : false);
-        
-            return customData;
+            return new CustomEntityComponentData();
         }
 
         public virtual void RestoreState(CustomEntityComponentData customComponentData)
         {
-            var position    = customComponentData.Get<SerializableVector3>(nameof(BaseFireworkBehaviorData.Position));
-            var rotation    = customComponentData.Get<SerializableRotation>(nameof(BaseFireworkBehaviorData.Rotation));
-            var isKinematic = customComponentData.Get<bool>(nameof(BaseFireworkBehaviorData.IsKinematic));
-
-            this.transform.position   = new Vector3(position.X, position.Y, position.Z);
-            this.transform.rotation   = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
-        
-            var rigidbody = this.GetComponent<Rigidbody>();
-            if (rigidbody != null)
-                rigidbody.isKinematic = isKinematic;
         }
 
         public virtual void Ignite(float ignitionForce)

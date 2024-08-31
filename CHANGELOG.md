@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.8.7] - 2024-8-31 (CLOSED BETA)
+Target Unity version: [v2022.3.44f1](https://unity3d.com/unity/whats-new/2022.3.44) (**ATTENTION**: New Unity version)
+
+### Changed
+- Changed SaveableEntity to save/load Transform and Rigidbody data, meaning SaveableTransformComponent and SaveableRigidbodyComponent are now marked as obsolete. All logic from them have been removed, so you can remove them from your prefabs at will, all will still work if they are there or not. Did this change to make things simpler for modders really, as you now don't have to add that many components for the most common cases, which is that you want these data save/loaded
+- Made a lot of changes in relation to get blueprints to work in "multiplayer", but none of that should really have any impact on how the Mod Tools are used
+- Upgraded NGO dependency to 1.11.0 as that's the version in the game now 
+
 ## [v2024.6.5] - 2024-6-23 (CLOSED BETA)
 Target Unity version: [v2022.3.33f1](https://unity3d.com/unity/whats-new/2022.3.33) (**ATTENTION**: New Unity version)
 

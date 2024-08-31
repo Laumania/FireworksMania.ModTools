@@ -199,6 +199,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _clientRequestForIgnitionSend = false;
             SetEmissionOnParticleSystems(false);
 
+            if(SaveableEntityOwner.OrNull() != null)
+                SaveableEntityOwner.SetIsValidForSaving(true);
+
             if (!IsServer)
                 return;
 
@@ -326,8 +329,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public Transform IgnitePositionTransform    => _fuseConnectionPoint.Transform;
         public IFuseConnectionPoint ConnectionPoint => _fuseConnectionPoint;
-
-        public bool Enabled => IsUsed == false && this.enabled;
+        public bool Enabled                         => IsUsed == false && this.enabled;
+        /// <summary>
+        /// Index of this particular fuse if its on an SaveableEntity that contains multiple fuses. Defaults to 0.
+        /// </summary>
+        public int Index { get; internal set; }              = 0;
 
         public float FuseTime
         {
