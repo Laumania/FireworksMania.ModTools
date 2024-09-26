@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Common;
+using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -21,11 +22,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _rigidbody = this.GetComponent<Rigidbody>();
 
-            if (_rigidbody == null)
-                Debug.LogError("Missing Rigidbody", this);
-
-            if (_effect == null)
-                Debug.LogError($"Missing particle effects in {nameof(CakeBehavior)}!");
+            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_effect, $"Missing particle effects in {nameof(CakeBehavior)} - '{this.gameObject.name}'!");
 
             AvoidLoopingEffect();
             StopAllEffects();

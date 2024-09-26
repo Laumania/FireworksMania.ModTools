@@ -328,7 +328,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 otherObjectRigidbody.isKinematic = false;
                 otherObjectRigidbody.MovePosition(((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f)));
 
-                var relativeToMassExplosionForce = originExplosionForce * Mathf.Clamp(otherObjectRigidbody.mass / originExplosionForce, .05f, 1f);
+                var relativeToMassExplosionForce = originExplosionForce * Mathf.Clamp(otherObjectRigidbody.mass / originExplosionForce, .1f, 1f);
                 otherObjectRigidbody.AddExplosionForce(relativeToMassExplosionForce, _mortarTubeBottom.transform.position, explosionRadius, 0.45f, ForceMode.Impulse);
             }
             _otherObjectsInTube.Clear();

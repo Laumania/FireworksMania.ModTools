@@ -19,23 +19,21 @@ namespace FireworksMania.Core.Behaviors
         private float _ignoreDamageUnder = 0f;
         
         [SerializeField]
+        [Tooltip("This prefab will be spawned and replace this gameobject when the CurrentHitPoints reach 0. If no prefab is specified, this gameobject will just be destroyed.")]
         private GameObject _destroyedPrefab;
 
         private int _debriLayerInt = -1;
 
         private void Awake()
         {
-            //_destructible = GetComponent<DestroyIt.Destructible>();
-
             _debriLayerInt    = LayerMask.NameToLayer("DestroyItDebris");
             _currentHitPoints = _totalHitPoints;
         }
 
         public void ApplyDamage(float damage)
         {
-            if(NetworkManager.Singleton.IsServer && damage > _ignoreDamageUnder && IsDestroyed == false)
+            if(NetworkManager.Singleton.IsServer && CoreSettings.EnableDestruction && damage > _ignoreDamageUnder && IsDestroyed == false)
             {
-                //_destructible.ApplyDamage(damage);
                 _currentHitPoints -= damage;
 
                 if(_currentHitPoints <= 0)

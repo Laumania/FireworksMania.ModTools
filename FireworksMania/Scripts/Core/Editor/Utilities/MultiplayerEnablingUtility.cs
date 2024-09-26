@@ -39,7 +39,7 @@ namespace FireworksMania.Core.Editor.Utilities
         }
 
 
-        [MenuItem("Mod Tools/Utilities/Revert All NetworkObject Overrides In Current Scene")]
+        [MenuItem("Mod Tools/Utilities/Multiplayer/Revert All NetworkObject Overrides In Current Scene")]
         private static void RevertAllNetworkObjectOverridesInCurrentScene()
         {
             var networkObjectsInScene = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
@@ -57,7 +57,7 @@ namespace FireworksMania.Core.Editor.Utilities
             }
         }
 
-        [MenuItem("Mod Tools/Utilities/Mark all NetworkObjects as dirty in current scene")]
+        [MenuItem("Mod Tools/Utilities/Multiplayer/Mark all NetworkObjects as dirty in current scene")]
         private static void MarkAllNetworkObjectsAsDirtyInCurrentScene()
         {
             var networkObjectsInScene = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);

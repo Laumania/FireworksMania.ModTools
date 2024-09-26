@@ -6,7 +6,11 @@ using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
 
 namespace FireworksMania.Core.Definitions
 {
@@ -51,29 +55,44 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private WeatherSettings _weatherSettings;
 
-        public void OnValidate()
+
+
+#if UNITY_EDITOR
+        private void OnValidate()
         {
             for (var i = 0; i < _networkObjectPrefabs.Count; i++)
             {
                 var prefab = _networkObjectPrefabs[i];
-                if (prefab != null)
+                if (prefab.OrNull() != null)
                 {
-                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(), $"{nameof(MapDefinition)}: NetworkObject prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
+                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(),
+                        $"{nameof(MapDefinition)}: NetworkObject prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
                 }
             }
+
+            if (EditorSceneManager.GetActiveScene().name == _sceneName)
+                PopulateNetworkObjectPrefabsFromScene();
         }
 
-#if UNITY_EDITOR
-        [ContextMenu("Populate NetworkObjectPrefabs from current open scene")]
-        void PopulateNetworkObjectPrefabsFromScene()
-        {
-            _networkObjectPrefabs.Clear();
-            //Todo: Validate that the scene that is open is also named the same as stated in _sceneName
-            var inSceneNetworkObjects = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
+        [ContextMenu("Populate NetworkObjectPrefabs from current open scene")]
+        private void PopulateNetworkObjectPrefabsFromScene()
+        {
+            if (EditorSceneManager.GetActiveScene().name != _sceneName)
+            {
+                Debug.LogWarning($"Unable to populate networkobject prefabs from the current scene '{EditorSceneManager.GetActiveScene().name}', as it is not matching the scene '{this._sceneName}' on '{this.name}'", this);
+                return;
+            }
+
+            var networkObjectsAsHashSet = _networkObjectPrefabs.ToHashSet();
+
+            _networkObjectPrefabs.Clear();
+
+            var inSceneNetworkObjects = GameObject.FindObjectsByType<NetworkObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var networkObject in inSceneNetworkObjects)
             {
-                if (UnityEditor.PrefabUtility.GetPrefabAssetType(networkObject.gameObject) == UnityEditor.PrefabAssetType.Regular && UnityEditor.PrefabUtility.IsOutermostPrefabInstanceRoot(networkObject.gameObject))
+                if (UnityEditor.PrefabUtility.GetPrefabAssetType(networkObject.gameObject) == UnityEditor.PrefabAssetType.Regular ||
+                    UnityEditor.PrefabUtility.GetPrefabAssetType(networkObject.gameObject) == UnityEditor.PrefabAssetType.Variant && UnityEditor.PrefabUtility.IsOutermostPrefabInstanceRoot(networkObject.gameObject))
                 {
                     var sourcePrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(networkObject.gameObject) as GameObject;
                     if (sourcePrefab.OrNull() != null)
@@ -81,10 +100,13 @@ namespace FireworksMania.Core.Definitions
                         if (_networkObjectPrefabs.Contains(sourcePrefab) == false)
                         {
                             _networkObjectPrefabs.Add(sourcePrefab);
+
+                            if(networkObjectsAsHashSet.Contains(sourcePrefab) == false)
+                                Debug.Log($"Added '{sourcePrefab.name}' to NetworkObjectPrefabs on '{this.name}'", this);
                         }
                     }
                     else
-                        Debug.LogWarning($"Unable to find Prefab for {networkObject.gameObject.name}");
+                        Debug.LogWarning($"Unable to find Prefab for {networkObject.gameObject.name}", this);
                 }
             }
 
@@ -130,11 +152,14 @@ namespace FireworksMania.Core.Definitions
         private Common.SerializableNullable<AnimationCurve> _sunIntensityCurve;
         [SerializeField]
         private Common.SerializableNullable<AnimationCurve> _moonIntensityCurve;
+        [SerializeField]
+        private Common.SerializableNullable<UnityEngine.Rendering.AmbientMode> _ambientMode;
 
-        public Common.SerializableNullable<AnimationCurve> AmbientIntensityCurve => _ambientIntensityCurve;
-        public Common.SerializableNullable<Gradient> AmbientSkyColorGradient     => _ambientSkyColorGradient;
-        public Common.SerializableNullable<AnimationCurve> SunIntensityCurve     => _sunIntensityCurve;
-        public Common.SerializableNullable<AnimationCurve> MoonIntensityCurve    => _moonIntensityCurve;
+        public Common.SerializableNullable<AnimationCurve> AmbientIntensityCurve                       => _ambientIntensityCurve;
+        public Common.SerializableNullable<Gradient> AmbientSkyColorGradient                           => _ambientSkyColorGradient;
+        public Common.SerializableNullable<AnimationCurve> SunIntensityCurve                           => _sunIntensityCurve;
+        public Common.SerializableNullable<AnimationCurve> MoonIntensityCurve                          => _moonIntensityCurve;
+        public Common.SerializableNullable<UnityEngine.Rendering.AmbientMode> AmbientMode              => _ambientMode;
     }
 
     [Serializable]

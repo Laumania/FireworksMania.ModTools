@@ -9,5 +9,6 @@
         public static bool EnableExplosionPhysicsForces { get; set; }
         public static bool EnableIgnitionForces         { get; set; }
         public static bool EnableCameraShake            { get; set; }
+        public static bool EnableDestruction            { get; set; }
     }
 }

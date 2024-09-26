@@ -60,7 +60,7 @@ namespace FireworksMania.Core.Editor.Utilities
             { "m_Script: {fileID: -457894799, guid: 15f2946a651cfd84c804c26926af6433, type: 3}", new ScriptReplacementData() { LegacyScriptName = "GameReferenceManager", ReplacementText = "m_Script: {fileID: 11500000, guid: 17f9f398e264371489e3652d7275b32b, type: 3}" } },
         };
 
-        [MenuItem("Mod Tools/Utilities/Remap legacy Core script to new Core")]
+        [MenuItem("Mod Tools/Utilities/Upgrade/Remap legacy Core script to new Core")]
         private static void RemapLegacyCoreScriptsToNewCore()
         {
             Debug.Log("Begin remapping legacy FireworksMania.Core scripts to new FireworksMania.Core scripts");

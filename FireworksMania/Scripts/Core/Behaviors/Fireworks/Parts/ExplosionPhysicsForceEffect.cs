@@ -112,7 +112,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 if (applyPhysicsForce && CoreSettings.EnableExplosionPhysicsForces)
                 {
-                    if (HandleDestructibles(_nonAllocColliderArray, foundCount, position))
+                    if (CoreSettings.EnableDestruction && HandleDestructibles(_nonAllocColliderArray, foundCount, position))
                     {
                         HandleDebris(position);
                     }

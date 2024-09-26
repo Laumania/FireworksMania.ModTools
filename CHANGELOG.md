@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.9.4] - 2024-9-26 (CLOSED BETA)
+Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47) (**ATTENTION**: New Unity version)
+
+### Added
+- Added Gizmo arrow to show the direction of the PlayerSpawnLocation
+- Added more settings to GameSoundDefinition
+  - "Loop" specifies if the sound should loop
+  - "SoundBus" determine the type of sound. Default: Used for most sounds, Ambient: Used for ambient sounds and are forced to be 2D, UI: Used for UI sounds and are forced to be 2D, Explosions: Used for loud explosions as sounds of this type will duck other sounds for a short while to emphasize how loud it is.
+- Added more settings to MapDefinition
+  - "AmbientMode" sets how the ambient light in the scene should to handled, the difference can be pretty big so try out the different ones and see what fit your map, remember to test in both day and night time in the map
+
+### Changed
+- Renamed some Mod Tools menu items to be under a "Upgrade" subfolder, preparing for the Mod Tools to go public beta and some information about how to upgrade your old mods
+
+
+
 ## [v2024.8.7] - 2024-8-31 (CLOSED BETA)
 Target Unity version: [v2022.3.44f1](https://unity3d.com/unity/whats-new/2022.3.44) (**ATTENTION**: New Unity version)
 

@@ -33,7 +33,7 @@ namespace FireworksMania.Core.Editor.Utilities
         //    return Selection.gameObjects?.Length > 0;
         //}
 
-        [MenuItem("Mod Tools/Utilities/Find all Prefabs with missing scripts")]
+        [MenuItem("Mod Tools/Utilities/Upgrade/Find all Prefabs with missing scripts")]
         private static void FindPrefabsWithMissingScriptInProject()
         {
             Debug.Log("Looking for Prefabs with missing scripts...");

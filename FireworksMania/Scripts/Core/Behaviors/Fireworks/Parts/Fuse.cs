@@ -139,7 +139,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_clientRequestForIgnitionSend || _isIgnited.Value)
                 return;
 
-            SaveableEntityOwner.SetIsValidForSaving(false);
+            if(SaveableEntityOwner != null)
+                SaveableEntityOwner.SetIsValidForSaving(false);
             
             if (_token.IsCancellationRequested)
                 return;
