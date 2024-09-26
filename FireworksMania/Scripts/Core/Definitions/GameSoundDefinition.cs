@@ -73,7 +73,7 @@ namespace FireworksMania.Core.Definitions
         public float RandomPitchMin                         => _randomPitchMin;
         public float RandomPitchMax                         => _randomPitchMax;
         public float Volume                                 => _volume;
-        public bool Loop                                    => _lopp;
+        public bool Loop                                    => _loop;
         public SoundBusGroups SoundBus                      => _soundBus;
 #else
         public AudioClip[] AudioVariationClips
