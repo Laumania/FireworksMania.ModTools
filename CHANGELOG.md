@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.9.5] - 2024-9-27 (CLOSED BETA)
+Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47)
+
+### Added
+- Added an "arrow" Gizmo to CharacterCameraPosition to show the forward direction
+- Added new rightclick menuitem to add a CharacterCameraPositionPrefab to your character to make it easier. Just right click on an gameobject in the hierarchy and look in the "Fireworks Mania" sub menu
+
 ## [v2024.9.4] - 2024-9-26 (CLOSED BETA)
 Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47) (**ATTENTION**: New Unity version)
 

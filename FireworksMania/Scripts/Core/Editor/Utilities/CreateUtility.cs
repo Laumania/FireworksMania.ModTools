@@ -142,6 +142,12 @@ namespace FireworksMania.Core.Editor.Utilities
         {
             CreateUtility.CreatePrefabAsChild("Prefabs/PlayerSpawnLocationPrefab", menuCommand.context as GameObject);
         }
+
+        [MenuItem("GameObject/Fireworks Mania/Parts/Character/Character Camera Position Prefab", priority = 1)]
+        public static void CreateCharacterCameraPositionPrefab(MenuCommand menuCommand)
+        {
+            CreateUtility.CreatePrefabAsChild("Prefabs/CharacterCameraPositionPrefab", menuCommand.context as GameObject);
+        }
     }
 
     public static class CreateUtility
