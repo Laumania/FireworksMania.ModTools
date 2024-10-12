@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.10.3] - 2024-10-12 (CLOSED BETA)
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+### Added
+- Added new "Icon" field to CharacterDefinition as characters can now be selected in UI in the game
+- Added package "RuntimePreviewGenerator" and some scripts based on work of Panini and Guanaco0403 to help generate previews of fireworks and propd. Right click on a prefab in the Project window and navigate to Fireworks Mania/Generate Preview/... to see your options. This is the first version so I'm sure I will tweak it with help from some of you guys
+
 ## [v2024.9.5] - 2024-9-27 (CLOSED BETA)
 Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47)
 

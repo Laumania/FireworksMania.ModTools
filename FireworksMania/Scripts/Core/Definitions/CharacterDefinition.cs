@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FireworksMania.Core.Definitions
 {
@@ -13,6 +14,9 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private string _name;
 
+        [SerializeField]
+        private Sprite _icon;
+
         [Tooltip("Prefab with the character prefab.")]
         [SerializeField]
         private GameObject _characterPrefab;
@@ -25,5 +29,6 @@ namespace FireworksMania.Core.Definitions
         public Avatar CharacterAvatar     => _characterAvatar;
         public string Id                  => _id;
         public string Name                => _name;
+        public Sprite Icon                => _icon;
     }
 }

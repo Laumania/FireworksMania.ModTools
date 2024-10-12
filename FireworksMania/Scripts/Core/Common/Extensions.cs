@@ -38,5 +38,23 @@ namespace FireworksMania.Core.Common
                 particleSystem.Simulate(time, true, true);
             }
         }
+
+        public static string ToDelimitedString<T>(this IEnumerable<T> sequence)
+        {
+            if (sequence == null)
+                return "null";
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("(");
+            bool flag = true;
+            foreach (T obj in sequence)
+            {
+                if (!flag)
+                    stringBuilder.Append(", ");
+                flag = false;
+                stringBuilder.Append((object)obj);
+            }
+            stringBuilder.Append(")");
+            return stringBuilder.ToString();
+        }
     }
 }
