@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.10.4] - 2024-10-17 (CLOSED BETA)
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+### Added
+- Included a new "PreviewLightingScene" which is used to set the light for the right click on prefab "Preview Generation" feature
+
 ## [v2024.10.3] - 2024-10-12 (CLOSED BETA)
 Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
 

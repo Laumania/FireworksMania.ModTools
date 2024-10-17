@@ -2,9 +2,13 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using UnityEditor.SceneManagement;
 
 public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 {
+    private const string PreviewSceneName = "PreviewLightingScene";
+    private const string PreviewScenePath = "Assets/FireworksMania/Scenes/Editor/PreviewLightingScene.unity";
+
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Orthographic/Front View")]
     public static void Prefab2PngOF()
     {
@@ -59,6 +63,8 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 
     public static void GenerateCharacterPreviewImageAsset(GameObject pref)
     {
+        LoadPreviewLightingScene();
+
         int width                                      = 512;
         int height                                     = 512;
 
@@ -78,9 +84,16 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         DestroyImmediate(temp);
     }
 
+    private static void LoadPreviewLightingScene()
+    {
+        if (EditorSceneManager.GetActiveScene().name != PreviewSceneName)
+            EditorSceneManager.OpenScene(PreviewScenePath);
+    }
 
     public static Sprite CaptureImage(GameObject pref, bool front, bool Ortho)
     {
+        LoadPreviewLightingScene();
+
         int width = 512;
         int height = 512;
         RuntimePreviewGenerator.BackgroundColor = Color.clear;
@@ -115,6 +128,7 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         Sprite result = SetTex(RuntimePreviewGenerator.GenerateModelPreview(temp.transform, width, height, false, true), temp, folderPath);
 
         DestroyImmediate(temp);
+
         return result;
     }
 
