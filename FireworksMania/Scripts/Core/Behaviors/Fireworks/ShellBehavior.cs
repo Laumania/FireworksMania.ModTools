@@ -7,7 +7,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/ShellBehavior")]
-    public class ShellBehavior : BaseFireworkBehavior
+    public class ShellBehavior : BaseFireworkBehavior, IHaveEntityDiameterDefinition
     {
         [SerializeField]
         private EntityDiameterDefinition _diameter;

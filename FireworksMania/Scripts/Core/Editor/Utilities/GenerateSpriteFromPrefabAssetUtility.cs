@@ -3,68 +3,85 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using FireworksMania.Core.Utilities;
 using UnityEditor.SceneManagement;
+using FireworksMania.Core.Definitions;
 
 public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 {
-    private const string PreviewSceneName = "PreviewLightingScene";
+    private const string PreviewLightingPrefabName          = "PreviewLightingPrefab";
+    private static GameObject PreviewLightingPrefab         = null;
+    private static GameObject PreviewLightingPrefabInstance = null;
+
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Orthographic/Front View")]
     public static void Prefab2PngOF()
     {
-        GameObject Prefab = Selection.activeGameObject;
-
-        if (PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.Model) return;
-
-        CaptureImage(Prefab, true, true);
+        InstansiatePreviewLightingPrefab();
+        foreach (var selectedGameObjectPrefab in Selection.gameObjects)
+        {
+            if (PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.Model) return;
+            
+            CaptureImage(selectedGameObjectPrefab, true, true);
+        }
+        DestroyPreviewLightingPrefabInstance();
     }
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Front View Character")]
     public static void PrefabCharacter2PngOF()
     {
+        InstansiatePreviewLightingPrefab();
         foreach (var selectedGameObjectPrefab in Selection.gameObjects)
         {
             if (PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.Model) return;
 
             GenerateCharacterPreviewImageAsset(selectedGameObjectPrefab);
         }
+        DestroyPreviewLightingPrefabInstance();
     }
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Orthographic/Back View")]
     public static void Prefab2PngBF()
     {
-        GameObject Prefab = Selection.activeGameObject;
+        InstansiatePreviewLightingPrefab();
+        foreach (var selectedGameObjectPrefab in Selection.gameObjects)
+        {
+            if (PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.Model) return;
 
-        if (PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.Model) return;
-
-        CaptureImage(Prefab, false, true);
+            CaptureImage(selectedGameObjectPrefab, false, true);
+        }
+        DestroyPreviewLightingPrefabInstance();
     }
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Perspective/Front View")]
     public static void Prefab2PngPF()
     {
-        GameObject Prefab = Selection.activeGameObject;
+        InstansiatePreviewLightingPrefab();
+        foreach (var selectedGameObjectPrefab in Selection.gameObjects)
+        {
+            if (PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.Model) return;
 
-        if (PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.Model) return;
-
-        CaptureImage(Prefab, true, false);
+            CaptureImage(selectedGameObjectPrefab, true, false);
+        }
+        DestroyPreviewLightingPrefabInstance();
     }
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Perspective/Back View")]
     public static void Prefab2PngPB()
     {
-        GameObject Prefab = Selection.activeGameObject;
+        InstansiatePreviewLightingPrefab();
+        foreach (var selectedGameObjectPrefab in Selection.gameObjects)
+        {
+            if (PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(selectedGameObjectPrefab) == PrefabAssetType.Model) return;
 
-        if (PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.NotAPrefab || PrefabUtility.GetPrefabAssetType(Prefab) == PrefabAssetType.Model) return;
-
-        CaptureImage(Prefab, false, false);
+            CaptureImage(selectedGameObjectPrefab, false, false);
+        }
+        DestroyPreviewLightingPrefabInstance();
     }
-
 
     public static void GenerateCharacterPreviewImageAsset(GameObject pref)
     {
-        LoadPreviewLightingScene();
-
         int width                                      = 512;
         int height                                     = 512;
 
@@ -73,6 +90,7 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         RuntimePreviewGenerator.MarkTextureNonReadable = false;
         RuntimePreviewGenerator.RenderSupersampling    = 2;
         RuntimePreviewGenerator.OrthographicMode       = false;
+        //RuntimePreviewGenerator.Padding                = 0.05f;
 
         string folderPath = AssetDatabase.GetAssetPath(pref);
         if (folderPath.Contains("."))
@@ -84,32 +102,42 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         DestroyImmediate(temp);
     }
 
-    private static void LoadPreviewLightingScene()
+    private static void InstansiatePreviewLightingPrefab()
     {
-        if (EditorSceneManager.GetActiveScene().name != PreviewSceneName)
+        if (PreviewLightingPrefab.OrNull() == null)
         {
-            var previewSceneAssetGuid = AssetDatabase.FindAssets(PreviewSceneName).FirstOrDefault();
-            var previewScenePath      = AssetDatabase.GUIDToAssetPath(previewSceneAssetGuid);
-            EditorSceneManager.OpenScene(previewScenePath);
+            var previewLightingPrefabAssetGuid = AssetDatabase.FindAssets(PreviewLightingPrefabName).FirstOrDefault();
+            var previewLightingPrefabPath      = AssetDatabase.GUIDToAssetPath(previewLightingPrefabAssetGuid);
+            var filePathWithOutExtension       = Path.GetFileNameWithoutExtension(previewLightingPrefabPath);
+            PreviewLightingPrefab              = Resources.Load<GameObject>(filePathWithOutExtension);
         }
-            
+
+        DestroyPreviewLightingPrefabInstance();
+        
+        PreviewLightingPrefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(PreviewLightingPrefab);
+    }
+
+    private static void DestroyPreviewLightingPrefabInstance()
+    {
+        if (PreviewLightingPrefabInstance.OrNull() != null)
+            DestroyImmediate(PreviewLightingPrefabInstance);
     }
 
     public static Sprite CaptureImage(GameObject pref, bool front, bool Ortho)
     {
-        LoadPreviewLightingScene();
-
-        int width = 512;
-        int height = 512;
-        RuntimePreviewGenerator.BackgroundColor = Color.clear;
+        int width                                      = 512;
+        int height                                     = 512;
+        RuntimePreviewGenerator.BackgroundColor        = Color.clear;
         RuntimePreviewGenerator.MarkTextureNonReadable = false;
+        //RuntimePreviewGenerator.Padding                = 0.05f;
+
         if (front)
         {
-            RuntimePreviewGenerator.PreviewDirection = new Vector3(-0.75f, -1, 1.5f);
+            RuntimePreviewGenerator.PreviewDirection = new Vector3(-0.75f, -1, -1f);
         }
         else
         {
-            RuntimePreviewGenerator.PreviewDirection = new Vector3(-0.75f, -1, -1.5f);
+            RuntimePreviewGenerator.PreviewDirection = new Vector3(-0.75f, -1, 1f);
         }
 
         RuntimePreviewGenerator.RenderSupersampling = 2;
