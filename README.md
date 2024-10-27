@@ -69,7 +69,8 @@ Go to Windows->Package Manager, click the little + button and select that you wa
 
 ![image](https://github.com/user-attachments/assets/f045a7d3-30d8-4a17-8503-9279c57fde62)
 
-Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
+Paste in this url and hit Add: 
+> https://github.com/Laumania/FireworksMania.ModTools.git
 
 ![image](https://github.com/user-attachments/assets/1d1bc3a5-bbad-49b6-af28-0301516983d7)
 
@@ -144,7 +145,8 @@ The "Mod Export Directory" can be set to exactly what you want, however, for eas
 
 To find the path press WIN + R to get the Run prompt up.
 
-Put in: %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
+Put in:
+> %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
 
 And press Enter.
 
@@ -174,7 +176,7 @@ Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition
 
 We of course create this in our "Definitions" folder.
 
-![image](https://user-images.githubusercontent.com/1378458/139088210-1c2f4197-59da-47dc-ad83-4a678146d5b4.png)
+![image](https://github.com/user-attachments/assets/bf435ce6-b12c-486c-9c1c-a7f1141894a9)
 
 As you will see in a moment, it is always a good idea to name your EntityDefinitions something unique, as the name of the file will also be used as the "EntityDefinitionId" that will be used to uniquely identify this specific firework that you are creating.
 
@@ -182,28 +184,24 @@ I therefore recommend naming it after this schema:
 
 *YourNickname_EntityType_NameOfTheItem*
 
-You will find all the possible firework types in this folder:
-![image](https://user-images.githubusercontent.com/1378458/140571230-807126d2-4ffd-4587-9409-055f25c457a0.png)
+In my sample here I call it: *Laumania_Cake_TutorialCake*
 
-
-In my sample here I call it: *Laumania_Rocket_TutorialRocket*
-
-![image](https://user-images.githubusercontent.com/1378458/139089176-ac89b969-a843-4ea8-bb6a-9bcbfa045538.png)
+![image](https://github.com/user-attachments/assets/d8e6f05d-5130-4d40-81ed-ac26a6732b3d)
 
 ### Entity Definition Id
 You will see some "errors" in the console now - these are here to help you.
 
-![image](https://user-images.githubusercontent.com/1378458/139089415-9f065536-acd9-404e-a781-db2d7f846ea8.png)
+![image](https://github.com/user-attachments/assets/11542db4-7e60-485b-97a2-4bccce70ced1)
 
 You can see the first one says something about you need to update the Id.
 
 If you select the EntityDefinition you can see what fields it have in the Inspector.
 
-![image](https://user-images.githubusercontent.com/1378458/139089742-c8ca719b-ed2e-4aa3-b238-0e3c52d6313c.png)
+![image](https://github.com/user-attachments/assets/46f556b0-8706-4a19-98e8-b0b7b42a92eb)
 
 Looking closer we see that Id the error is talking about.
 
-![image](https://user-images.githubusercontent.com/1378458/139089828-98d75d83-ef54-4bed-9f21-fff46ab47612.png)
+![image](https://github.com/user-attachments/assets/bb49bb20-276e-43ec-b559-5f13c8281ba8)
 
 For a newly created EntityDefinition, you can see this field it set to: INSERT UNIQUE DEFINITION ID
 
@@ -211,9 +209,9 @@ For a newly created EntityDefinition, you can see this field it set to: INSERT U
 
 Right click in the top of the Inspector.
 
-![image](https://user-images.githubusercontent.com/1378458/139090061-2abfdf99-385c-4e07-87fc-d3991c90d140.png)
+![image](https://github.com/user-attachments/assets/05222f38-d755-42d8-a765-c912aaf63ddd)
 
-![image](https://user-images.githubusercontent.com/1378458/139090412-096b6eeb-5c23-4715-ae94-a22b6569e8a7.png)
+![image](https://github.com/user-attachments/assets/1144e3d5-d2e4-4d4b-8db1-471c42b12bfe)
 
 > One important thing to note here is that this EntityDefinitionId is used, among other things, to save in blueprint files. Therefore, once your mod has been released the first time - **do not change this id** - as you will break users of your mods blueprints.
 
