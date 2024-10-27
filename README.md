@@ -218,23 +218,23 @@ Right click in the top of the Inspector.
 ### Entity Definition Type
 The next error says something about EntityDefinitionType that is missing. It is because an FireworkEntityDefinition needs to have a type.
 
-![image](https://user-images.githubusercontent.com/1378458/139092007-5dda56e1-3ff9-40f5-b99b-3868787eed6f.png)
+![image](https://github.com/user-attachments/assets/d4f3e599-8fd5-4c51-b22f-ef43f902d8f5)
 
-As we know we are building a rocket let us pick the Rocket type.
+As we know we are building a cake let us pick the Cake type.
 
 > EntityDefinitionType is the one that determine under what category/type the firework will show up in the Inventory in game.
 
 Click this little round thingy to select a type.
 
-![image](https://user-images.githubusercontent.com/1378458/139092367-62e29a9f-f74f-486d-ba92-3718f69e37f3.png)
+![image](https://github.com/user-attachments/assets/ce46d46a-ef99-4f5f-8bb4-3c087101f0ae)
 
 If you window looks like this:
  
-![image](https://user-images.githubusercontent.com/1378458/139092429-e2a5b3ae-db6c-4fe8-aa6a-4052f9c236af.png)
+![image](https://github.com/user-attachments/assets/38e74e58-b34e-49fa-96db-521c3cca04c8)
 
 You need to click the little eye icon to toggle on assets from packages, as these types comes as part of the Fireworks Mania Mod Tools in a package.
 
-![image](https://user-images.githubusercontent.com/1378458/139092700-00311929-681d-427b-a0c3-c346efbeee6a.png)
+![image](https://github.com/user-attachments/assets/d5a8f882-b20a-4264-8ace-5c923ae5a098)
 
 ### Entity Definition Prefab
 Now we have a definition with an unique Id and an Entity Definition Type. 
