@@ -7,28 +7,28 @@ I have created a playlist with various videos about creating mods for Fireworks 
 [Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
 
 # Prerequisites
-To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
+To be able to build mods for Fireworks Mania there are a few prerequisites.
 
 - Basic knowledge about [Unity](https://unity.com)
   - If you want to get started I recommend Imphenzia's ["LEARN UNITY - The Most BASIC TUTORIAL I'll Ever Make"](https://www.youtube.com/watch?v=pwZpJzpE2lQ)
 - Basic 3D modeling skills ([Blender](https://www.blender.org) is the tool I use, but there are others. As long as they can export to .fbx I think it's all fine)
   - If you want to get started I recommend Imphenzia's ["Learn Low Poly Modeling in Blender"](https://www.youtube.com/watch?v=1jHUY3qoBu8) if you are all new to Blender. 
 
-Keep in mind that there are tons of good tutorials out there for basic Unity and Blender, so go check out what YouTube have to offer, the two recommendation are just one place to start.
+Keep in mind that there are tons of good tutorials out there for basic Unity and Blender stuff, so go check out what YouTube have to offer, the two recommendation are just one place to start.
 
-**NO CODING SKILLS NEEDED**
+It is very important to note that **NO CODING SKILLS ARE REQUIRED** to be able to build a mod - it can all be done via the Unity editor.
 
-It is very important to note that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
+So, none-coders, fear not.
 
-So none-coders, fear not.
-
-Coders, fear not either, you can do custom scripting (with some security limitations of cause).
+Coders, fear not either, you can do custom scripting.
 
 # Getting started
-## 1. Getting Unity Hub
-Go and get the [Unity Hub](https://unity3d.com/get-unity/download) (not the Beta version!)
+## 1. Getting Unity Hub & Git
+[Download and install Git](https://git-scm.com/) - Unity need this to be installed to be able to install the Mod Tools package later one, so you might as well install it right away.
 
-When Unity Hub is installed on your machine, you are ready to install "Unity" (also called "Unity Editor").
+[Download and install Unity Hub](https://unity.com/download) - The Unity Hub acts a a "launcher" and it's via this that you will install the actual Unity Editor.
+
+After the two above have been installed, restart your PC and come back here.
 
 ## 2. Getting Unity Editor
 To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with.
