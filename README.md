@@ -269,6 +269,9 @@ You will now see the instance in the Hierarchy turned blue, because it's now an 
 
 ![image](https://github.com/user-attachments/assets/62da0c6f-a436-4036-878d-272bd0e416bd)
 
+At this point you delete the instance in the hierarchy, as you want to make changes directly to the prefab and not to an instance of the prefab.
+
+![image](https://github.com/user-attachments/assets/1dd44648-07ac-4308-a284-be7b109fff7b)
 
 
 
