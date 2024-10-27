@@ -156,7 +156,8 @@ A new window will open in the correct location, copy the path from that and put 
 
 ![image](https://github.com/user-attachments/assets/094b6426-aaaf-4dd8-a73f-0131defb7093)
 
-On the "Build" tab, set the "Optimize for" to "File Size" to avoid your mods to be very large in size.
+On the "Build" tab, set the "Optimize for" to "File Size". 
+> This is very important! If you do not do this your mod will take up more space on players harddrive, take longer to download and take longer to load into the game. So do this for your own and all other players sake :)
 
 ![image](https://user-images.githubusercontent.com/1378458/139145086-9d16d5d8-083e-40cf-a87d-79dbe1675781.png)
 
