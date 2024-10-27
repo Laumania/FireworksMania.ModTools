@@ -37,15 +37,15 @@ When you have the Unity Hub installed, it's easy to install the specific version
 
 You find the current target Unity version in the [Change log](CHANGELOG.md).
 
-To install that specific version, go to the [Unity Archive](https://unity3d.com/get-unity/download/archive) and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
+If you don't have the given version installed, just click on the version number in the Change log. This will take you to Unity's website where you can click the "Install" button and it will open up in your Unity hub and install that version. Really easy!
 
-![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
+![image](https://github.com/user-attachments/assets/d9fd49fa-61f9-4db2-9b1d-0bdfaa396ea9)
 
 ## 3. Create empty Unity project
-Fireworks Mania mods are build from inside Unity and you therefore need a empty 3D Unity project. This is (initially) exactly as you would do if you were going to create your own game, however, when building mods there are a few things that are different, which we will get to a bit later.
+Fireworks Mania mods are build from a Unity Project. So create an empty 3D (Build-in Render Pipeline) Unity project.
 
+![image](https://github.com/user-attachments/assets/e721a480-262f-481c-96ce-82771318fc5d)
 
-![image](https://user-images.githubusercontent.com/1378458/138611162-2917e479-285b-4192-b640-2fd0a10abbb9.png)
 
 ### Naming your Unity Project
 One important thing to know when naming your project is that you can have multiple mods within a single Unity project. 
@@ -55,43 +55,36 @@ This means that you might want to name the Unity project something more generic 
 These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on actual mod(s) name(s).
 
 At this point you should now have an empty Unity project that should look something like this:
-![image](https://user-images.githubusercontent.com/1378458/138737260-cd972920-94cd-4eeb-940f-41fe5002c736.png)
+![image](https://github.com/user-attachments/assets/99d54efa-c99e-44e1-81aa-dda7f5566140)
+
+To make sure we are off to a good start and all is as it should, it's a good idea to enter Play-mode. Click the Play button in the top and make sure there are no errors in the console. Click the Play button again to exit play mode.
+![image](https://github.com/user-attachments/assets/361acdd8-051b-491a-95f1-628da74d0c5d)
+
+
 
 ## 4. Install Fireworks Mania Mod Tools
-Now we need to install the actual Fireworks Mania Mod Tools.
+Now we need to install the Fireworks Mania Mod Tools.
 
-Go to the Package Manager, click the little + button and select that you want to add an git package.
+Go to Windows->Package Manager, click the little + button and select that you want to add an git package.
 
-![image](https://user-images.githubusercontent.com/1378458/138907247-a5e8d7d9-6318-4997-87b4-526839aa3301.png)
+![image](https://github.com/user-attachments/assets/f045a7d3-30d8-4a17-8503-9279c57fde62)
 
 Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
 
-> For experimental branch, use this url:
-> https://github.com/Laumania/FireworksMania.ModTools.git#experimental
+![image](https://github.com/user-attachments/assets/1d1bc3a5-bbad-49b6-af28-0301516983d7)
 
-![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
+The installation can take some time, so let its do its work.
 
-> Troubleshooting: 
-> 
-> ![image](https://user-images.githubusercontent.com/1378458/209989463-bc3f944c-daef-4f30-9ca8-c11e5ed91d29.png)
-> 
-> If you get an error saying something with "Git" when you try to add the Mod Tools, its because you don't have Git installed on your computer. You can get git from here, install that and restart your computer: https://git-scm.com/
+Once its done you might get this popup. Just click Yes and it should automatically restart the Unity Editor.
+![image](https://github.com/user-attachments/assets/11c35d7f-8c03-4e72-92fa-8efe8f7eddb6)
 
-![image](https://user-images.githubusercontent.com/1378458/203601491-86803483-48e0-4984-b0d2-0636cf34f669.png)
+You now have the Fireworks Mania Mod Tools installed and are ready to create your first mod!
 
-Once it's done installing you might see a few errors in the console.
+![image](https://github.com/user-attachments/assets/3cbbb379-a7f3-4c80-b201-16f255ced006)
 
-Restart Unity and reopen your project.
+Close the Package Manager window and hit Play again to make sure we don't have any errors. Click Play again to exit Play mode, which is important, as we dont want to be in Play mode.
 
-To verify that your project is working and building, press the "Play" button in the top.
-
-You should see something like this, with no errors. 
-
-![image](https://user-images.githubusercontent.com/1378458/138908645-7d96c0ae-e49f-4faf-b34b-e5ad5aaa833a.png)
-
-> If you see errors, try and read them and see if you can solve them, else reach out in the Mod Creation channels on my [Discord](https://discord.gg/SzZD77p).
-
-You are now ready to start creating your first mod.
+![image](https://github.com/user-attachments/assets/93b7c6b8-a695-40e4-a2da-79e1eb76281b)
 
 # Create Your First Mod
 This is the point where things start to get interesting.
