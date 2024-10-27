@@ -89,26 +89,28 @@ Close the Package Manager window and hit Play again to make sure we don't have a
 # Create Your First Mod
 This is the point where things start to get interesting.
 
-As mentioned previously, it is important to remember that you can build multiple, completely different, mods from this single Unity project you just setup. You can even have different things in a single mod.
+As mentioned previously, it is important to remember that you can build multiple mods from this single Unity project.
 
 ## Create Mod & Folders
 Lets first create an "Mods" folder where we can have all our mods in.
 
-![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
+![image](https://github.com/user-attachments/assets/87ad59fa-4d7e-49ea-b2c2-a0120f9acf0c)
 
 Then let us go and create a new mod.
 
-![image](https://user-images.githubusercontent.com/1378458/138917553-79bbd930-3c96-420a-966a-e95093adbd7f.png)
+![image](https://github.com/user-attachments/assets/b0462e0e-eafd-4e52-988a-661b19a9cec3)
 
-![image](https://user-images.githubusercontent.com/1378458/138917674-36b0c45c-79ac-44c0-8ca3-82389738d7fd.png)
+![image](https://github.com/user-attachments/assets/9f1db1cd-af7c-4815-80cd-463a9c76ea94)
 
-Now give the mod an good descriptive and unique name, it's always an good idea to prefix it with your nickname like I have done here.
+Now give the mod a good descriptive and unique name. It's always an good idea to prefix it with your nickname like I have done here.
+
+Avoid spaces and special characters in the name.
 
 Make sure to put the mod in "Assets/Mods" as shown. 
 
 It is not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
 
-![image](https://user-images.githubusercontent.com/1378458/138918428-50febbac-15d8-4937-9ff7-bb8499e82961.png)
+![image](https://github.com/user-attachments/assets/dd999d23-6dd3-461b-9311-ba665b28f5d0)
 
 You can think of this folder, "Laumania_TutorialMod_01" in this sample, as the mod itself. 
 
@@ -124,15 +126,19 @@ Right click and create the following folders:
 - Models
 - Prefabs
 
-![image](https://user-images.githubusercontent.com/1378458/139088027-daae90f7-a681-4519-9e34-6e12fb6fc30d.png)
+![image](https://github.com/user-attachments/assets/ae3bddcb-fb9d-4dd6-9909-76ceea8fb330)
 
 Now head to the Export Settings to setup metadata on your mod, some build options etc.
 
-![image](https://user-images.githubusercontent.com/1378458/139144466-032e17db-1912-4688-b16b-d596a211ba02.png)
+![image](https://github.com/user-attachments/assets/2e57daac-4627-45d8-8098-dfb7809bbb96)
 
-Fill out the various fields with what fits your mod.
+Fill out the following fields under "Mod Information" with what fits your mod, the rest can be ignored as they are not really used in the game.
 
-![image](https://user-images.githubusercontent.com/1378458/139144549-56aa5eb8-bb3f-499b-b728-72bdd3918456.png)
+- Mod Name
+- Mod Version
+- Mod Author
+
+![image](https://github.com/user-attachments/assets/11af3453-9ae3-4274-9436-aafeb757a450)
 
 The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the games mods folder and do not have to copy files each time.
 
@@ -148,7 +154,7 @@ A new window will open in the correct location, copy the path from that and put 
 
 ![image](https://user-images.githubusercontent.com/1378458/139146085-5420792e-8587-4858-a341-e41be75a2bb9.png)
 
-![image](https://user-images.githubusercontent.com/1378458/139146248-a8748f42-a27e-44c8-98c9-57294a864cdd.png)
+![image](https://github.com/user-attachments/assets/094b6426-aaaf-4dd8-a73f-0131defb7093)
 
 On the "Build" tab, set the "Optimize for" to "File Size" to avoid your mods to be very large in size.
 
