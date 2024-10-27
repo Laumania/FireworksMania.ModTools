@@ -33,7 +33,7 @@ After the two above have been installed, restart your PC and come back here.
 ## 2. Getting Unity Editor
 To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with.
 
-When you have the Unity Hub installed, it's easy to install the specific version you want and you can have multiple versions installed at the same time.
+When you have the Unity Hub installed, it's easy to install the specific version you want. Also know that you can have multiple versions installed at the same time.
 
 You find the current target Unity version in the [Change log](CHANGELOG.md).
 
