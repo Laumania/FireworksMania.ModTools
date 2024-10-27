@@ -236,18 +236,51 @@ You need to click the little eye icon to toggle on assets from packages, as thes
 
 ![image](https://github.com/user-attachments/assets/d5a8f882-b20a-4264-8ace-5c923ae5a098)
 
+![image](https://github.com/user-attachments/assets/608671bb-59b5-4feb-9088-87ea494f07dc)
+
 ### Entity Definition Prefab
 Now we have a definition with an unique Id and an Entity Definition Type. 
 
 However, when you set the type, you get another error, saying something about missing a Prefab Game Object.
 
-![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
+![image](https://github.com/user-attachments/assets/cdcec0bf-fad1-4a30-9afa-049f139b5b7d)
 
-This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have the 3d model, rocket behavior, effect, fuse, sound etc. 
+This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework. Therefore, this prefab is your actual firework with logic to act as a cake in this case. It have the 3d model, cake behavior, effect, fuse, sound etc. 
 
 Creating and modifying this prefab is where the majority of your time will be spend as a typical firework mod creator.
 
 For now however, as this is a getting started guide, we will keep it simple so you get a basic idea of how a mod it put together, without going into the details of creating particle effect, setup the various fireworks behavior etc. We will get to that later.
+
+Luckily, its very easy to get started, as the Mod Tools comes with some templates you can use to start from.
+
+So right click in the Hierarchy and create an Cake_Template.
+![image](https://github.com/user-attachments/assets/52ae02a8-4b9f-4db4-afe1-91e42fe84ad2)
+
+To the left you see the Cake_Template instance you just created (we will make that into an prefab in a bit as thats what we actually need) and to the right you see all the components on that game object because it's select. Don't look to much at the right for now, we get to that later.
+![image](https://github.com/user-attachments/assets/40743b72-7c15-4b5b-bf3a-ac4a09798772)
+
+Now lets rename the instance in the Hierarchy to what we want our prefab to be named.
+
+Once its renamed, drag and drop it to the "Prefabs" folder in your mods folder.
+
+![image](https://github.com/user-attachments/assets/9e57f7fc-a3c2-4eab-acc6-3fd136e4b351)
+
+You will now see the instance in the Hierarchy turned blue, because it's now an instance of an actual prefab and you now have the prefab in your "Prefabs" folder too.
+
+![image](https://github.com/user-attachments/assets/62da0c6f-a436-4036-878d-272bd0e416bd)
+
+
+
+
+
+
+
+
+
+
+
+-- LEGACY STUFF! ---
+
 
 So to help you get started, I have included some "ModSamples" in the Fireworks Mania Mod Tools.
 
