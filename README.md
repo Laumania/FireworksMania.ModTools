@@ -349,17 +349,21 @@ Your mod is successfully build - let us try it out!
 ## Testing Your Mod In Game
 With your mod, or mods, in the "Mods" folder of the game, the mods will attempt to load on the load of a map in the game.
 
-So let us start up the game and to go the Flat map. All map should work for this. When the map is loaded open the Inventory and head over to the "Workshop" part.
+In most cases you want to test out your mod in a Singleplayer game, to avoid others joining your host, as they will not be able to see your creation from the mod as they do not have it installed. For others to get access to your game it need to be put on mod.io, you will find a video about that in the YouTube playlist mentioned in the beginning.
 
-Here you should see your first mod rocket.
+So let us start up a Singleplayer game. Lets test it out in the Town map. All map should work for this. When the map is loaded open the Inventory and find your firework.
 
-![image](https://user-images.githubusercontent.com/1378458/139147106-8e53f90a-68f4-42fc-aece-eff7edf7be2a.png)
+Here you should see your first mod cake.
+
+![image](https://github.com/user-attachments/assets/7fbac6ae-9d02-4678-9ffa-45b3d4c99f30)
 
 Now select it and spawn it and see it working.
 
-![image](https://user-images.githubusercontent.com/1378458/139147195-b91c4243-e2d8-4b0f-9e08-c2c1a96a7606.png)
+![20241028183205_1](https://github.com/user-attachments/assets/af7dabcc-1d79-421d-b5b1-ff92353a51e8)
 
-![image](https://user-images.githubusercontent.com/1378458/139147243-39be5c71-1067-466d-ae3f-37b713da9343.png)
+![20241028183218_1](https://github.com/user-attachments/assets/f5837b63-2b1b-492a-a541-d18472a9d029)
+
+![20241028183221_2](https://github.com/user-attachments/assets/0c070ba1-0d99-46a8-b705-509efe44b7cc)
 
 Congrats - you have created your first Fireworks Mania Mod!
 
