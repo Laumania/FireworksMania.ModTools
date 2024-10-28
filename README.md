@@ -276,21 +276,29 @@ You will now see the instance in the Hierarchy turned blue, because it's now an 
 
 At this point you delete the prefab instance in the hierarchy, as you want to make changes directly to the original prefab and not to the prefab instance.
 
-![image](https://github.com/user-attachments/assets/1dd44648-07ac-4308-a284-be7b109fff7b)
+![image](https://github.com/user-attachments/assets/4eac1675-ea33-48d9-89e1-c74dc6b50b09)
 
+Now we want to edit the prefab, you do that by double clicking in.
 
+![image](https://github.com/user-attachments/assets/5bbd63c5-de00-4c5d-88bf-f9d11203edb7)
 
+You now have the prefab open in edit mode and by selecting the top gameobject (root node) you can setup the last part of the prefab. 
 
+What you need to do here is set the "Entity Definition" to be the "Laumania_Cake_TutorialCake" we created earlier. This tells the prefab which entity definition it belongs too, you don't have to understand why now, just know that its needed for the game to work properly.
 
-![image](https://user-images.githubusercontent.com/1378458/139139295-1c519819-27ed-4df8-b661-b57d84636f8c.png)
+![image](https://github.com/user-attachments/assets/419f2cab-1554-4728-a6f5-30770c8b3513)
 
-Instead, double click the prefab in the project window, to open up the prefab.
+Press CTRL + S to save the changes on the prefab. It is recommended to have "Auto save" turned off, as it can in some cases slow down Unity a lot.
 
-![image](https://user-images.githubusercontent.com/1378458/139139537-98b56d31-6a6a-44a4-841d-4f14aa87b0a9.png)
+![image](https://github.com/user-attachments/assets/53d753ec-17fd-49b4-a46c-35c6909c2119)
 
-You now have the prefab open in edit mode and by selecting the top gameobject (root node) you can setup the last part of the prefab to fit to your FireworkEntityDefinition you created earlier.
+Now the prefab knows which FireworksEntityDefinition it belongs to, now we need to tell the "Laumania_Cake_TutorialCake" EntityDefinition which prefab it should spawn when selected in the Inventory in game.
 
-![image](https://user-images.githubusercontent.com/1378458/139139782-7c0d18ff-59b5-4ab8-b251-fa7363c369e8.png)
+Select the "Laumania_Cake_TutorialCake" to make it show its details in the Inspector and then drag the "Laumania_Cake_TutorialCakePrefab" to the "Prefab Game Object" field.
+
+![image](https://github.com/user-attachments/assets/bb80d5cd-a942-4c3c-8ceb-ab9664e3db79)
+(Alternative you can also click the little cirle next to the field end select the prefab there - the result is the same)
+
 
 Only thing we need to do here is to tell this prefabs RocketBehavior, which Entity Definition it is related to.
 
