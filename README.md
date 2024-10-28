@@ -367,6 +367,16 @@ Now select it and spawn it and see it working.
 
 Congrats - you have created your first Fireworks Mania Mod!
 
+# What's next?
+So far you only scratched the surface of modding for Fireworks Mania and to be frank, all the above was the boring setup part. 
+
+Now the fun begins where you can make your own effects, maps, characters etc.
+
+This written "Getting started guide" stop here and the rest you need to find in the YouTube Playlist mentioned in [Video Tutorials](##video-tutorials), as it is much easier to explain and show in videos.
+
+Love to see what awesome stuff you are going to create 🤓
+
+
 # Project in Github / Backup
 This is not a requirement, but having your project in some sort of version control is essential.
 
