@@ -372,7 +372,7 @@ So far you only scratched the surface of modding for Fireworks Mania and to be f
 
 Now the fun begins where you can make your own effects, maps, characters etc.
 
-This written "Getting started guide" stop here and the rest you need to find in the YouTube Playlist mentioned in [Video Tutorials](##video-tutorials), as it is much easier to explain and show in videos.
+This written "Getting started guide" stop here and the rest you need to find in the YouTube Playlist mentioned in [Video Tutorials](#video-tutorials), as it is much easier to explain and show in videos.
 
 Love to see what awesome stuff you are going to create 🤓
 
