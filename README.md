@@ -330,19 +330,18 @@ Now you just select the "Laumania_Cake_TutorialCake" (the EntityDefinition) and 
 
 
 
-
 ## Build Mod
 With all the above setup building the mod is the easy part.
 
-![image](https://user-images.githubusercontent.com/1378458/139146350-44fdf6ff-5197-4b90-9e96-a12cd6922801.png)
+![image](https://github.com/user-attachments/assets/56ed74d4-734f-459c-9c52-eb7cf2382a60)
 
 Unity will spend some time building and you should see this in the console when it is done.
 
-![image](https://user-images.githubusercontent.com/1378458/139146423-6e893d7d-9dc8-469a-b93d-5ba4d88c776c.png)
+![image](https://github.com/user-attachments/assets/29c20f6a-7ffa-4176-9089-3e42fbd02ed5)
 
 At the same time the export directory will open and you should see your mod in the Mods folder of Fireworks Mania.
 
-![image](https://user-images.githubusercontent.com/1378458/139146509-e1e52e96-f5af-4096-882a-9c4f7043cac0.png)
+![image](https://github.com/user-attachments/assets/0d801476-63ff-4b25-bc59-dffd11db4633)
 
 Your mod is successfully build - let us try it out!
 
