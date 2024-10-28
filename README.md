@@ -150,7 +150,7 @@ Click the 3 dots to set the "Mod Export Directory".
 
 ![image](https://github.com/user-attachments/assets/fa568118-4f97-4d78-823c-c9bbed23f2cf)
 
-This will open the normal file explorer. Instead of manually browsing to the path, it's easier just to put in the below in the adress bar in the top.
+This will open the normal file explorer. Copy/Paste the below into the adress bar in the top.
 
 > %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
 
@@ -274,51 +274,13 @@ You will now see the instance in the Hierarchy turned blue, because it's now an 
 
 ![image](https://github.com/user-attachments/assets/62da0c6f-a436-4036-878d-272bd0e416bd)
 
-At this point you delete the instance in the hierarchy, as you want to make changes directly to the prefab and not to an instance of the prefab.
+At this point you delete the prefab instance in the hierarchy, as you want to make changes directly to the original prefab and not to the prefab instance.
 
 ![image](https://github.com/user-attachments/assets/1dd44648-07ac-4308-a284-be7b109fff7b)
 
 
 
 
-
-
-
-
-
-
--- LEGACY STUFF! ---
-
-
-So to help you get started, I have included some "ModSamples" in the Fireworks Mania Mod Tools.
-
-![image](https://user-images.githubusercontent.com/1378458/139133149-cb18c33b-ebcb-4b6b-b851-891144278131.png)
-
-Find the prefab "Rocket_DummyRocket_Prefab".
-
-As all these are inside a package you cannot copy or manipulate them here, which is as it should be. However, you can drag this prefab into your scene and from it create your own prefab.
-
-First drag the prefab into the scene hierarchy.
-
-![image](https://user-images.githubusercontent.com/1378458/139134286-520ea2c2-d501-4125-95a3-d8eec58fd288.png)
-
-Then right click it, Prefab -> Unpack to unpack it from being an prefab fra the ModSamples.
-
-![image](https://user-images.githubusercontent.com/1378458/139134419-0c5a2bc1-eeb1-4e81-8f70-a18053211956.png)
-
-Now you can rename that gameobject in the hierarchy to fit your fireworks name.
-
-![image](https://user-images.githubusercontent.com/1378458/139134599-3c7b2f82-7c80-41e1-9e1d-a3df9c8459cf.png)
-
-Because it is no longer a prefab in the hierarchy, we can make it our own prefab by dragging it to the Prefabs folder in our mod's folder.
-
-![image](https://user-images.githubusercontent.com/1378458/139134750-664001a0-9994-4f86-8a3e-1075ba8188db.png)
-
-As it is now a prefab again, it is again showing up as blue in the hierarchy and you can see it in the Prefabs folder in your mod.
-
-![image](https://user-images.githubusercontent.com/1378458/139135040-54edae2e-88ec-4715-b4cc-74ce128b22a5.png)
-
-For now we can delete the game object (prefab instance) in the hierarchy to avoid by mistake make changes to that, instead of the actual prefab.
 
 ![image](https://user-images.githubusercontent.com/1378458/139139295-1c519819-27ed-4df8-b661-b57d84636f8c.png)
 
