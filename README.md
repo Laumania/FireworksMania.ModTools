@@ -292,30 +292,12 @@ Press CTRL + S to save the changes on the prefab. It is recommended to have "Aut
 
 ![image](https://github.com/user-attachments/assets/53d753ec-17fd-49b4-a46c-35c6909c2119)
 
-Now the prefab knows which FireworksEntityDefinition it belongs to, now we need to tell the "Laumania_Cake_TutorialCake" EntityDefinition which prefab it should spawn when selected in the Inventory in game.
+Now the prefab knows which FireworksEntityDefinition it belongs to, now we need to tell the "Laumania_Cake_TutorialCake" EntityDefinition which prefab it should spawn when selected in the Inventory in game. So the relationship goes both ways.
 
-Select the "Laumania_Cake_TutorialCake" to make it show its details in the Inspector and then drag the "Laumania_Cake_TutorialCakePrefab" to the "Prefab Game Object" field.
+Select the "Laumania_Cake_TutorialCake" (the EntityDefinition) to make it show its details in the Inspector and then drag the "Laumania_Cake_TutorialCakePrefab" to the "Prefab Game Object" field.
 
 ![image](https://github.com/user-attachments/assets/bb80d5cd-a942-4c3c-8ceb-ab9664e3db79)
 (Alternative you can also click the little cirle next to the field end select the prefab there - the result is the same)
-
-
-Only thing we need to do here is to tell this prefabs RocketBehavior, which Entity Definition it is related to.
-
-As you might have guessed, as we want this prefab to be related to our FireworkEntityDefinition from before.
-
-So, again click the little round icon and select your definition.
-
-![image](https://user-images.githubusercontent.com/1378458/139140050-af61b1e2-c505-4340-8a1c-fde06606f5f1.png)
-
-![image](https://user-images.githubusercontent.com/1378458/139140092-d4dd3cf1-8546-4142-a31c-0448d369a0c4.png)
-
-Now we need to go back to where we came from, the FireworkEntityDefinition from before, where we needed to provide it with an prefab. We have now created that prefab and can therefore assign it to the FireworkEntityDefinition.
-
-Drag the prefab to the field in the Inspector.
-
-![image](https://user-images.githubusercontent.com/1378458/139140686-ab690713-05f9-4b6e-9796-340b7abb4b51.png)
-
 
 ### Entity Definition Name
 Our FireworkEntityDefinition also needs a name, which is the one showing up in the Inventory.
