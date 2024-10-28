@@ -142,7 +142,7 @@ Fill out the following fields under "Mod Information" with what fits your mod, t
 ![image](https://github.com/user-attachments/assets/11af3453-9ae3-4274-9436-aafeb757a450)
 
 The "Mod Export Directory" is there you mod is eventually going to be placed everytime you build it. To make it easier and quicker to test, it make sense to set this directory to the local "Mods" folder of the game. 
-This way, everytime you build your mod, all you have to do is restart the map in the game. The game will detect the mod have changed and reload it and you can test your changes.
+This way, everytime you build the mod, all you have to do is restart the map in the game. The game will detect the mod have changed and reload it and you can test your changes.
 
 As this "Mods" folder is placed in a location under your user on your PC, the path to it is unique to your machine and user.
 
