@@ -20,7 +20,7 @@ It is very important to note that **NO CODING SKILLS ARE REQUIRED** to be able t
 
 So, none-coders, fear not.
 
-Coders, fear not either, you can do custom scripting.
+Coders, fear not either, you can do custom scripting 🤓
 
 # Getting started
 ## 1. Getting Unity Hub & Git
@@ -141,22 +141,27 @@ Fill out the following fields under "Mod Information" with what fits your mod, t
 
 ![image](https://github.com/user-attachments/assets/11af3453-9ae3-4274-9436-aafeb757a450)
 
-The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the games mods folder and do not have to copy files each time.
+The "Mod Export Directory" is there you mod is eventually going to be placed everytime you build it. To make it easier and quicker to test, it make sense to set this directory to the local "Mods" folder of the game. 
+This way, everytime you build your mod, all you have to do is restart the map in the game. The game will detect the mod have changed and reload it and you can test your changes.
 
-To find the path press WIN + R to get the Run prompt up.
+As this "Mods" folder is placed in a location under your user on your PC, the path to it is unique to your machine and user.
 
-Put in:
+Click the 3 dots to set the "Mod Export Directory".
+
+![image](https://github.com/user-attachments/assets/fa568118-4f97-4d78-823c-c9bbed23f2cf)
+
+This will open the normal file explorer. Instead of manually browsing to the path, it's easier just to put in the below in the adress bar in the top.
+
 > %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
 
-And press Enter.
+![image](https://github.com/user-attachments/assets/674e7b4e-7829-4853-921e-bb7c83c7c161)
 
-![image](https://user-images.githubusercontent.com/1378458/139145921-f7382bfc-71b1-4e84-9a87-d22297c02e28.png)
+Hit Enter and you will get to the folder we want.
+![image](https://github.com/user-attachments/assets/a43c94d3-cc78-4629-967f-b3c8c5fdf3ae)
 
-A new window will open in the correct location, copy the path from that and put it into the "Mod Export Directory".
+Click the "Select folder" button and the correct path will be set as the "Mod Export Directory".
 
-![image](https://user-images.githubusercontent.com/1378458/139146085-5420792e-8587-4858-a341-e41be75a2bb9.png)
-
-![image](https://github.com/user-attachments/assets/094b6426-aaaf-4dd8-a73f-0131defb7093)
+![image](https://github.com/user-attachments/assets/749ea929-6322-46e4-85dc-cd547b8d24a1)
 
 On the "Build" tab, set the "Optimize for" to "File Size". 
 > This is very important! If you do not do this your mod will take up more space on players harddrive, take longer to download and take longer to load into the game. So do this for your own and all other players sake :)
