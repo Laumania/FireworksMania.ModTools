@@ -297,7 +297,7 @@ Now the prefab knows which FireworksEntityDefinition it belongs to, now we need 
 Select the "Laumania_Cake_TutorialCake" (the EntityDefinition) to make it show its details in the Inspector and then drag the "Laumania_Cake_TutorialCakePrefab" to the "Prefab Game Object" field.
 
 ![image](https://github.com/user-attachments/assets/bb80d5cd-a942-4c3c-8ceb-ab9664e3db79)
-(Alternative you can also click the little cirle next to the field end select the prefab there - the result is the same)
+(Alternative you can also click the little circle next to the field end select the prefab there - the result is the same)
 
 ### Entity Definition Name
 Our FireworkEntityDefinition also needs a name, which is the one showing up in the Inventory.
@@ -307,19 +307,23 @@ So let us give it a name.
 ![image](https://github.com/user-attachments/assets/f98b83e3-16ec-4bba-95f2-e1d743d85e72)
 
 ### Entity Definition Icon
-For the firework to look good in the Inventory we also need to provide a preview icon. You can create your own outside Unity if you want to, however, there is also a way to generate it in the Mod Tools.
+For the firework to look good in the Inventory we also need to provide a preview icon. 
 
 All you need to do is to right click the prefab in the Project window.
 ![image](https://github.com/user-attachments/assets/1025f08d-f334-47d6-832c-48a35c2f9f1e)
 
-As you can see there are different options and you can test out which one you like the best. Everytime you click a new icon is generated next to the prefab, if one is exiting there it will overwrite it. So very easy to test things out.
+As you can see there are different options and you can test out which one you like the best. Everytime you click, a new icon is generated next to the prefab, if one is exiting there it will overwrite it. So very easy to test things out.
 
 ![image](https://github.com/user-attachments/assets/b91b45ce-7501-40fd-a9cd-75452e20552f)
 
 This looks good so lets go with that one. The icon starts out expanded, but you can click the little arrow to collapse it, so it's not too confusing.
 ![image](https://github.com/user-attachments/assets/f090664f-7676-46cb-b8c3-bdd98e87e139)
 
-Now you just select the "Laumania_Cake_TutorialCake" (the EntityDefinition) and drag in the generated icon to the "Icon" field (or again you can pick it with the little circle - you get the idea).
+You can decide to leave the icon next to the prefab, but we also made an folder called "Icons" earlier you can put it in. Drag and drop the icon file to move it. 
+
+Its up to you how you want to organize your project. My advise is to be consistant. Do the same thing the same way, everytime, to avoid confusing your future self.
+
+Now you just select the "Laumania_Cake_TutorialCake" (the EntityDefinition) and drag in the generated icon to the "Icon" field.
 
 ![image](https://github.com/user-attachments/assets/89c9a153-5b85-4d10-8906-c3eb3d644ab3)
 
