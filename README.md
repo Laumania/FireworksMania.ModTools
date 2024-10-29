@@ -6,7 +6,7 @@ I have created a playlist with various videos about creating mods for Fireworks 
 
 [Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
 
-# Recommended Prerequisites
+# Recommended prerequisites
 To be able to build mods for Fireworks Mania there are a few recommended prerequisites.
 
 - Basic knowledge about [Unity](https://unity.com)
