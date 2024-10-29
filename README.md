@@ -24,9 +24,9 @@ Coders, fear not either, you can do custom scripting 🤓
 
 # Getting started
 ## 1. Getting Unity Hub & Git
-[Download and install Git](https://git-scm.com/) - Unity need this to be installed to be able to install the Mod Tools package later one, so you might as well install it right away.
-
 [Download and install Unity Hub](https://unity.com/download) - The Unity Hub acts a a "launcher" and it's via this that you will install the actual Unity Editor.
+
+[Download and install Git](https://git-scm.com/) - Unity need this to be installed to be able to install the Mod Tools package later one, so you might as well install it right away.
 
 After the two above have been installed, restart your PC and come back here.
 
