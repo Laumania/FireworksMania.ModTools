@@ -6,6 +6,9 @@ I have created a playlist with various videos about creating mods for Fireworks 
 
 [Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
 
+The firework effects are made with the Unity Particle System and here is a guide that goes through how it works. This video is not specifically about making firework effects, but it explains the basics of the Particle System, which you need to know so you can create your own custom effects.
+[Getting Started with PARTICLES in Unity](https://www.youtube.com/watch?v=Eua7G7Vct0A)
+
 # Recommended prerequisites
 To be able to build mods for Fireworks Mania there are a few recommended prerequisites.
 
