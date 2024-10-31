@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.10.7] - 2024-10-31
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+**ATTENTION**: ALWAYS BACKUP BEFORE UPGRADING! This is the first public release of the new Mod Tools targeting the new "multiplayer" version of Fireworks Mania. If you are upgrading from *v2023.1.6* or previous, there are a few things you need to do to make it work.
+
+[Upgrade mod from Mod Tools 2023.1.6 in Fireworks Mania](https://www.youtube.com/watch?v=JyKD0h4QlbM)
+
+### Added
+- Added two new PhysicsMaterials for footstep sounds. Snow and Gravel
+- Added context menu option to CharacterDefinitions so you can now right click in the top an "Set Id as filename" 
+
+### Changed
+- Removed Description and Thumbnails from MapDefinitions as it was never used ingame
+- Decreased the intensity of lights used to generate previews/icons as it was a bit too bright before
+
 ## [v2024.10.6] - 2024-10-20 (CLOSED BETA)
 Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
 
