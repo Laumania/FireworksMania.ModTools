@@ -25,6 +25,12 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private Avatar _characterAvatar;
 
+        [ContextMenu("Set Id to filename")]
+        private void SetIdToFilename()
+        {
+            this._id = this.name;
+        }
+
         public GameObject CharacterPrefab => _characterPrefab;
         public Avatar CharacterAvatar     => _characterAvatar;
         public string Id                  => _id;
