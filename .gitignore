@@ -10,9 +10,9 @@
 [Ll]ogs/
 [Mm]emoryCaptures/
 
-# We specifically don't want to save the Scenes folder in this Mod Tools project
-Scenes
-Scenes.meta
+# We specifically don't want to save the root Scenes folder in this Mod Tools project
+/Scenes
+/Scenes.meta
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta

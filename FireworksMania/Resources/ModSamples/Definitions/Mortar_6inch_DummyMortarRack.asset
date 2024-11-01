@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7029976d5733448893cd5be7a3662a, type: 3}
+  m_Name: Mortar_6inch_DummyMortarRack
+  m_EditorClassIdentifier: 
+  _id: Mortar_6inch_DummyMortarRack
+  _prefabGameObject: {fileID: 2201424296091111136, guid: 61ae318fa5deecc409a1641ac8f1e60b,
+    type: 3}
+  _itemName: 6 inch Dummy Mortar Rack
+  _icon: {fileID: 21300000, guid: a5ee425076e09c941b63558ac4c9b4ee, type: 3}
+  _entityDefinitionType: {fileID: 11400000, guid: d049a36475ac7b54d9de521c8d51c933,
+    type: 2}

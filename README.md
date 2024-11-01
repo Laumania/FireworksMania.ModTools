@@ -2,50 +2,53 @@
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
 # Video Tutorials
-I have created a playlist with various videos about creating mods for Fireworks Mania:
+I have created a playlist with various videos about creating mods for Fireworks Mania. That playlist starts with a video of me going through all the stuff below. Further more it contains videos on a lot more stuff you can do with the Fireworks Mania Mod Tools.
 
 [Mod Support | Fireworks Mania](https://www.youtube.com/playlist?list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck)
 
-# Prerequisites
-To be able to build mods for Fireworks Mania there are a few prerequisites, at least it will be pretty hard to do if you don't know anything about the below.
+The firework effects are made with the Unity Particle System and here is a guide that goes through how it works. This video is not specifically about making firework effects, but it explains the basics of the Particle System, which you need to know so you can create your own custom effects.
+[Getting Started with PARTICLES in Unity](https://www.youtube.com/watch?v=Eua7G7Vct0A)
+
+# Recommended prerequisites
+To be able to build mods for Fireworks Mania there are a few recommended prerequisites.
 
 - Basic knowledge about [Unity](https://unity.com)
   - If you want to get started I recommend Imphenzia's ["LEARN UNITY - The Most BASIC TUTORIAL I'll Ever Make"](https://www.youtube.com/watch?v=pwZpJzpE2lQ)
 - Basic 3D modeling skills ([Blender](https://www.blender.org) is the tool I use, but there are others. As long as they can export to .fbx I think it's all fine)
   - If you want to get started I recommend Imphenzia's ["Learn Low Poly Modeling in Blender"](https://www.youtube.com/watch?v=1jHUY3qoBu8) if you are all new to Blender. 
 
-Keep in mind that there are tons of good tutorials out there for basic Unity and Blender, so go check out what YouTube have to offer, the two recommendation are just one place to start.
+Keep in mind that there are tons of good tutorials out there for basic Unity and Blender stuff, so go check out what YouTube have to offer, the two recommendation are just one place to start.
 
-**NO CODING SKILLS NEEDED**
+It is very important to note that **NO CODING SKILLS ARE REQUIRED** to be able to build a mod - it can all be done via the Unity editor.
 
-It is very important to note that you do **NOT** need to be able to code to build a mod - it can all be done via the Unity editor.
+So, none-coders, fear not.
 
-So none-coders, fear not.
-
-Coders, fear not either, you can do custom scripting (with some security limitations of cause).
+Coders, fear not either, you can do custom scripting 🤓
 
 # Getting started
-## 1. Getting Unity Hub
-Go and get the [Unity Hub](https://unity3d.com/get-unity/download) (not the Beta version!)
+## 1. Getting Unity Hub & Git
+[Download and install Unity Hub](https://unity.com/download) - The Unity Hub acts a a "launcher" and it's via this that you will install the actual Unity Editor.
 
-When Unity Hub is installed on your machine, you are ready to install "Unity" (also called "Unity Editor").
+[Download and install Git](https://git-scm.com/) - Unity need this to be installed to be able to install the Mod Tools package later one, so you might as well install it right away.
+
+After the two above have been installed, restart your PC and come back here.
 
 ## 2. Getting Unity Editor
 To avoid unintended behavior and issues you always need the specific version of Unity that the Mod Tools are build with.
 
-When you have the Unity Hub installed, it's easy to install the specific version you want and you can have multiple versions installed at the same time.
+When you have the Unity Hub installed, it's easy to install the specific version you want. Also know that you can have multiple versions installed at the same time.
 
 You find the current target Unity version in the [Change log](CHANGELOG.md).
 
-To install that specific version, go to the [Unity Archive](https://unity3d.com/get-unity/download/archive) and click the green "Unity Hub" button on that version. This should make Unity Hub download this version.
+If you don't have the given version installed, just click on the version number in the Change log. This will take you to Unity's website where you can click the "Install" button and it will open up in your Unity hub and install that version. Really easy!
 
-![image](https://user-images.githubusercontent.com/1378458/138602725-e61fd662-a607-4618-873d-a533e5043ab8.png)
+![image](https://github.com/user-attachments/assets/d9fd49fa-61f9-4db2-9b1d-0bdfaa396ea9)
 
 ## 3. Create empty Unity project
-Fireworks Mania mods are build from inside Unity and you therefore need a empty 3D Unity project. This is (initially) exactly as you would do if you were going to create your own game, however, when building mods there are a few things that are different, which we will get to a bit later.
+Fireworks Mania mods are build from a Unity Project. So create an empty 3D (Build-in Render Pipeline) Unity project.
 
+![image](https://github.com/user-attachments/assets/e721a480-262f-481c-96ce-82771318fc5d)
 
-![image](https://user-images.githubusercontent.com/1378458/138611162-2917e479-285b-4192-b640-2fd0a10abbb9.png)
 
 ### Naming your Unity Project
 One important thing to know when naming your project is that you can have multiple mods within a single Unity project. 
@@ -55,67 +58,63 @@ This means that you might want to name the Unity project something more generic 
 These are just suggestions and you should name the Unity project something that make sense to you and how you structure things. The name of the Unity project have no impact on actual mod(s) name(s).
 
 At this point you should now have an empty Unity project that should look something like this:
-![image](https://user-images.githubusercontent.com/1378458/138737260-cd972920-94cd-4eeb-940f-41fe5002c736.png)
+![image](https://github.com/user-attachments/assets/99d54efa-c99e-44e1-81aa-dda7f5566140)
+
+To make sure we are off to a good start and all is as it should, it's a good idea to enter Play-mode. Click the Play button in the top and make sure there are no errors in the console. Click the Play button again to exit play mode.
+![image](https://github.com/user-attachments/assets/361acdd8-051b-491a-95f1-628da74d0c5d)
+
+
 
 ## 4. Install Fireworks Mania Mod Tools
-Now we need to install the actual Fireworks Mania Mod Tools.
+Now we need to install the Fireworks Mania Mod Tools.
 
-Go to the Package Manager, click the little + button and select that you want to add an git package.
+Go to Windows->Package Manager, click the little + button and select that you want to add an git package.
 
-![image](https://user-images.githubusercontent.com/1378458/138907247-a5e8d7d9-6318-4997-87b4-526839aa3301.png)
+![image](https://github.com/user-attachments/assets/f045a7d3-30d8-4a17-8503-9279c57fde62)
 
-Paste in this url and hit Add: https://github.com/Laumania/FireworksMania.ModTools.git
+Paste in this url and hit Add: 
+> https://github.com/Laumania/FireworksMania.ModTools.git
 
-> For experimental branch, use this url:
-> https://github.com/Laumania/FireworksMania.ModTools.git#experimental
+![image](https://github.com/user-attachments/assets/1d1bc3a5-bbad-49b6-af28-0301516983d7)
 
-![image](https://user-images.githubusercontent.com/1378458/138907336-b6292fe8-2c10-413e-b18a-7f282f9f1405.png)
+The installation can take some time, so let its do its work.
 
-> Troubleshooting: 
-> 
-> ![image](https://user-images.githubusercontent.com/1378458/209989463-bc3f944c-daef-4f30-9ca8-c11e5ed91d29.png)
-> 
-> If you get an error saying something with "Git" when you try to add the Mod Tools, its because you don't have Git installed on your computer. You can get git from here, install that and restart your computer: https://git-scm.com/
+Once its done you might get this popup. Just click Yes and it should automatically restart the Unity Editor.
+![image](https://github.com/user-attachments/assets/11c35d7f-8c03-4e72-92fa-8efe8f7eddb6)
 
-![image](https://user-images.githubusercontent.com/1378458/203601491-86803483-48e0-4984-b0d2-0636cf34f669.png)
+You now have the Fireworks Mania Mod Tools installed and are ready to create your first mod!
 
-Once it's done installing you might see a few errors in the console.
+![image](https://github.com/user-attachments/assets/3cbbb379-a7f3-4c80-b201-16f255ced006)
 
-Restart Unity and reopen your project.
+Close the Package Manager window and hit Play again to make sure we don't have any errors. Click Play again to exit Play mode, which is important, as we dont want to be in Play mode.
 
-To verify that your project is working and building, press the "Play" button in the top.
-
-You should see something like this, with no errors. 
-
-![image](https://user-images.githubusercontent.com/1378458/138908645-7d96c0ae-e49f-4faf-b34b-e5ad5aaa833a.png)
-
-> If you see errors, try and read them and see if you can solve them, else reach out in the Mod Creation channels on my [Discord](https://discord.gg/SzZD77p).
-
-You are now ready to start creating your first mod.
+![image](https://github.com/user-attachments/assets/93b7c6b8-a695-40e4-a2da-79e1eb76281b)
 
 # Create Your First Mod
 This is the point where things start to get interesting.
 
-As mentioned previously, it is important to remember that you can build multiple, completely different, mods from this single Unity project you just setup. You can even have different things in a single mod.
+As mentioned previously, it is important to remember that you can build multiple mods from this single Unity project.
 
 ## Create Mod & Folders
 Lets first create an "Mods" folder where we can have all our mods in.
 
-![image](https://user-images.githubusercontent.com/1378458/138917519-c58115ff-34af-42fc-a610-b0f81c38c0c1.png)
+![image](https://github.com/user-attachments/assets/87ad59fa-4d7e-49ea-b2c2-a0120f9acf0c)
 
 Then let us go and create a new mod.
 
-![image](https://user-images.githubusercontent.com/1378458/138917553-79bbd930-3c96-420a-966a-e95093adbd7f.png)
+![image](https://github.com/user-attachments/assets/b0462e0e-eafd-4e52-988a-661b19a9cec3)
 
-![image](https://user-images.githubusercontent.com/1378458/138917674-36b0c45c-79ac-44c0-8ca3-82389738d7fd.png)
+![image](https://github.com/user-attachments/assets/9f1db1cd-af7c-4815-80cd-463a9c76ea94)
 
-Now give the mod an good descriptive and unique name, it's always an good idea to prefix it with your nickname like I have done here.
+Now give the mod a good descriptive and unique name. It's always an good idea to prefix it with your nickname like I have done here.
+
+Avoid spaces and special characters in the name.
 
 Make sure to put the mod in "Assets/Mods" as shown. 
 
 It is not a requirement, but the more structure you have on your things, the easier it is to find and navigate as the project grows.
 
-![image](https://user-images.githubusercontent.com/1378458/138918428-50febbac-15d8-4937-9ff7-bb8499e82961.png)
+![image](https://github.com/user-attachments/assets/dd999d23-6dd3-461b-9311-ba665b28f5d0)
 
 You can think of this folder, "Laumania_TutorialMod_01" in this sample, as the mod itself. 
 
@@ -131,33 +130,44 @@ Right click and create the following folders:
 - Models
 - Prefabs
 
-![image](https://user-images.githubusercontent.com/1378458/139088027-daae90f7-a681-4519-9e34-6e12fb6fc30d.png)
+![image](https://github.com/user-attachments/assets/ae3bddcb-fb9d-4dd6-9909-76ceea8fb330)
 
 Now head to the Export Settings to setup metadata on your mod, some build options etc.
 
-![image](https://user-images.githubusercontent.com/1378458/139144466-032e17db-1912-4688-b16b-d596a211ba02.png)
+![image](https://github.com/user-attachments/assets/2e57daac-4627-45d8-8098-dfb7809bbb96)
 
-Fill out the various fields with what fits your mod.
+Fill out the following fields under "Mod Information" with what fits your mod, the rest can be ignored as they are not really used in the game.
 
-![image](https://user-images.githubusercontent.com/1378458/139144549-56aa5eb8-bb3f-499b-b728-72bdd3918456.png)
+- Mod Name
+- Mod Version
+- Mod Author
 
-The "Mod Export Directory" can be set to exactly what you want, however, for easier test of your mod it is recommended that you set this to your local "Mods" folder for Fireworks Mania. This way you build your mod directly into the games mods folder and do not have to copy files each time.
+![image](https://github.com/user-attachments/assets/11af3453-9ae3-4274-9436-aafeb757a450)
 
-To find the path press WIN + R to get the Run prompt up.
+The "Mod Export Directory" is there you mod is eventually going to be placed everytime you build it. To make it easier and quicker to test, it make sense to set this directory to the local "Mods" folder of the game. 
+This way, everytime you build the mod, all you have to do is restart the map in the game. The game will detect the mod have changed and reload it and you can test your changes.
 
-Put in: %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
+As this "Mods" folder is placed in a location under your user on your PC, the path to it is unique to your machine and user.
 
-And press Enter.
+Click the 3 dots to set the "Mod Export Directory".
 
-![image](https://user-images.githubusercontent.com/1378458/139145921-f7382bfc-71b1-4e84-9a87-d22297c02e28.png)
+![image](https://github.com/user-attachments/assets/fa568118-4f97-4d78-823c-c9bbed23f2cf)
 
-A new window will open in the correct location, copy the path from that and put it into the "Mod Export Directory".
+This will open the normal file explorer. Copy/Paste the below into the adress bar in the top.
 
-![image](https://user-images.githubusercontent.com/1378458/139146085-5420792e-8587-4858-a341-e41be75a2bb9.png)
+> %userprofile%\appdata\locallow\Laumania ApS\Fireworks mania\Mods
 
-![image](https://user-images.githubusercontent.com/1378458/139146248-a8748f42-a27e-44c8-98c9-57294a864cdd.png)
+![image](https://github.com/user-attachments/assets/674e7b4e-7829-4853-921e-bb7c83c7c161)
 
-On the "Build" tab, set the "Optimize for" to "File Size" to avoid your mods to be very large in size.
+Hit Enter and you will get to the folder we want.
+![image](https://github.com/user-attachments/assets/a43c94d3-cc78-4629-967f-b3c8c5fdf3ae)
+
+Click the "Select folder" button and the correct path will be set as the "Mod Export Directory".
+
+![image](https://github.com/user-attachments/assets/749ea929-6322-46e4-85dc-cd547b8d24a1)
+
+On the "Build" tab, set the "Optimize for" to "File Size". 
+> This is very important! If you do not do this your mod will take up more space on players harddrive, take longer to download and take longer to load into the game. So do this for your own and all other players sake :)
 
 ![image](https://user-images.githubusercontent.com/1378458/139145086-9d16d5d8-083e-40cf-a87d-79dbe1675781.png)
 
@@ -174,7 +184,7 @@ Let us create our first "EntityDefinition" of the type "FireworkEntityDefinition
 
 We of course create this in our "Definitions" folder.
 
-![image](https://user-images.githubusercontent.com/1378458/139088210-1c2f4197-59da-47dc-ad83-4a678146d5b4.png)
+![image](https://github.com/user-attachments/assets/bf435ce6-b12c-486c-9c1c-a7f1141894a9)
 
 As you will see in a moment, it is always a good idea to name your EntityDefinitions something unique, as the name of the file will also be used as the "EntityDefinitionId" that will be used to uniquely identify this specific firework that you are creating.
 
@@ -182,28 +192,24 @@ I therefore recommend naming it after this schema:
 
 *YourNickname_EntityType_NameOfTheItem*
 
-You will find all the possible firework types in this folder:
-![image](https://user-images.githubusercontent.com/1378458/140571230-807126d2-4ffd-4587-9409-055f25c457a0.png)
+In my sample here I call it: *Laumania_Cake_TutorialCake*
 
-
-In my sample here I call it: *Laumania_Rocket_TutorialRocket*
-
-![image](https://user-images.githubusercontent.com/1378458/139089176-ac89b969-a843-4ea8-bb6a-9bcbfa045538.png)
+![image](https://github.com/user-attachments/assets/d8e6f05d-5130-4d40-81ed-ac26a6732b3d)
 
 ### Entity Definition Id
 You will see some "errors" in the console now - these are here to help you.
 
-![image](https://user-images.githubusercontent.com/1378458/139089415-9f065536-acd9-404e-a781-db2d7f846ea8.png)
+![image](https://github.com/user-attachments/assets/11542db4-7e60-485b-97a2-4bccce70ced1)
 
 You can see the first one says something about you need to update the Id.
 
 If you select the EntityDefinition you can see what fields it have in the Inspector.
 
-![image](https://user-images.githubusercontent.com/1378458/139089742-c8ca719b-ed2e-4aa3-b238-0e3c52d6313c.png)
+![image](https://github.com/user-attachments/assets/46f556b0-8706-4a19-98e8-b0b7b42a92eb)
 
 Looking closer we see that Id the error is talking about.
 
-![image](https://user-images.githubusercontent.com/1378458/139089828-98d75d83-ef54-4bed-9f21-fff46ab47612.png)
+![image](https://github.com/user-attachments/assets/bb49bb20-276e-43ec-b559-5f13c8281ba8)
 
 For a newly created EntityDefinition, you can see this field it set to: INSERT UNIQUE DEFINITION ID
 
@@ -211,130 +217,134 @@ For a newly created EntityDefinition, you can see this field it set to: INSERT U
 
 Right click in the top of the Inspector.
 
-![image](https://user-images.githubusercontent.com/1378458/139090061-2abfdf99-385c-4e07-87fc-d3991c90d140.png)
+![image](https://github.com/user-attachments/assets/05222f38-d755-42d8-a765-c912aaf63ddd)
 
-![image](https://user-images.githubusercontent.com/1378458/139090412-096b6eeb-5c23-4715-ae94-a22b6569e8a7.png)
+![image](https://github.com/user-attachments/assets/1144e3d5-d2e4-4d4b-8db1-471c42b12bfe)
 
 > One important thing to note here is that this EntityDefinitionId is used, among other things, to save in blueprint files. Therefore, once your mod has been released the first time - **do not change this id** - as you will break users of your mods blueprints.
 
 ### Entity Definition Type
 The next error says something about EntityDefinitionType that is missing. It is because an FireworkEntityDefinition needs to have a type.
 
-![image](https://user-images.githubusercontent.com/1378458/139092007-5dda56e1-3ff9-40f5-b99b-3868787eed6f.png)
+![image](https://github.com/user-attachments/assets/d4f3e599-8fd5-4c51-b22f-ef43f902d8f5)
 
-As we know we are building a rocket let us pick the Rocket type.
+As we know we are building a cake let us pick the Cake type.
 
 > EntityDefinitionType is the one that determine under what category/type the firework will show up in the Inventory in game.
 
 Click this little round thingy to select a type.
 
-![image](https://user-images.githubusercontent.com/1378458/139092367-62e29a9f-f74f-486d-ba92-3718f69e37f3.png)
+![image](https://github.com/user-attachments/assets/ce46d46a-ef99-4f5f-8bb4-3c087101f0ae)
 
 If you window looks like this:
  
-![image](https://user-images.githubusercontent.com/1378458/139092429-e2a5b3ae-db6c-4fe8-aa6a-4052f9c236af.png)
+![image](https://github.com/user-attachments/assets/38e74e58-b34e-49fa-96db-521c3cca04c8)
 
 You need to click the little eye icon to toggle on assets from packages, as these types comes as part of the Fireworks Mania Mod Tools in a package.
 
-![image](https://user-images.githubusercontent.com/1378458/139092700-00311929-681d-427b-a0c3-c346efbeee6a.png)
+![image](https://github.com/user-attachments/assets/d5a8f882-b20a-4264-8ace-5c923ae5a098)
+
+![image](https://github.com/user-attachments/assets/608671bb-59b5-4feb-9088-87ea494f07dc)
 
 ### Entity Definition Prefab
 Now we have a definition with an unique Id and an Entity Definition Type. 
 
 However, when you set the type, you get another error, saying something about missing a Prefab Game Object.
 
-![image](https://user-images.githubusercontent.com/1378458/139095883-805b70e5-5b1d-453b-b8cc-13bd2c7de7f4.png)
+![image](https://github.com/user-attachments/assets/cdcec0bf-fad1-4a30-9afa-049f139b5b7d)
 
-This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework. Therefore, this prefab is your actual firework with logic to act as a rocket in this case. It have the 3d model, rocket behavior, effect, fuse, sound etc. 
+This is the [prefab](https://docs.unity3d.com/Manual/Prefabs.html) that will be spawned in game when a player spawns your firework. Therefore, this prefab is your actual firework with logic to act as a cake in this case. It have the 3d model, cake behavior, effect, fuse, sound etc. 
 
 Creating and modifying this prefab is where the majority of your time will be spend as a typical firework mod creator.
 
 For now however, as this is a getting started guide, we will keep it simple so you get a basic idea of how a mod it put together, without going into the details of creating particle effect, setup the various fireworks behavior etc. We will get to that later.
 
-So to help you get started, I have included some "ModSamples" in the Fireworks Mania Mod Tools.
+Luckily, its very easy to get started, as the Mod Tools comes with some templates you can use to start from.
 
-![image](https://user-images.githubusercontent.com/1378458/139133149-cb18c33b-ebcb-4b6b-b851-891144278131.png)
+So right click in the Hierarchy and create an Cake_Template.
+![image](https://github.com/user-attachments/assets/52ae02a8-4b9f-4db4-afe1-91e42fe84ad2)
 
-Find the prefab "Rocket_DummyRocket_Prefab".
+To the left you see the Cake_Template instance you just created (we will make that into an prefab in a bit as thats what we actually need) and to the right you see all the components on that game object because it's select. Don't look to much at the right for now, we get to that later.
+![image](https://github.com/user-attachments/assets/40743b72-7c15-4b5b-bf3a-ac4a09798772)
 
-As all these are inside a package you cannot copy or manipulate them here, which is as it should be. However, you can drag this prefab into your scene and from it create your own prefab.
+Now lets rename the instance in the Hierarchy to what we want our prefab to be named.
 
-First drag the prefab into the scene hierarchy.
+Once its renamed, drag and drop it to the "Prefabs" folder in your mods folder.
 
-![image](https://user-images.githubusercontent.com/1378458/139134286-520ea2c2-d501-4125-95a3-d8eec58fd288.png)
+![image](https://github.com/user-attachments/assets/9e57f7fc-a3c2-4eab-acc6-3fd136e4b351)
 
-Then right click it, Prefab -> Unpack to unpack it from being an prefab fra the ModSamples.
+You will now see the instance in the Hierarchy turned blue, because it's now an instance of an actual prefab and you now have the prefab in your "Prefabs" folder too.
 
-![image](https://user-images.githubusercontent.com/1378458/139134419-0c5a2bc1-eeb1-4e81-8f70-a18053211956.png)
+![image](https://github.com/user-attachments/assets/62da0c6f-a436-4036-878d-272bd0e416bd)
 
-Now you can rename that gameobject in the hierarchy to fit your fireworks name.
+At this point you delete the prefab instance in the hierarchy, as you want to make changes directly to the original prefab and not to the prefab instance.
 
-![image](https://user-images.githubusercontent.com/1378458/139134599-3c7b2f82-7c80-41e1-9e1d-a3df9c8459cf.png)
+![image](https://github.com/user-attachments/assets/4eac1675-ea33-48d9-89e1-c74dc6b50b09)
 
-Because it is no longer a prefab in the hierarchy, we can make it our own prefab by dragging it to the Prefabs folder in our mod's folder.
+Now we want to edit the prefab, you do that by double clicking in.
 
-![image](https://user-images.githubusercontent.com/1378458/139134750-664001a0-9994-4f86-8a3e-1075ba8188db.png)
+![image](https://github.com/user-attachments/assets/5bbd63c5-de00-4c5d-88bf-f9d11203edb7)
 
-As it is now a prefab again, it is again showing up as blue in the hierarchy and you can see it in the Prefabs folder in your mod.
+You now have the prefab open in edit mode and by selecting the top gameobject (root node) you can setup the last part of the prefab. 
 
-![image](https://user-images.githubusercontent.com/1378458/139135040-54edae2e-88ec-4715-b4cc-74ce128b22a5.png)
+What you need to do here is set the "Entity Definition" to be the "Laumania_Cake_TutorialCake" we created earlier. This tells the prefab which entity definition it belongs too, you don't have to understand why now, just know that its needed for the game to work properly.
 
-For now we can delete the game object (prefab instance) in the hierarchy to avoid by mistake make changes to that, instead of the actual prefab.
+![image](https://github.com/user-attachments/assets/419f2cab-1554-4728-a6f5-30770c8b3513)
 
-![image](https://user-images.githubusercontent.com/1378458/139139295-1c519819-27ed-4df8-b661-b57d84636f8c.png)
+Press CTRL + S to save the changes on the prefab. It is recommended to have "Auto save" turned off, as it can in some cases slow down Unity a lot.
 
-Instead, double click the prefab in the project window, to open up the prefab.
+![image](https://github.com/user-attachments/assets/53d753ec-17fd-49b4-a46c-35c6909c2119)
 
-![image](https://user-images.githubusercontent.com/1378458/139139537-98b56d31-6a6a-44a4-841d-4f14aa87b0a9.png)
+Now the prefab knows which FireworksEntityDefinition it belongs to, now we need to tell the "Laumania_Cake_TutorialCake" EntityDefinition which prefab it should spawn when selected in the Inventory in game. So the relationship goes both ways.
 
-You now have the prefab open in edit mode and by selecting the top gameobject (root node) you can setup the last part of the prefab to fit to your FireworkEntityDefinition you created earlier.
+Select the "Laumania_Cake_TutorialCake" (the EntityDefinition) to make it show its details in the Inspector and then drag the "Laumania_Cake_TutorialCakePrefab" to the "Prefab Game Object" field.
 
-![image](https://user-images.githubusercontent.com/1378458/139139782-7c0d18ff-59b5-4ab8-b251-fa7363c369e8.png)
-
-Only thing we need to do here is to tell this prefabs RocketBehavior, which Entity Definition it is related to.
-
-As you might have guessed, as we want this prefab to be related to our FireworkEntityDefinition from before.
-
-So, again click the little round icon and select your definition.
-
-![image](https://user-images.githubusercontent.com/1378458/139140050-af61b1e2-c505-4340-8a1c-fde06606f5f1.png)
-
-![image](https://user-images.githubusercontent.com/1378458/139140092-d4dd3cf1-8546-4142-a31c-0448d369a0c4.png)
-
-Now we need to go back to where we came from, the FireworkEntityDefinition from before, where we needed to provide it with an prefab. We have now created that prefab and can therefore assign it to the FireworkEntityDefinition.
-
-Drag the prefab to the field in the Inspector.
-
-![image](https://user-images.githubusercontent.com/1378458/139140686-ab690713-05f9-4b6e-9796-340b7abb4b51.png)
-
+![image](https://github.com/user-attachments/assets/bb80d5cd-a942-4c3c-8ceb-ab9664e3db79)
+(Alternative you can also click the little circle next to the field end select the prefab there - the result is the same)
 
 ### Entity Definition Name
 Our FireworkEntityDefinition also needs a name, which is the one showing up in the Inventory.
 
 So let us give it a name.
 
-![image](https://user-images.githubusercontent.com/1378458/139143631-9e0996cb-e476-4520-bcd4-05e65604a9d0.png)
-
+![image](https://github.com/user-attachments/assets/f98b83e3-16ec-4bba-95f2-e1d743d85e72)
 
 ### Entity Definition Icon
-We also need to provide an icon which is used in the Inventory. In your own mod you would create your own icon and I will do a guide on how to do that later.
+For the firework to look good in the Inventory we also need to provide a preview icon. 
 
-For now let us just use one of the icons from the ModSamples.
+All you need to do is to right click the prefab in the Project window.
+![image](https://github.com/user-attachments/assets/1025f08d-f334-47d6-832c-48a35c2f9f1e)
 
-![image](https://user-images.githubusercontent.com/1378458/139143908-dfe541f8-8c4c-4b76-aa7a-7996255d977b.png)
+As you can see there are different options and you can test out which one you like the best. Everytime you click, a new icon is generated next to the prefab, if one is exiting there it will overwrite it. So very easy to test things out.
+
+![image](https://github.com/user-attachments/assets/b91b45ce-7501-40fd-a9cd-75452e20552f)
+
+This looks good so lets go with that one. The icon starts out expanded, but you can click the little arrow to collapse it, so it's not too confusing.
+![image](https://github.com/user-attachments/assets/f090664f-7676-46cb-b8c3-bdd98e87e139)
+
+You can decide to leave the icon next to the prefab, but we also made an folder called "Icons" earlier you can put it in. Drag and drop the icon file to move it. 
+
+Its up to you how you want to organize your project. My advise is to be consistant. Do the same thing the same way, everytime, to avoid confusing your future self.
+
+Now you just select the "Laumania_Cake_TutorialCake" (the EntityDefinition) and drag in the generated icon to the "Icon" field.
+
+![image](https://github.com/user-attachments/assets/89c9a153-5b85-4d10-8906-c3eb3d644ab3)
+
+
+
 
 ## Build Mod
 With all the above setup building the mod is the easy part.
 
-![image](https://user-images.githubusercontent.com/1378458/139146350-44fdf6ff-5197-4b90-9e96-a12cd6922801.png)
+![image](https://github.com/user-attachments/assets/56ed74d4-734f-459c-9c52-eb7cf2382a60)
 
 Unity will spend some time building and you should see this in the console when it is done.
 
-![image](https://user-images.githubusercontent.com/1378458/139146423-6e893d7d-9dc8-469a-b93d-5ba4d88c776c.png)
+![image](https://github.com/user-attachments/assets/29c20f6a-7ffa-4176-9089-3e42fbd02ed5)
 
 At the same time the export directory will open and you should see your mod in the Mods folder of Fireworks Mania.
 
-![image](https://user-images.githubusercontent.com/1378458/139146509-e1e52e96-f5af-4096-882a-9c4f7043cac0.png)
+![image](https://github.com/user-attachments/assets/0d801476-63ff-4b25-bc59-dffd11db4633)
 
 Your mod is successfully build - let us try it out!
 
@@ -342,19 +352,33 @@ Your mod is successfully build - let us try it out!
 ## Testing Your Mod In Game
 With your mod, or mods, in the "Mods" folder of the game, the mods will attempt to load on the load of a map in the game.
 
-So let us start up the game and to go the Flat map. All map should work for this. When the map is loaded open the Inventory and head over to the "Workshop" part.
+In most cases you want to test out your mod in a Singleplayer game, to avoid others joining your host, as they will not be able to see your creation from the mod as they do not have it installed. For others to get access to your game it need to be put on mod.io, you will find a video about that in the YouTube playlist mentioned in the beginning.
 
-Here you should see your first mod rocket.
+So let us start up a Singleplayer game. Lets test it out in the Town map. All map should work for this. When the map is loaded open the Inventory and find your firework.
 
-![image](https://user-images.githubusercontent.com/1378458/139147106-8e53f90a-68f4-42fc-aece-eff7edf7be2a.png)
+Here you should see your first mod cake.
+
+![image](https://github.com/user-attachments/assets/7fbac6ae-9d02-4678-9ffa-45b3d4c99f30)
 
 Now select it and spawn it and see it working.
 
-![image](https://user-images.githubusercontent.com/1378458/139147195-b91c4243-e2d8-4b0f-9e08-c2c1a96a7606.png)
+![20241028183205_1](https://github.com/user-attachments/assets/af7dabcc-1d79-421d-b5b1-ff92353a51e8)
 
-![image](https://user-images.githubusercontent.com/1378458/139147243-39be5c71-1067-466d-ae3f-37b713da9343.png)
+![20241028183218_1](https://github.com/user-attachments/assets/f5837b63-2b1b-492a-a541-d18472a9d029)
+
+![20241028183221_2](https://github.com/user-attachments/assets/0c070ba1-0d99-46a8-b705-509efe44b7cc)
 
 Congrats - you have created your first Fireworks Mania Mod!
+
+# What's next?
+So far you only scratched the surface of modding for Fireworks Mania and to be frank, all the above was the boring setup part. 
+
+Now the fun begins where you can make your own effects, maps, characters etc.
+
+This written "Getting started guide" stop here and the rest you need to find in the YouTube Playlist mentioned in [Video Tutorials](#video-tutorials), as it is much easier to explain and show in videos.
+
+Love to see what awesome stuff you are going to create 🤓
+
 
 # Project in Github / Backup
 This is not a requirement, but having your project in some sort of version control is essential.
@@ -373,12 +397,27 @@ https://assetstore.unity.com/packages/tools/utilities/zip-backup-71979
 # Publish Your Mod
 Once your mod is ready for the world, it is time to get it into the workshop in the game.
 
-You do that by uploading your mod to mod.io here: https://fireworksmania.mod.io
+You do that by uploading your mod to mod.io here: [https://fireworksmania.mod.io](https://mod.io/g/fireworksmania)
 
 We all look forward to try out your mod :D
 
 # Troubleshooting
 If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Unity seems to fix the issue. Thanks guanaco0403.
+
+# Known limitations
+
+## Netcode For GameObjects
+The game uses Unity's new Netcode for GameObject (NGO) package for multiplayer. It works pretty well in the game and Unity clear spend a lot of time updating it, so new stuff being added over time.
+
+However, in relation to mods in Fireworks Mania, there are some limitations when it comes to NGO. NGO depends on some "CodeGen" to run when the actual game is build, to make some NGO features work, lige RPC's and NetworkVariables.
+
+The CodeGen can currently not be executed when building a mod, meaning you cannot utialize any of these features from within a mod - yet. It's very annoying as it's fundamental to a multiplayer game, but we have to wait a bit for it to work from within custom scripting in mods.
+
+I have been in dialog with Unity about this for a while and it sounds like they want to support it, however, it still haven't happened. So crossing fingers. You can follow the issue here on NGO's Github page: https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/issues/2747
+
+
+## Network Prefabs in MapDefinitions
+Most likely due to the same as above, some CodeGen stuff that NGO depends on, the "Network Prefabs" list in a MapDefinition is not working for modded maps. This field is suppose to hold network prefabs of objects that are placed in the scene and/or destructible versions of them. However, this is sadly not working in a custom map in a mod, only for maps that is build into the game. I hope when the above CodeGen issue is fixed, this will be fixed too. This means you can't have moveable objects placed in a custom map, or you can but they won't be synced with other players, making it not very fun.
 
 
 

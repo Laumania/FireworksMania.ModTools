@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7029976d5733448893cd5be7a3662a, type: 3}
+  m_Name: PreloadedTube_DummyPreloadedTube
+  m_EditorClassIdentifier: 
+  _id: PreloadedTube_DummyPreloadedTube
+  _prefabGameObject: {fileID: 9195578706541690224, guid: 1cdcd9160c991a741af4c713db31a5c5,
+    type: 3}
+  _itemName: Dummy Preloaded Tube
+  _icon: {fileID: 21300000, guid: d0b755006772dc848bded67105a7f048, type: 3}
+  _entityDefinitionType: {fileID: 11400000, guid: 6a8da2b4f244cbb48b79c2e36a0cae30,
+    type: 2}

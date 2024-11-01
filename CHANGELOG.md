@@ -5,6 +5,180 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.10.7] - 2024-10-31
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+**ATTENTION**: ALWAYS BACKUP BEFORE UPGRADING! This is the first public release of the new Mod Tools targeting the new "multiplayer" version of Fireworks Mania. If you are upgrading from *v2023.1.6* or previous, there are a few things you need to do to make it work.
+
+[Upgrade mod from Mod Tools 2023.1.6 in Fireworks Mania](https://www.youtube.com/watch?v=JyKD0h4QlbM)
+
+### Added
+- Added two new PhysicsMaterials for footstep sounds. Snow and Gravel
+- Added context menu option to CharacterDefinitions so you can now right click in the top an "Set Id as filename" 
+
+### Changed
+- Removed Description and Thumbnails from MapDefinitions as it was never used ingame
+- Decreased the intensity of lights used to generate previews/icons as it was a bit too bright before
+
+## [v2024.10.6] - 2024-10-20 (CLOSED BETA)
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+### Fixed
+- Fixed and improved Preview Generator
+
+## [v2024.10.4] - 2024-10-17 (CLOSED BETA)
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+### Added
+- Included a new "PreviewLightingScene" which is used to set the light for the right click on prefab "Preview Generation" feature
+
+## [v2024.10.3] - 2024-10-12 (CLOSED BETA)
+Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
+
+### Added
+- Added new "Icon" field to CharacterDefinition as characters can now be selected in UI in the game
+- Added package "RuntimePreviewGenerator" and some scripts based on work of Panini and Guanaco0403 to help generate previews of fireworks and propd. Right click on a prefab in the Project window and navigate to Fireworks Mania/Generate Preview/... to see your options. This is the first version so I'm sure I will tweak it with help from some of you guys
+
+## [v2024.9.5] - 2024-9-27 (CLOSED BETA)
+Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47)
+
+### Added
+- Added an "arrow" Gizmo to CharacterCameraPosition to show the forward direction
+- Added new rightclick menuitem to add a CharacterCameraPositionPrefab to your character to make it easier. Just right click on an gameobject in the hierarchy and look in the "Fireworks Mania" sub menu
+
+## [v2024.9.4] - 2024-9-26 (CLOSED BETA)
+Target Unity version: [v2022.3.47f1](https://unity3d.com/unity/whats-new/2022.3.47) (**ATTENTION**: New Unity version)
+
+### Added
+- Added Gizmo arrow to show the direction of the PlayerSpawnLocation
+- Added more settings to GameSoundDefinition
+  - "Loop" specifies if the sound should loop
+  - "SoundBus" determine the type of sound. Default: Used for most sounds, Ambient: Used for ambient sounds and are forced to be 2D, UI: Used for UI sounds and are forced to be 2D, Explosions: Used for loud explosions as sounds of this type will duck other sounds for a short while to emphasize how loud it is.
+- Added more settings to MapDefinition
+  - "AmbientMode" sets how the ambient light in the scene should to handled, the difference can be pretty big so try out the different ones and see what fit your map, remember to test in both day and night time in the map
+
+### Changed
+- Renamed some Mod Tools menu items to be under a "Upgrade" subfolder, preparing for the Mod Tools to go public beta and some information about how to upgrade your old mods
+
+
+
+## [v2024.8.7] - 2024-8-31 (CLOSED BETA)
+Target Unity version: [v2022.3.44f1](https://unity3d.com/unity/whats-new/2022.3.44) (**ATTENTION**: New Unity version)
+
+### Changed
+- Changed SaveableEntity to save/load Transform and Rigidbody data, meaning SaveableTransformComponent and SaveableRigidbodyComponent are now marked as obsolete. All logic from them have been removed, so you can remove them from your prefabs at will, all will still work if they are there or not. Did this change to make things simpler for modders really, as you now don't have to add that many components for the most common cases, which is that you want these data save/loaded
+- Made a lot of changes in relation to get blueprints to work in "multiplayer", but none of that should really have any impact on how the Mod Tools are used
+- Upgraded NGO dependency to 1.11.0 as that's the version in the game now 
+
+## [v2024.6.5] - 2024-6-23 (CLOSED BETA)
+Target Unity version: [v2022.3.33f1](https://unity3d.com/unity/whats-new/2022.3.33) (**ATTENTION**: New Unity version)
+
+### Added
+- Added DestructibleBehavior. For now just know it's there, as I need to create a video to explain how it works, as there are a set of things that need to be in place for this to work. However, Im putting it in here so I can test it myself from an actual mod - so far I have only used this from within the game and there might be differences. So it's here, don't use it yet really :)
+- Add UseableNetworkBehavior, which is essentially the same as the UseableBehavior, except this is synced in multiplayer. I decided to create a new version of this, as there might be use cases for a UseableBehavior that should really only be client side
+- Added a lot of new classes and interfaces to support various new things in the game
+
+### Changed
+- Updated a lot of behavior and classes to work with NetCode, improvement etc.
+
+### Fixed
+- Fixed various bugs ;)
+
+## [v2024.4.5] - 2024-4-22 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+### Added
+- Added new feature where you can set "ModelMeshRenderer" on a ShellBehavior. It will try and set it automatically, both in Unity but also in game at runtime, if its not already set. If it picked a wrong MeshRenderer, you can drag in the right one
+
+### Changed
+- In relation to the new ModelMeshRenderer, both Shell templates in Mod Tools have been updated to have this set too
+
+## [v2024.4.4] - 2024-4-18 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+### Added
+- Added new "Create Menu" item for adding "PlayerSpawnLocationPrefab" to make it easier to add to a map
+- Added new Shell launch effect prefab in various sizes that can be used if you do not want to create your own
+- Added new Shell launch and explode sounds that are natively in the game
+
+### Fixed
+- Fixed issue where a lot of warning were written to the log in Unity when "UnwrappedShellFuse" Gizmo was rendered in Play Mode
+
+
+## [v2024.4.2] - 2024-4-08 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Added
+- Added support for custom fuse effects on UnwrappedShellFuses. Basically it's just using the same effect and sound as on the fuse you put on the regular Shell. So the effect you set on your shell, is the one that will be used on your custom fuse. However, due to this change, the rotation of the "IgnitePosition" on the UnwrappedShellFuse becomes important. On a regular fuse and on the UnwrappedShellFuse you will now see an yellow arrow pointing in the "forward" direction of the fuse. So make sure it's pointing in the right direction. Look at the UnwrappedShellFuse template if in doubt
+
+### Fixed
+- The issue with Prefabs being marked as edited for no reason, should partly be fixed. I have fixed my code, but NGO seems to NEED to have "Network Object" as the first component on the GameObject - so it will move it and thereby update your prefab, just by clicking on it. If it prompts you something about prefab being edited, just press the "Keep Changes" button and it shouldn't happen again
+
+
+## [v2024.4.1] - 2024-4-06 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Added
+- Added new ParticlSystemShellSound that can be used on Shells instead of the normal ParticleSystemSound. This new component gives the option to have a different launch sounds depending on if shell is fired on ground or from a mortar. (Also updated ModSample Shell templates to use it)
+- Added more validation upon build of a mod. So don't be worried if you suddently get errors when building the mod. Read the error messages, because its because the Mod Tools are now smarter in knowing what works and what doesn't, so it tried to stop you from building, if it can see an issue that it knows will be an issue in game anyway at runtime
+
+### Changed
+- Reverted back some of the logic I tested out that should set references between EntityDefinitions and Prefabs and visa versa, as it didn't work as expected. This also means the EntityDefinition fields are now visible again on firework behaviors
+
+### Fixed
+- The above new validation running when mod it build, should prevent that issue where two or more shells had the same effect. Just rebuild the mod and you will get an error telling what the problem is
+
+
+## [v2024.3.3] - 2024-3-29 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+This update should not break anything build with previous version.
+There are no actual Mod Tool changes in this one, it's mainly to match some changes i the game of the same version.
+
+### Changed
+- Updated some of the ModSample Templates to make sure the effects are setup correctly etc. 
+
+## [v2024.3.2] - 2024-3-29 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+>**IMPORTANT**: I haven't spend time not breaking previous version of shells and mortars. So the ones made with previous version won't work. Delete them and start over if the fastest way to continue.
+
+### Added
+- Added "rightclick Template" for easier creation of your own UnwrappedShellFuse Prefab
+- Added logic to the fuse time set on the fuse on the shell is carried over to also be the same fusetime on the fuse once the shell is loaded into a mortar
+
+### Changed
+- Simplified how Shells and Mortars are structured so it's hopefully a bit easier to understand - this is a big change!
+- Changed logic so EntityDefinition is set automatically on the prefab you drag into the Prefab field of a Fireworks/Prop EntityDefinition. Should work, but won't be possible to really test until we have blueprints in the game again
+- Changed "UnwrappedShellFuse gizmo from green to yellow, as green made it look like a collider
+
+### Fixed
+- Fixed the issue where you could see "Internal" things when you right click in the Project pane
+- Fixed particle system of the current default "Launch 3inch effect" so the particles are set in World and not Local
+
+## [v2024.3.1] - 2024-3-23 (CLOSED BETA)
+Target Unity version: [v2022.3.19f1](https://unity3d.com/unity/whats-new/2022.3.19)
+
+>**IMPORTANT**: As this is a beta and there is no upgrade guide yet, please use this version in a new Unity Project. Do not upgrade to this version in your existing mod project - for now.
+
+In general there are a lot of changes in this version of the Mod Tools so I'm not listing all here, only the important parts.
+
+### Added
+- First draft of native Shell and Mortar support. I'll share a private video for you closed beta guys of how Shell and Mortars work in this version
+- Added weather "Dark Cloudy" so it can now be set on MapDefinitions
+- Added 3 Footstep Physics material, that can be used on ground colliders to change the footstep sound of players
+
+### Changed
+- I changed the namespace of the CharacterDefinition, which means character mods build with previous version won't work with v2024-3-1 of the game. Luckily it's easy you fix, just rebuild your character mod with this version of the Mod Tools and it will work again.
+
+
+
 ## [v2023.1.6] - 2023-1-25
 Target Unity version: [v2021.3.16f1](https://unity3d.com/unity/whats-new/2021.3.16)
 
