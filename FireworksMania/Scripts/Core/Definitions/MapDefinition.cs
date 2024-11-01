@@ -22,13 +22,12 @@ namespace FireworksMania.Core.Definitions
         [SerializeField]
         private string _mapName = "Untitled Map";
 
-        [Tooltip("Description of the map")]
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
         [SerializeField]
-        private string _description = "";
-
-        [SerializeField]
+#endif
         private Sprite[] _thumbnails;
 
+        [Header("Scene")]
         [SerializeField]
         [Tooltip("Exact name of the scene in your mod holds the map. Important, name your scene something unique")]
         private string _sceneName;
@@ -38,7 +37,7 @@ namespace FireworksMania.Core.Definitions
         private GameSettings _gameSettings;
 
         [Header("Multiplayer Settings")]
-        [Tooltip("All objects in a map that have a NetworkObject component on them, HAVE to be a prefab instance. Add reference to the prefab itself here for it to work.")]
+        [Tooltip("[This is currently not working - awaiting a fix from Unity and NetCode Team] All objects in a map that have a NetworkObject component on them, HAVE to be a prefab instance. Add reference to the prefab itself here for it to work.")]
         [SerializeField]
         private List<GameObject> _networkObjectPrefabs = new List<GameObject>();
 
@@ -118,7 +117,8 @@ namespace FireworksMania.Core.Definitions
 
 
         public string SceneName                            => _sceneName;
-        public string Description                          => _description;
+        [Obsolete("Description is not longer supported", true)]
+        public string Description                          => string.Empty;
         public string MapName                              => _mapName;
         public Sprite[] Thumbnails                         => _thumbnails;
         public LightingSettings LightingSettings           => _lightingSettings;
