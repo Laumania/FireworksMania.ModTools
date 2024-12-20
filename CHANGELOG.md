@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2024.12.4] - 2024-12-20
+Target Unity version: [v2022.3.53f1](https://unity3d.com/unity/whats-new/2022.3.53) (**ATTENTION**: New Unity version)
+
+### Added
+- Added new Footstep physics material for Metal footstep sounds [(How to change footstep sounds)](https://www.youtube.com/watch?v=27JnOv-9er4&list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck&index=6)
+- Added two new Weather presets you can set on MapDefinition, "Very Foggy" and "Foggy Snow"
+
+### Changed
+- Removed all obsolete components from Template prefabs
+- Removed the "Affected Layers" on ExplosionPhysicsForceEffect as it caused some issues and fireworks not always affecting other fireworks
+
+
 ## [v2024.10.7] - 2024-10-31
 Target Unity version: [v2022.3.50f1](https://unity3d.com/unity/whats-new/2022.3.50)
 

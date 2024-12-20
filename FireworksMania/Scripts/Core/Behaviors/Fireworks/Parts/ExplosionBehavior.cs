@@ -30,7 +30,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private CancellationToken _cancellationToken;
         private NetworkVariable<LaunchState> _launchState = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        void Awake()
+        private bool _isWaitingOnDelayedSound = false;
+
+        private void Awake()
         {
             if (_explosionParticleEffect == null)
                 Debug.LogError("Missing particlesystem on ExplosionBehavior", this);
@@ -65,7 +67,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 ExplodeVisualsAsync(_cancellationToken).Forget();
         }
 
-        protected float GetLaunchTimeDifference()
+        private float GetLaunchTimeDifference()
         {
             return this.NetworkManager.ServerTime.TimeAsFloat - _launchState.Value.ServerStartTimeAsFloat;
         }
@@ -95,9 +97,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_explosionSound, this.transform.position, delayBasedOnDistanceToListener: true));
 
             if (_delayInSecondsBetweenSoundAndExplosionEffect > 0f)
+            {
+                _isWaitingOnDelayedSound = true;
                 await UniTask.Delay(Mathf.RoundToInt((_delayInSecondsBetweenSoundAndExplosionEffect * 1000f)), cancellationToken: token);
-
-            token.ThrowIfCancellationRequested();
+                token.ThrowIfCancellationRequested();
+                _isWaitingOnDelayedSound = false;
+            }
 
             _explosionParticleEffect.gameObject.SetActive(true);
             _explosionParticleEffect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
@@ -113,12 +118,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             {
                 IsLaunched             = true,
                 Seed                   = (byte)Random.Range(0, 254),
-                ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat
+                ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat + (_delayInSecondsBetweenSoundAndExplosionEffect * 1000f)
             };
 
             _explosionForceEffect.ApplyExplosionForce();
 
-            await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying, cancellationToken: token);
+            await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying || _isWaitingOnDelayedSound, cancellationToken: token);
             
             token.ThrowIfCancellationRequested();
 
@@ -131,6 +136,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             };
         }
 
-        public bool IsExploding { get { return _launchState.Value.IsLaunched; } }
+        public bool IsExploding => _launchState.Value.IsLaunched;
     }
 }

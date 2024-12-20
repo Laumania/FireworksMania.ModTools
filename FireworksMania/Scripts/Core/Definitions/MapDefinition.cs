@@ -277,6 +277,8 @@ namespace FireworksMania.Core.Definitions
         Foggy = 2,
         Rain = 3,
         Snow = 4,
-        DarkCloudy = 5
+        DarkCloudy = 5,
+        VeryFoggy = 6,
+        FoggySnow = 7
     }
 }

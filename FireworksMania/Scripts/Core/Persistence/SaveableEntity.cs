@@ -52,8 +52,8 @@ namespace FireworksMania.Core.Persistence
             var result               = new SaveableEntityData();
             var customComponentData  = new Dictionary<string, CustomEntityComponentData>();
 
-            if(_saveTransformData)
-             CaptureTransformState(customComponentData);
+            if(_saveTransformData) 
+                CaptureTransformState(customComponentData);
 
             CaptureRigidbodyState(customComponentData);
 
@@ -61,7 +61,11 @@ namespace FireworksMania.Core.Persistence
             {
                 try
                 {
-                    customComponentData[saveable.SaveableComponentTypeId] = saveable.CaptureState();
+                    var capturedState = saveable.CaptureState();
+                    if (capturedState.CustomData != null && capturedState.CustomData.Count > 0)
+                    {
+                        customComponentData[saveable.SaveableComponentTypeId] = saveable.CaptureState();
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -80,12 +84,7 @@ namespace FireworksMania.Core.Persistence
         public void RestoreState(SaveableEntityData stateToRestore)
         {
             EntityInstanceId = stateToRestore.EntityInstanceId;
-
-            if (_saveTransformData)
-                RestoreTransformState(stateToRestore);
-
-            RestoreRigidbodyState(stateToRestore);
-
+            
             foreach (var saveable in GetAllSaveableComponents())
             {
                 try
@@ -94,8 +93,8 @@ namespace FireworksMania.Core.Persistence
 
                     if (stateToRestore.CustomComponentData.TryGetValue(typeName, out CustomEntityComponentData value))
                         saveable.RestoreState(value);
-                    else
-                        Debug.LogWarning($"No {nameof(CustomEntityComponentData)} found on '{EntityInstanceId}' for {nameof(ISaveableComponent)} '{typeName}'", this);
+                    //else
+                    //    Debug.LogWarning($"No {nameof(CustomEntityComponentData)} found on '{EntityInstanceId}' for {nameof(ISaveableComponent)} '{typeName}'", this);
                 }
                 catch(Exception ex)
                 {
@@ -103,6 +102,11 @@ namespace FireworksMania.Core.Persistence
                     throw new RestoreStateException($"Unable to RestoreState for '{EntityInstanceId}' on '{saveable.SaveableComponentTypeId}', due to '{ex.Message}'");
                 }
             }
+
+            if (_saveTransformData)
+                RestoreTransformState(stateToRestore);
+
+            RestoreRigidbodyState(stateToRestore);
         }
 
         private void CaptureTransformState(Dictionary<string, CustomEntityComponentData> customComponentData)

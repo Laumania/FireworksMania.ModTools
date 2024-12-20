@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
@@ -27,22 +28,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             base.Awake();
 
-            if(_model == null)
-                Debug.LogError("Missing model reference in rocket", this);
-
-            if (_thruster == null)
-                Debug.LogError("Missing Thruster on rocket - this is not gonna fly!", this);
-
-            if (_fuse == null)
-                Debug.LogError("Missing Fuse on rocket", this);
-
-            if (_explosion == null)
-                Debug.LogError("Missing IExplosion on rocket", this);
-
             _rigidbody = this.GetComponent<Rigidbody>();
-            
-            if (_rigidbody == null)
-                Debug.LogError("Missing Rigidbody on rocket", this);
+
+            Preconditions.CheckNotNull(_model, $"Missing model reference in rocket on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_thruster, $"Missing Thruster on rocket on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_fuse, $"Missing Fuse on rocket on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_explosion, $"Missing Explosion on rocket on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on rocket on '{this.gameObject.name}'");
 
             _colliders = _rigidbody.GetComponents<Collider>();
         }
@@ -64,13 +56,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
+            if (token.IsCancellationRequested)
+                return;
+
             _thruster.TurnOn();
 
             await UniTask.Delay(200);
             token.ThrowIfCancellationRequested();
 
             _rigidbody.isKinematic = false;
-            _rigidbody.useGravity = true;
+            _rigidbody.useGravity  = true;
 
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();

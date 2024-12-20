@@ -240,6 +240,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public virtual void RestoreState(CustomEntityComponentData customComponentData)
         {
+            //This code is here to be able to support legacy blueprints
+            var position    = customComponentData.Get<SerializableVector3>(nameof(BaseFireworkBehaviorData.Position));
+            var rotation    = customComponentData.Get<SerializableRotation>(nameof(BaseFireworkBehaviorData.Rotation));
+            var isKinematic = customComponentData.Get<bool>(nameof(BaseFireworkBehaviorData.IsKinematic));
+
+            this.transform.position = new Vector3(position.X, position.Y, position.Z);
+            this.transform.rotation = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
+
+            var rigidbody = this.GetComponent<Rigidbody>();
+            if (rigidbody != null)
+                rigidbody.isKinematic = isKinematic;
         }
 
         public virtual void Ignite(float ignitionForce)

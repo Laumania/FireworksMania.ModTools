@@ -22,19 +22,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             base.Awake();
 
-            if (_model == null)
-                Debug.LogError("Missing model reference in firecracker", this);
-
-            if (_fuse == null)
-                Debug.LogError("Missing Fuse on firecracker", this);
-
-            if (_explosion == null)
-                Debug.LogError("Missing IExplosion on firecracker", this);
-
             _rigidbody = GetComponent<Rigidbody>();
 
-            if (_rigidbody == null)
-                Debug.LogError("Missing Rigidbody on firecracker", this);
+            Preconditions.CheckNotNull(_model, $"Missing model reference in firecracker on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_fuse, $"Missing Fuse on firecracker on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_explosion, $"Missing IExplosion on firecracker on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on firecracker on '{this.gameObject.name}'");
 
             _colliders = _rigidbody.GetComponents<Collider>();
         }
@@ -50,8 +43,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
             if (token.IsCancellationRequested)
-            {
                 return;
+
+            if (_explosion.OrNull() == null)
+            {
+                if (IsServer)
+                    this.gameObject.DestroyOrDespawn();
+                else
+                    return;
             }
 
             DisableRigidBodyAndColliders();

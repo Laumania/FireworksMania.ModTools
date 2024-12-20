@@ -43,6 +43,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         [Tooltip("Layers that should be affected by the explosion physics force effect.")]
         [SerializeField]
+        [HideInInspector]
         [FormerlySerializedAs("_layers")]
         private LayerMask _affectedLayers               = 0;
         private LayerMask _debrisLayer;
@@ -78,6 +79,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if (_debrisLayer == -1)
                 Debug.LogError("Debris layer name not found!", this);
+
+            _affectedLayers = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable") | LayerMask.GetMask("Player");
         }
 
         private void OnValidate()

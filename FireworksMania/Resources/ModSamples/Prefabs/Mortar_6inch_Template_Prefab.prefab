@@ -615,8 +615,6 @@ GameObject:
   - component: {fileID: 4214755521902678005}
   - component: {fileID: 5873532276144625177}
   - component: {fileID: 4446583013900086423}
-  - component: {fileID: 6104048255048087269}
-  - component: {fileID: 1802177333970067152}
   m_Layer: 0
   m_Name: Mortar_6inch_Template_Prefab
   m_TagString: Untagged
@@ -656,7 +654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1674245957
+  GlobalObjectIdHash: 4073249436
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -739,6 +737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: c2598ff635b2cb44e868d8db57ce36de, type: 2}
+  _saveTransformData: 1
 --- !u!54 &5554007381049491892
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -812,30 +811,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sound: SFX_Impact_GeneralLarge
---- !u!114 &6104048255048087269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2201424296091111136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cfe99405ba86ef44b1f70626f5b3376, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1802177333970067152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2201424296091111136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 236b5613f2baaf24abaa1f451f63a27c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2253087542726292205
 GameObject:
   m_ObjectHideFlags: 0
