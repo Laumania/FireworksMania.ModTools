@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
 ## [v2024.12.4] - 2024-12-20
-Target Unity version: [v2022.3.53f1](https://unity3d.com/unity/whats-new/2022.3.53) (**ATTENTION**: New Unity version)
+Target Unity version: [v2022.3.53f1](https://unity3d.com/unity/whats-new/2022.3.53) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
 ### Added
 - Added new Footstep physics material for Metal footstep sounds [(How to change footstep sounds)](https://www.youtube.com/watch?v=27JnOv-9er4&list=PLfRfKfCcFo_tvABAdgGDM5GGlaSa9Smck&index=6)
@@ -364,3 +364,5 @@ This behavior have the events OnBeginUse (triggered when E is pressed) and OnEnd
 Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
 
 Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+
+Always restart Unity after upgrading - very important!
