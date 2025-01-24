@@ -193,6 +193,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
+        internal void MarkAsUsed()
+        {
+            _isUsed.Value = true;
+        }
+
         public void ResetFuse()
         {
             _remainingFuseTime            = _fuseTime;

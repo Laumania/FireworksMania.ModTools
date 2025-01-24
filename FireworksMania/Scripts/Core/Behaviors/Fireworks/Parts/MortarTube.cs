@@ -88,7 +88,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
 
             if (IsServer)
-                _mortarInternalFuse.IgniteWithoutFuseTime(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
+                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
 
             _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
             _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
