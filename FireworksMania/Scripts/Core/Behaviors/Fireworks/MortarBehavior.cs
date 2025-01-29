@@ -33,6 +33,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private void Awake()
         {
             Preconditions.CheckNotNull(_mortarTubes);
+            PopulateMortarTubeList();
             Preconditions.CheckState(_mortarTubes.Length != 0, $"'{nameof(_mortarTubes)}' cannot be empty");
 
             _rigidbody = GetComponent<Rigidbody>();
@@ -50,6 +51,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 mortarTube.OnShellLaunched -= MortarTube_OnShellLaunched;
             
             base.OnDestroy();
+        }
+
+        private void PopulateMortarTubeList()
+        {
+            _mortarTubes = this.GetComponentsInChildren<MortarTube>();
+
+            if (_mortarTubes == null || _mortarTubes.Length == 0)
+                Debug.LogError($"No MortarTubes found on {this.gameObject.name}", this);
         }
 
         private void SetupMortarTubes()
@@ -86,12 +95,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                         return;
                     }
 
-                    _mortarTubes = this.GetComponentsInChildren<MortarTube>();
+                    PopulateMortarTubeList();
 
-                    if (_mortarTubes == null || _mortarTubes.Length == 0)
-                        Debug.LogError($"No MortarTubes found on {this.gameObject.name}", this);
-
-                    if(_diameter == null)
+                    if (_diameter == null)
                         Debug.LogError($"Missing {nameof(EntityDiameterDefinition)} on {this.gameObject.name}", this);
 
                     if (GetComponent<SaveableEntity>() != null)
