@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
-## [v2025.1.2] - 2025-01-24
+## [v2025.1.2] - 2025-01-31
 Target Unity version: [v2022.3.55f1](https://unity3d.com/unity/whats-new/2022.3.55) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
 ### Added
