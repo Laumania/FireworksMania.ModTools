@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
 
+## [v2025.1.2] - 2025-01-31
+Target Unity version: [v2022.3.55f1](https://unity3d.com/unity/whats-new/2022.3.55) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### Added
+- Added "Audio Settings" to MapDefinition so you can now set a custom Day and Night ambience sound
+- Added "Start Month" to the MapDefinition under Time, to set at which month the map starts. This have a big impact on how the lighting in the day/night cycle looks
+
 ## [v2024.12.4] - 2024-12-20
 Target Unity version: [v2022.3.53f1](https://unity3d.com/unity/whats-new/2022.3.53) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 

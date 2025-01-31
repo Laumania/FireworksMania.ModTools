@@ -48,7 +48,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
-            if (this.GetComponent<IErasable>() == null)
+            if (this.gameObject.GetComponent<IErasable>() == null)
                 this.gameObject.AddComponent<ErasableBehavior>();
 
             _saveableEntity = GetComponent<SaveableEntity>();

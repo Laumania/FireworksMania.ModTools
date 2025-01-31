@@ -49,8 +49,8 @@ namespace FireworksMania.Core.Definitions
         private LightingSettings _lightingSettings;
         [SerializeField]
         private SkySettings _skySettings;
-        //[SerializeField]
-        //private AudioSettings _audioSettings;
+        [SerializeField]
+        private AudioSettings _audioSettings;
         [SerializeField]
         private WeatherSettings _weatherSettings;
 
@@ -123,7 +123,7 @@ namespace FireworksMania.Core.Definitions
         public Sprite[] Thumbnails                         => _thumbnails;
         public LightingSettings LightingSettings           => _lightingSettings;
         public SkySettings SkySettings                     => _skySettings;
-        //public AudioSettings AudioSettings               => _audioSettings;
+        public AudioSettings AudioSettings                 => _audioSettings;
         public TimeSettings TimeSettings                   => _timeSettings;
         public WeatherSettings WeatherSettings             => _weatherSettings;
         public GameSettings GameSettings                   => _gameSettings;
@@ -200,8 +200,13 @@ namespace FireworksMania.Core.Definitions
         [Tooltip("Set the initial time of day in hours. (12.5 = 12:30)")]
         [SerializeField]
         private Common.SerializableNullable<float> _startTimeOfDay;
-        
+
+        [Tooltip("Set the initial month. The game is set to be based in northen Europe and therefore have seasons based on that. The suns path on the sky varies a lot depending if its winter or summer, why the day night cycle in the game will look a lot difference if its set to be January (1), July (7) or December (12). (Values between 1 and 12)")]
+        [SerializeField]
+        private Common.SerializableNullable<int> _startMonth;
+
         public Common.SerializableNullable<float> StartTimeOfDay => _startTimeOfDay;
+        public Common.SerializableNullable<int> startMonth => _startMonth;
     }
 
     [Serializable]

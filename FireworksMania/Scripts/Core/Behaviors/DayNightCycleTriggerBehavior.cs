@@ -1,3 +1,4 @@
+using System;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
 using UnityEngine;
@@ -35,7 +36,42 @@ namespace FireworksMania.Core.Behaviors
                 InternalHandlingChanges();
             }
         }
-        
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (this != null)
+                {
+                    if (OnDayActions != null)
+                    {
+                        for (int i = 0; i < OnDayActions.GetPersistentEventCount(); i++)
+                        {
+                            if (String.IsNullOrEmpty(OnDayActions.GetPersistentMethodName(i)))
+                                Debug.LogError($"Event '{nameof(OnDayActions)}' on '{this.gameObject.name}' missing method", this);
+
+                            if (OnDayActions.GetPersistentTarget(i) == null)
+                                Debug.LogError($"Event '{nameof(OnDayActions)}' on '{this.gameObject.name}' missing target", this);
+                        }
+                    }
+
+                    if (OnNightActions != null)
+                    {
+                        for (int i = 0; i < OnNightActions.GetPersistentEventCount(); i++)
+                        {
+                            if (String.IsNullOrEmpty(OnNightActions.GetPersistentMethodName(i)))
+                                Debug.LogError($"Event '{nameof(OnNightActions)}' on '{this.gameObject.name}' missing method", this);
+
+                            if (OnNightActions.GetPersistentTarget(i) == null)
+                                Debug.LogError($"Event '{nameof(OnNightActions)}' on '{this.gameObject.name}' missing target", this);
+                        }
+                    }
+                }
+            };
+        }
+#endif
+
         private void OnDestroy()
         {
             Messenger.RemoveListener<MessengerEventDayNightChanged>(OnDayNightChanged);
