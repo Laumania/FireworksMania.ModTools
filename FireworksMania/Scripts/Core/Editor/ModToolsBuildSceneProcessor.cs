@@ -1,9 +1,12 @@
 ﻿using FireworksMania.Core.Common;
+using System;
 using UMod.BuildEngine;
 using UMod.BuildPipeline;
 using UMod.BuildPipeline.Build;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 namespace FireworksMania.Core.Editor
@@ -13,17 +16,26 @@ namespace FireworksMania.Core.Editor
     {
         public override void ProcessAsset(BuildContext context, BuildPipelineAsset asset)
         {
-            Scene scene = EditorSceneManager.OpenScene(asset.FullPath);
+            Scene scene              = EditorSceneManager.OpenScene(asset.FullPath);
             GameObject[] rootObjects = scene.GetRootGameObjects();
-
+            
             //CheckForPlayerSpawnLocation(scene, rootObjects); //Have to comment this one out for now as it just wont work and I don't get why. It doesn't find the PlayerSpawnLocation even though it's right there in the scene...
             CheckForDirectionalLights(scene, rootObjects);
             CheckForCamera(scene, rootObjects);
-            
-            //if (rootObject.GetComponentInChildren<Light>() != null)
-            //{
-            //    context.FailBuild(string.Format("Scene: {0} contains one or more lights. Mod scenes must not contains any light componenets!", asset.RelativePath));
-            //}
+            CheckForEventSystem(context, scene, rootObjects);
+        }
+
+        private void CheckForEventSystem(BuildContext context, Scene scene, GameObject[] rootObjects)
+        {
+            foreach (GameObject rootObject in rootObjects)
+            {
+                EventSystem[] eventSystems = rootObject.GetComponentsInChildren<EventSystem>(true);
+
+                foreach (EventSystem eventSystem in eventSystems)
+                {
+                    context.FailBuild($"Found '{nameof(EventSystem)}' in scene '{scene.name}' on GameObject '{eventSystem.gameObject.name}'. The game already have a EventSystem so this should not be in your scene. Delete the EventSystem GameObject and build the mod again.");
+                }
+            }
         }
 
         private void CheckForCamera(Scene scene, GameObject[] rootObjects)

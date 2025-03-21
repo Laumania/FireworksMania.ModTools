@@ -3,7 +3,22 @@ All notable changes to Fireworks Mania Mod Tools will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-[How to upgrade Mod Tools package](#how-to-upgrade-mod-tools-package)
+## How to upgrade Mod Tools package
+
+[BACKUP YOUR PROJECT BEFORE UPGRADING!](https://github.com/Laumania/FireworksMania.ModTools/tree/main?tab=readme-ov-file#project-in-github--backup)
+
+> Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
+
+Always restart Unity after upgrading - very important!
+
+## [v2025.3.1] - 2025-03-21
+Target Unity version: [v6000.0.40f1](https://unity3d.com/unity/whats-new/6000.0.40) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### Changed
+- Upgraded to Unity 6. If you use Cinemachine or TextMeshPro in your mod you need to go over it an make sure it works 
+
+### Added
+- Included fonts and TextMeshPro fonts to be used. Use the "NotoSans-Regular SDF" or "NotoSans-Title SDF" as they are setup to fallback to other fonts in case a character is missing
 
 ## [v2025.1.2] - 2025-01-31
 Target Unity version: [v2022.3.55f1](https://unity3d.com/unity/whats-new/2022.3.55) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
@@ -365,11 +380,3 @@ This behavior have the events OnBeginUse (triggered when E is pressed) and OnEnd
 - Upgraded to UMod 2.8.4
 - Upgraded to Unity 2021.1.20f1
 - Enabled a setting to allow the game to try and load mods build with older versions. It might fail, but I assume it will also work in many cases and I think it's better to attempt to load a mod in the game, then proactively avoid loading mods build with older version each time the game/Unity is updated. Time will tell how this works out
-
-## How to upgrade Mod Tools package
-
-Make sure you have a [backup of your project before upgrading!](https://github.com/Laumania/FireworksMania.ModTools/tree/v2021.11.5#project-in-github--backup)
-
-Unity > Window > Package Manager > (Packages: "In Project" > Fireworks Mania Mod Tools > Press "Update" button  
-
-Always restart Unity after upgrading - very important!
