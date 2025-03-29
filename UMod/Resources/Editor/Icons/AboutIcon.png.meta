@@ -72,3 +72,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 58293
+  packageName: uMod 2.0
+  packageVersion: 2.9.9
+  assetPath: Assets/UMod/Resources/Editor/Icons/AboutIcon.png
+  uploadId: 737480

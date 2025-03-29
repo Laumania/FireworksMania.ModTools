@@ -31,3 +31,10 @@ PluginImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 58293
+  packageName: uMod 2.0
+  packageVersion: 2.9.9
+  assetPath: Assets/UMod/Plugin/UMod-ModTools.dll
+  uploadId: 737480
