@@ -26,7 +26,7 @@ MonoBehaviour:
   syncGameVersion: 1
   modFileExtension: .mod
   commandLineLaunchFormat: +mod=$PATH
-  targetUnityVersion: 6000.0.43f1
+  targetUnityVersion: 6000.0.44f1
   allowAnyUnityVersion: 1
   developerWebsiteURL: https://github.com/Laumania/FireworksMania.ModTools
   onlineDocumentationURL: https://github.com/Laumania/FireworksMania.ModTools
