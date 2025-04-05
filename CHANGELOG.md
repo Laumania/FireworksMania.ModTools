@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
+## [v2025.3.3] - 2025-04-5
+Target Unity version: [v6000.0.44f1](https://unity3d.com/unity/whats-new/6000.0.44) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### Fixed
+- Upgraded to a patched version of uMod to fix the ScriptableObject reference bug
+
+
 ## [v2025.3.1] - 2025-03-21
 Target Unity version: [v6000.0.40f1](https://unity3d.com/unity/whats-new/6000.0.40) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
