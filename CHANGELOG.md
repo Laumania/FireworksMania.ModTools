@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
+## [v2025.4.1] - 2025-04-15
+Target Unity version: [v6000.0.44f1](https://unity3d.com/unity/whats-new/6000.0.44) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### Added
+- Added new "Generate View" function for prefabs in a scene. This means you can put your prefan in a sample scene, place the Scene View Camera as you want the preview to be generated and then right click on the prefab in the scene hierarchy -> "Fireworks Mania/Generate Preview/Perspective/Current Veiw In Scene"
+
+
 ## [v2025.3.3] - 2025-04-5
 Target Unity version: [v6000.0.44f1](https://unity3d.com/unity/whats-new/6000.0.44) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 

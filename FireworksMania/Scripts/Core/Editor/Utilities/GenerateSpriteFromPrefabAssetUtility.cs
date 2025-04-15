@@ -7,13 +7,35 @@ using System.Threading;
 using FireworksMania.Core.Utilities;
 using UnityEditor.SceneManagement;
 using FireworksMania.Core.Definitions;
+using System.Drawing.Drawing2D;
+using System;
 
 public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 {
+    private const int Width                                 = 512;
+    private const int Height                                = 512;
     private const string PreviewLightingPrefabName          = "PreviewLightingPrefab";
     private static GameObject PreviewLightingPrefab         = null;
     private static GameObject PreviewLightingPrefabInstance = null;
 
+
+    [MenuItem("GameObject/Fireworks Mania/Generate Preview/Perspective/Current Veiw In Scene")]
+    public static void PrefabToPngSceneView()
+    {
+        Vector3 camerapos = SceneView.lastActiveSceneView.camera.transform.position;
+        Vector3 relative  = Selection.activeGameObject.transform.InverseTransformPoint(camerapos);
+
+        RuntimePreviewGenerator.BackgroundColor        = Color.clear;
+        RuntimePreviewGenerator.MarkTextureNonReadable = false;
+        RuntimePreviewGenerator.RenderSupersampling    = 2;
+        RuntimePreviewGenerator.OrthographicMode       = false;
+
+        var prefabpath          = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Selection.activeGameObject);
+        var prefabFileName      = Path.GetFileName(prefabpath);
+        var path                = prefabpath.Replace(prefabFileName, string.Empty);
+
+        SetTex(RuntimePreviewGenerator.GenerateModelPreview(Selection.activeGameObject.transform, Width, Height, false, true, true, relative), Selection.activeGameObject, path);
+    }
 
     [MenuItem("Assets/Fireworks Mania/Generate Preview/Orthographic/Front View")]
     public static void Prefab2PngOF()
@@ -125,8 +147,6 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 
     public static Sprite CaptureImage(GameObject pref, bool front, bool Ortho)
     {
-        int width                                      = 512;
-        int height                                     = 512;
         RuntimePreviewGenerator.BackgroundColor        = Color.clear;
         RuntimePreviewGenerator.MarkTextureNonReadable = false;
         //RuntimePreviewGenerator.Padding                = 0.05f;
@@ -158,7 +178,7 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
 
         GameObject temp = (GameObject)PrefabUtility.InstantiatePrefab(pref);
         
-        Sprite result = SetTex(RuntimePreviewGenerator.GenerateModelPreview(temp.transform, width, height, false, true), temp, folderPath);
+        Sprite result = SetTex(RuntimePreviewGenerator.GenerateModelPreview(temp.transform, Width, Height, false, true), temp, folderPath);
 
         DestroyImmediate(temp);
 
