@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
+## [v2025.4.2] - 2025-04-16
+Target Unity version: [v6000.0.44f1](https://unity3d.com/unity/whats-new/6000.0.44) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### NOTES
+This is the first official version of the Mod Tools build for Unity 6. Therefore, be sure to backup your project before upgrading. If you run into throuble please ask for help in the "Modding" channel on my Discord: https://discord.gg/SzZD77p
+
+To see what have changed since the latest official version, see the different versions below.
+
 ## [v2025.4.1] - 2025-04-15
 Target Unity version: [v6000.0.44f1](https://unity3d.com/unity/whats-new/6000.0.44) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
