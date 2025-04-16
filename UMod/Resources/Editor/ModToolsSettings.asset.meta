@@ -7,3 +7,10 @@ NativeFormatImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 58293
+  packageName: uMod 2.0
+  packageVersion: 
+  assetPath: Assets/UMod/Resources/Editor/ModToolsSettings.asset
+  uploadId: 0
