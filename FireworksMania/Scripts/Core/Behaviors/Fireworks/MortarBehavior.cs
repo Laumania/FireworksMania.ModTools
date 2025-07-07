@@ -146,10 +146,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private IIgnitable GetNextIgnitable()
         {
-            var isPickedUp = this.gameObject.GetComponent<IsPickedUp>().OrNull();
+            //var isPickedUp = this.gameObject.GetComponent<IsPickedUp>().OrNull();
 
-            if (isPickedUp == null)
-                return null;
+            //if (isPickedUp == null)
+            //    return null;
 
             foreach (var mortarTube in _mortarTubes)
             {

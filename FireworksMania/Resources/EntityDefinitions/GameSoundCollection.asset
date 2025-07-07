@@ -107,6 +107,8 @@ MonoBehaviour:
   - FastWhoosh
   - JumpSound
   - LandSound
+  - MortarTubeEnter
+  - MortarTubeReject
   - PlayerPerspectiveSwitchSound
   - FireworksManiaSong1
   - NeonLightBuzzing
