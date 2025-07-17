@@ -6,6 +6,7 @@ using FireworksMania.Core.Persistence;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using DG.Tweening;
 using FireworksMania.Core.Attributes;
@@ -50,23 +51,33 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [Tooltip("Sound played when a shell enters the tube")]
         [GameSound]
         private string _loadSound;
+        private const string OtherObjectEnterSound       = "MortarTubeEnter";
+        private const string OtherObjectRejectSound      = "MortarTubeReject";
+        private const float RejectionForce               = 2f;
 
         private ShellBehavior _shellBehaviorFromPrefab;
         private ParticleSystem _shellEffect;
         private ParticleSystem _launchEffect;
         private UnwrappedShellFuse _shellUnwrappedFuse;
         private GameObject _loadedShellMesh;
-
+        
         private SaveableEntity _saveableEntity;
                 
         private NetworkVariable<MortarTubeState> _tubeState = new NetworkVariable<MortarTubeState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private MortarTubeState? _restoredState;
 
-        private Dictionary<int, Rigidbody> _otherObjectsInTube = new Dictionary<int, Rigidbody>();
+        private List<Rigidbody> _otherRigidbodiesInsideMortarTube           = new List<Rigidbody>();
+        private Dictionary<int, Rigidbody> _rigidbodiesRejectedThisFrame    = new Dictionary<int, Rigidbody>();
+
+        private bool _isShellLoadingInProgress = false;
+        private float _allowedBoundMaxSize;
 
         private void Awake()
         {
             InstantiateMortarTubeFuse();
+
+            if (this.GetComponent<Collider>().OrNull() == null)
+                Debug.LogWarning($"MortarTube (on {this.gameObject.name}) requires at least one collider for the player to be able to ignite, erase, fuse etc. properly", this.gameObject);
         }
 
         private void InstantiateMortarTubeFuse()
@@ -86,21 +97,22 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Preconditions.CheckNotNull(_saveableEntity);
 
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
-
-            if (IsServer)
-                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
-
-            _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
-            _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
+            _allowedBoundMaxSize = _mortarTubeTop.DetectionRadius * 3f;
         }
 
         public override void OnDestroy()
         {
-            if (_mortarInternalFuse != null)
-                _mortarInternalFuse.OnFuseCompleted -= OnFuseCompleted;
+            if (IsServer)
+            {
+                if (_mortarInternalFuse != null)
+                    _mortarInternalFuse.OnFuseCompleted -= OnFuseCompleted;
 
-            if(_mortarTubeTop != null)
-                _mortarTubeTop.OnTriggerEnterAction -= OnTriggerEnterMortarTube;
+                if (_mortarTubeTop != null)
+                    _mortarTubeTop.OnTriggerEnterAction -= OnTriggerEnterMortarTube;
+
+                foreach (var rigidbodyInsideMortar in _otherRigidbodiesInsideMortarTube)
+                    rigidbodyInsideMortar?.gameObject.DestroyOrDespawn();
+            }
 
             base.OnDestroy();
         }
@@ -108,6 +120,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+
+            if (IsServer)
+            {
+                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
+                _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
+                _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
+            }
 
             if (_restoredState.HasValue)
                 _tubeState.Value = _restoredState.Value;
@@ -145,6 +164,41 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     Seed                   = (byte)UnityEngine.Random.Range(0, 254),
                     ShellEntityId          = _tubeState.Value.ShellEntityId,
                 };
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if(IsServer)
+                ApplyForceToRejectedRigidBodies();
+        }
+
+        private void ApplyForceToRejectedRigidBodies()
+        {
+            if(_rigidbodiesRejectedThisFrame.Count == 0)
+                return;
+
+            foreach (var rejectedRigidBody in _rigidbodiesRejectedThisFrame.Values)
+            {
+                var rejectionForce = _mortarTubeTop.transform.up.normalized * RejectionForce * rejectedRigidBody.mass;
+                rejectedRigidBody.AddForce(rejectionForce, ForceMode.Impulse);
+            }
+
+            _rigidbodiesRejectedThisFrame.Clear();
+            PlayOtherObjectRejectSoundClientRpc();
+        }
+
+        private void LateUpdate()
+        {
+            UpdatePositionOfObjectsInsideMortar();
+        }
+
+        private void UpdatePositionOfObjectsInsideMortar()
+        {
+            foreach (var rigidbodyInsideMortar in _otherRigidbodiesInsideMortarTube)
+            {
+                if (rigidbodyInsideMortar.OrNull() != null)
+                    rigidbodyInsideMortar.transform.position = _mortarTubeTop.transform.position;
             }
         }
 
@@ -243,7 +297,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 OnShellLaunched?.Invoke(this.transform, _shellBehaviorFromPrefab);
 
-                ShootOutOtherObjectsInTube();
+                ShootOutOtherObjectsInTube(_shellBehaviorFromPrefab.Recoil);
 
                 _shellBehaviorFromPrefab = null;
                 _launchEffect            = null;
@@ -254,111 +308,231 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 Debug.LogWarning($"Unable to launch '{this.gameObject.name}' due to missing effects, some of them are null...can't explain it");
         }
 
-        private bool _isShellLoadingInProgress = false;
+        
         private async void OnTriggerEnterMortarTube(Collider other)
         {
-            if (_isShellLoadingInProgress)
-                return;
-
             if (!IsServer)
                 return;
 
-            if (IsShellLoaded)
+            if (other.OrNull() == null)
                 return;
 
-            var shellBehaviorToLoad = other.gameObject.GetComponent<ShellBehavior>();
-            if (shellBehaviorToLoad != null && other.gameObject.GetComponent<Rigidbody>()?.isKinematic == false)
+            if (other.isTrigger)
+                return;
+
+            if (other.gameObject.isStatic)
+                return;
+
+            if (_isShellLoadingInProgress)
+                return;
+            
+            var otherRigidbody = other.attachedRigidbody;
+            if (otherRigidbody.OrNull() == null)
+                return;
+
+            if (IsShellLoaded == false)
             {
-                if(shellBehaviorToLoad.DiameterDefinition.Diameter <= this.DiameterDefinition.Diameter &&
-                   shellBehaviorToLoad.IsIgnited == false)
+                var shellBehaviorToLoad = otherRigidbody.GetComponent<ShellBehavior>();
+                if (shellBehaviorToLoad != null)
                 {
-                    _isShellLoadingInProgress = true;
-
-                    shellBehaviorToLoad.GetComponent<Rigidbody>().isKinematic = true;
-
-                    foreach (var collider in shellBehaviorToLoad.gameObject.GetComponentsInChildren<Collider>())
+                    if (shellBehaviorToLoad.DiameterDefinition.Diameter <= this.DiameterDefinition.Diameter &&
+                        shellBehaviorToLoad.IsIgnited == false)
                     {
-                        Destroy(collider);
+                        _isShellLoadingInProgress  = true;
+                        otherRigidbody.isKinematic = true;
+
+                        foreach (var collider in shellBehaviorToLoad.gameObject.GetComponentsInChildren<Collider>())
+                            collider.enabled = false;
+
+                        PlayShellLoadSoundClientRpc();
+
+                        var sequence = DOTween.Sequence();
+                        sequence.Join(shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.4f));
+                        sequence.Join(shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.4f));
+                        sequence.Append(
+                            DOVirtual.Float(0f, 1f, 2f, (float value) => {
+                                var position = Vector3.Lerp(_mortarTubeTop.transform.position, _mortarTubeBottom.transform.position, value);
+                                shellBehaviorToLoad.gameObject.transform.position = position;
+                            })
+                        );
+                        await sequence.AsyncWaitForCompletion();
+
+                        _tubeState.Value = new MortarTubeState()
+                        {
+                            IsLaunched             = false,
+                            Seed                   = 0,
+                            ServerStartTimeAsFloat = 0,
+                            ShellEntityId          = shellBehaviorToLoad.EntityDefinition.Id
+                        };
+
+                        shellBehaviorToLoad.gameObject.DestroyOrDespawn();
+
+                        _isShellLoadingInProgress = false;
                     }
-
-                    PlayShellLoadSoundClientRpc();
-
-                    await shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f);
-                    await shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f);
-
-                    await shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 2f);
-
-                    _tubeState.Value = new MortarTubeState()
-                    {
-                        IsLaunched             = false,
-                        Seed                   = 0,
-                        ServerStartTimeAsFloat = 0,
-                        ShellEntityId          = shellBehaviorToLoad.EntityDefinition.Id
-                    };
-
-                    shellBehaviorToLoad.gameObject.DestroyOrDespawn();
-
-                    _isShellLoadingInProgress = false;
                 }
+            }
+            else if (IsAllowedToEnterMortarTube(otherRigidbody))
+            {
+                //_isShellLoadingInProgress = true; //Removed to remove the cooldown on putting stuff into the mortar tube, as its more fun if it goes fast
+                otherRigidbody.isKinematic = true;
+
+                foreach (var collider in otherRigidbody.gameObject.GetComponentsInChildren<Collider>())
+                    collider.enabled = false;
+
+                // Calculate the scale factor to resize objectSize to (0.2, 0.2, 0.2)
+                var targetScaledSize     = _mortarTubeTop.DetectionRadius * 2f;
+                Vector3 scaleFactor      = Vector3.one;
+                var otherRigidbodyBounds = CalculateBounds(otherRigidbody.gameObject);
+                
+                if (otherRigidbodyBounds != null)
+                {
+                    // Avoid division by zero
+                    scaleFactor.x = otherRigidbodyBounds.Value.size.x != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.x, 0f, 1f) : 1f;
+                    scaleFactor.y = otherRigidbodyBounds.Value.size.y != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.y, 0f, 1f) : 1f;
+                    scaleFactor.z = otherRigidbodyBounds.Value.size.z != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.z, 0f, 1f) : 1f;
+
+                    // Use the smallest scale to maintain proportions
+                    float uniformScale = Mathf.Min(scaleFactor.x, scaleFactor.y, scaleFactor.z);
+                    scaleFactor = new Vector3(uniformScale, uniformScale, uniformScale);
+                }
+
+                PlayOtherObjectEnterLoadSoundClientRpc();
+
+                var sequence = DOTween.Sequence();
+                sequence.Join(otherRigidbody.gameObject.transform.DOScale(scaleFactor, 0.2f));
+                sequence.Join(otherRigidbody.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f));
+                sequence.Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f));
+                sequence.Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f));
+                sequence.Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f));
+                await sequence.AsyncWaitForCompletion();
+
+                otherRigidbody.gameObject.transform.position = _mortarTubeTop.transform.position; //Move it back to be inside the MortarTubeTop so it's loaded in properly when loaded via blueprints
+
+                otherRigidbody.GetComponent<NetworkObject>()?.Despawn(false);
+
+                _otherRigidbodiesInsideMortarTube.Add(otherRigidbody);
+
+                //_isShellLoadingInProgress = false;
+            }
+            else if(ShouldBeRejectedWithForce(otherRigidbody))
+            {
+                _rigidbodiesRejectedThisFrame.Add(otherRigidbody.GetInstanceID(), otherRigidbody);
             }
         }
 
-        private void ShootOutOtherObjectsInTube()
+        private Bounds? CalculateBounds(GameObject gameObject)
+        {
+            var originalRotation          = gameObject.transform.rotation;
+            gameObject.transform.rotation = Quaternion.identity; //Reset rotation to calculate bounds correctly
+
+            var meshRenderers      = gameObject.GetComponentsInChildren<MeshRenderer>();
+            if (meshRenderers.Length > 0)
+            {
+                Bounds resultingBounds = meshRenderers[0].bounds;
+                for (int i = 1; i < meshRenderers.Length; i++)
+                {
+                    resultingBounds.Encapsulate(meshRenderers[i].bounds);
+                }
+
+                gameObject.transform.rotation = originalRotation; //Restore original rotation
+                return resultingBounds;
+            }
+            return null;
+        }
+
+        private bool ShouldBeRejectedWithForce(Rigidbody otherRigidbody)
+        {
+            if (_rigidbodiesRejectedThisFrame.ContainsKey(otherRigidbody.GetInstanceID()))
+                return false;
+
+            if (otherRigidbody.gameObject.layer == LayerMask.NameToLayer("Player"))
+                return false;
+
+            if (otherRigidbody.isKinematic)
+                return false;
+
+            return true;
+        }
+
+        private bool IsAllowedToEnterMortarTube(Rigidbody otherRigidbody)
+        {
+            if (otherRigidbody.gameObject.GetComponent<IIgnitable>() != null &&
+                otherRigidbody.gameObject.GetComponent<IIgnitable>().IsIgnited)
+                return false;
+
+            //Note: For some reasons IsSceneObjects are not being destroyed correctly on clients, why we don't want them into a mortar as it behaves oddly. Don't know why it works like that.
+            if (otherRigidbody.GetComponent<NetworkObject>() == null || otherRigidbody.GetComponent<NetworkObject>()?.IsSceneObject == true)
+                return false;
+
+            if (otherRigidbody.gameObject.GetComponent<MortarBehavior>() != null)
+                return false;
+
+            if (otherRigidbody.gameObject.layer == LayerMask.NameToLayer("Player"))
+                return false;
+
+            
+            var otherRigidbodyBounds = CalculateBounds(otherRigidbody.gameObject);
+            if (otherRigidbodyBounds.HasValue && 
+                otherRigidbodyBounds.Value.size.x > _allowedBoundMaxSize && 
+                otherRigidbodyBounds.Value.size.y > _allowedBoundMaxSize &&
+                otherRigidbodyBounds.Value.size.z > _allowedBoundMaxSize)
+                return false;
+
+            return true;
+        }
+
+        private void ShootOutOtherObjectsInTube(float shellRecoil)
         {
             if (!IsServer)
-                return;
-            
-            var shellBehavior        = _shellBehaviorFromPrefab;
-            var originExplosionForce = shellBehavior.Recoil * 30f;
-            var explosionRadius      = Vector3.Distance(_mortarTubeBottom.transform.position, _mortarTubeTop.transform.position) * 2.5f;
-            foreach (var otherObjectRigidbody in _otherObjectsInTube.Values)
+               return;
+
+            var calculatedForce = shellRecoil * 0.5f; //Adjusted force better match how far things are flying
+
+            foreach (var otherObjectRigidbody in _otherRigidbodiesInsideMortarTube)
             {
-                if(otherObjectRigidbody == null)
+                if (otherObjectRigidbody == null)
                     continue;
 
                 if (otherObjectRigidbody.GetComponent<IHaveFuse>() != null)
                 {
-                    var fuse      = otherObjectRigidbody.GetComponent<IHaveFuse>().GetFuse();
+                    var fuse = otherObjectRigidbody.GetComponent<IHaveFuse>().GetFuse();
                     fuse.FuseTime *= Random.Range(0.05f, 0.5f);
                 }
 
                 if (otherObjectRigidbody.GetComponent<IIgnitable>() != null)
                     otherObjectRigidbody.GetComponent<IIgnitable>().IgniteInstant();
 
-                otherObjectRigidbody.isKinematic = false;
+                otherObjectRigidbody.transform.localScale = Vector3.one;
                 otherObjectRigidbody.MovePosition(((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f)));
+                otherObjectRigidbody.isKinematic = false;
 
-                var relativeToMassExplosionForce = originExplosionForce * Mathf.Clamp(otherObjectRigidbody.mass / originExplosionForce, .1f, 1f);
-                otherObjectRigidbody.AddExplosionForce(relativeToMassExplosionForce, _mortarTubeBottom.transform.position, explosionRadius, 0.45f, ForceMode.Impulse);
+                foreach (var collider in otherObjectRigidbody.gameObject.GetComponentsInChildren<Collider>())
+                    collider.enabled = true;
+
+                otherObjectRigidbody.rotation = _mortarTubeTop.transform.rotation;
+                otherObjectRigidbody.AddForce(Random.Range(0.8f, 1.2f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
+                otherObjectRigidbody.GetComponent<NetworkObject>()?.Spawn(true);
             }
-            _otherObjectsInTube.Clear();
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            if (!IsServer)
-                return;
-            var rigidBody = other.GetComponent<Rigidbody>();
-            if (rigidBody != null && rigidBody.GetComponent<MortarBehavior>() == null)
-            {
-                _otherObjectsInTube.TryAdd(other.gameObject.GetInstanceID(), other.GetComponent<Rigidbody>());
-            }
+
+            _otherRigidbodiesInsideMortarTube.Clear();
         }
 
-        private void OnTriggerExit(Collider other)
-        {
-            if (!IsServer)
-                return;
-
-            if (_otherObjectsInTube.ContainsKey(other.gameObject.GetInstanceID()))
-            {
-                _otherObjectsInTube.Remove(other.gameObject.GetInstanceID());
-            }
-        }
-
-        [ClientRpc]
+        [Rpc(SendTo.Everyone)]
         private void PlayShellLoadSoundClientRpc()
         {
             Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _mortarTubeTop.transform.position));
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void PlayOtherObjectEnterLoadSoundClientRpc()
+        {
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(OtherObjectEnterSound, _mortarTubeTop.transform.position));
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void PlayOtherObjectRejectSoundClientRpc()
+        {
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(OtherObjectRejectSound, _mortarTubeTop.transform.position));
         }
 
         private IEnumerator DestroyWhenFinishedPlayingCoroutine(ParticleSystem shellEffect, ParticleSystem launchEffect)

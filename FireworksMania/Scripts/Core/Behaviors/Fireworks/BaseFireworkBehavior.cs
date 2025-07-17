@@ -9,6 +9,7 @@ using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Persistence;
 using FireworksMania.Core.Utilities;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -251,6 +252,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             var rigidbody = this.GetComponent<Rigidbody>();
             if (rigidbody != null)
                 rigidbody.isKinematic = isKinematic;
+
+            var networkRigidbody = this.GetComponent<NetworkRigidbody>();
+            if (networkRigidbody != null)
+            {
+                networkRigidbody.SetPosition(this.transform.position);
+                networkRigidbody.SetRotation(this.transform.rotation);
+            }
         }
 
         public virtual void Ignite(float ignitionForce)
@@ -305,7 +313,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public virtual Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
         public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
         public virtual bool Enabled                           => _fuse.Enabled;
-        public virtual bool IsIgnited                         => _launchState.Value.IsLaunched;
+        public virtual bool IsIgnited                         => _fuse.IsIgnited || _launchState.Value.IsLaunched;
     }
 
     [Serializable]

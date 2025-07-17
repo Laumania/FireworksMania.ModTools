@@ -4,6 +4,7 @@ using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Utilities;
 using Newtonsoft.Json;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace FireworksMania.Core.Persistence
@@ -161,6 +162,13 @@ namespace FireworksMania.Core.Persistence
                 this.transform.position   = new Vector3(position.X, position.Y, position.Z);
                 this.transform.rotation   = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
                 this.transform.localScale = new Vector3(scale.X, scale.Y, scale.Z);
+
+                var networkRigidbody = this.GetComponent<NetworkRigidbody>();
+                if (networkRigidbody != null)
+                {
+                    networkRigidbody.SetPosition(this.transform.position);
+                    networkRigidbody.SetRotation(this.transform.rotation);
+                }
             }
         }
 
