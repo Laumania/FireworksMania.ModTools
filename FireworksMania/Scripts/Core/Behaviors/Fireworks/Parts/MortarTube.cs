@@ -97,14 +97,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Preconditions.CheckNotNull(_saveableEntity);
 
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
-
-            if (IsServer)
-            {
-                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
-                _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
-                _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
-            }
-            
             _allowedBoundMaxSize = _mortarTubeTop.DetectionRadius * 3f;
         }
 
@@ -128,6 +120,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+
+            if (IsServer)
+            {
+                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
+                _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
+                _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
+            }
 
             if (_restoredState.HasValue)
                 _tubeState.Value = _restoredState.Value;
@@ -298,7 +297,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 OnShellLaunched?.Invoke(this.transform, _shellBehaviorFromPrefab);
 
-                ShootOutOtherObjectsInTube();
+                ShootOutOtherObjectsInTube(_shellBehaviorFromPrefab.Recoil);
 
                 _shellBehaviorFromPrefab = null;
                 _launchEffect            = null;
@@ -482,14 +481,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return true;
         }
 
-        private void ShootOutOtherObjectsInTube()
+        private void ShootOutOtherObjectsInTube(float shellRecoil)
         {
             if (!IsServer)
-                return;
-            
-            var shellBehavior        = _shellBehaviorFromPrefab;
-            var originExplosionForce = shellBehavior.Recoil * 30f;
-            var explosionRadius      = Vector3.Distance(_mortarTubeBottom.transform.position, _mortarTubeTop.transform.position) * 2.5f;
+               return;
+
+            var calculatedForce = shellRecoil * 0.5f; //Adjusted force better match how far things are flying
 
             foreach (var otherObjectRigidbody in _otherRigidbodiesInsideMortarTube)
             {
@@ -512,11 +509,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 foreach (var collider in otherObjectRigidbody.gameObject.GetComponentsInChildren<Collider>())
                     collider.enabled = true;
 
-                var relativeToMassExplosionForce = originExplosionForce * Mathf.Clamp(otherObjectRigidbody.mass / originExplosionForce, .25f, 1f);
-                otherObjectRigidbody.AddExplosionForce(relativeToMassExplosionForce, _mortarTubeBottom.transform.position, explosionRadius, 0.45f, ForceMode.Impulse);
-
+                otherObjectRigidbody.rotation = _mortarTubeTop.transform.rotation;
+                otherObjectRigidbody.AddForce(Random.Range(0.8f, 1.2f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
                 otherObjectRigidbody.GetComponent<NetworkObject>()?.Spawn(true);
             }
+
             _otherRigidbodiesInsideMortarTube.Clear();
         }
 

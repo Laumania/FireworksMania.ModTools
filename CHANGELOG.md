@@ -11,12 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
-## [v2025.7.1] - 2025-07-07
+## [v2025.7.2] - 2025-07-17
 Target Unity version: [v6000.0.47f1](https://unity3d.com/unity/whats-new/6000.0.47) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
 ### Changed
 - Updated various internal scripts to match the game version
-- Updated Mortar templates to use the new and simpler collision setup. So if you wanna do mortars, create one from the templates and have a look how it works or simply use it as a template and change it to match what you need
+- Updated Mortar templates to use the new and simpler collision setup. So if you wanna do mortars, create one from the templates and have a look how it works or simply use it as a template and change it to match what you need. Alternative watch this video to see how to upgrade an existing mortar to be more optimized with the 2025.7.2+ version of the game: https://youtu.be/3Yqfeb_CKng
 
 
 ## [v2025.4.2] - 2025-04-16
