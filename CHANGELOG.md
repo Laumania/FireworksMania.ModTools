@@ -11,6 +11,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
+## [v2025.7.3] - 2025-08-22
+Target Unity version: [v6000.0.47f1](https://unity3d.com/unity/whats-new/6000.0.47)
+
+### Added
+- Added support for NGO CodeGen. Guanaco and I ended up having to figure out our own solution for this, after we waited for 2 years for a solution from Unity (https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/issues/2747)
+
+### Changed
+- Updated the Mortar Templates to match the new setup
+
+
 ## [v2025.7.2] - 2025-07-17
 Target Unity version: [v6000.0.47f1](https://unity3d.com/unity/whats-new/6000.0.47) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
