@@ -14,7 +14,7 @@ namespace FireworksMania.Core.Editor
 {
     // Add a build processor for script assets since we are only interested in scripts that will be compiled by uMod.
     // High priority means that it will run after script compilation so build assemblies collection will already be filled out with compiled assemblies.
-    [UModBuildProcessor(".txt")] //Note: We have to have an extension here for now, for this to trigger. This also means the mod folder MUST contain a empty .txt file to trigger this. UMod will fix this in an update.
+    [UModBuildProcessor("")]
     public class ModToolsBuildAssemblyPatcherProcessor : BuildEngineProcessor
     {
         // Methods
@@ -136,7 +136,7 @@ namespace FireworksMania.Core.Editor
             Type interfaceType = commonAssembly.GetTypes().FirstOrDefault(t => t.FullName == "Unity.CompilationPipeline.Common.ILPostProcessing.ICompiledAssembly");
             if (interfaceType == null)
                 throw new Exception("Cannot find ICompiledAssembly type in Unity.CompilationPipeline.Common.dll");
-
+            
             // Create a proxy implementing ICompiledAssembly
             var proxy = CompiledAssemblyShimProxy.Create(shim, interfaceType);
 
@@ -165,7 +165,10 @@ namespace FireworksMania.Core.Editor
                 //Required references needed for NGO CodeGen to do its magic, else it will skip the assembly.
                 var netcodeAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.Netcode.Runtime");
                 var unityModule     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "UnityEngine.CoreModule");
-                References = new string[] { netcodeAssembly.Location, unityModule.Location };
+                var netstandard     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "netstandard");
+                var mscorlib        = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "mscorlib");
+                
+                References = new string[] { netcodeAssembly.Location, unityModule.Location, netstandard.Location, mscorlib.Location }; 
 
                 var commonAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.CompilationPipeline.Common");
                 var inMemoryAsmType = commonAssembly.GetType("Unity.CompilationPipeline.Common.ILPostProcessing.InMemoryAssembly", true);
