@@ -11,11 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
-## [v2025.7.3] - 2025-08-22
+## [v2025.8.1] - 2025-08-28
 Target Unity version: [v6000.0.47f1](https://unity3d.com/unity/whats-new/6000.0.47)
 
 ### Added
-- Added support for NGO CodeGen. Guanaco and I ended up having to figure out our own solution for this, after we waited for 2 years for a solution from Unity (https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/issues/2747)
+- Added support for native Netcode for GameObject usage. Guanaco and I ended up having to figure out our own solution for this, after we waited for 2 years for a solution from Unity (https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/issues/2747). Anyway, it seems to work now, so you should be able to create scripts that use Netcode for GameObject, like Rpcs, NetworkVariables etc. However, this is advanced stuff, so 99% of mod creators will never use this. However, for modders that are creating script with custom logic, this is super important and really a huge step forward
+- Added "PrefabEditorScene" which I also use in the game to edit prefabs. See the "Readme.txt" file in "/FireworksMania/Scenes/Editor/" to learn how to set it up as the default scene for prefab editing in your project. This file also contains info about how to setup your Color Space to the same as the game
 
 ### Changed
 - Updated the Mortar Templates to match the new setup
