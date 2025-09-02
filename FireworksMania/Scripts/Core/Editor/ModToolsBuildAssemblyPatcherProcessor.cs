@@ -35,8 +35,11 @@ namespace FireworksMania.Core.Editor
         private void PatchAssembly(BuildContext context, ModAssemblyEntry entry)
         {
             //Note: We can't use entry.AssemblySymbolsImage as it set wrong by Umod it seems. It's the same as the AssemblyImage. Therefore we have to read the PDB file manually.
-            var umodAssemblyPbdAsBytes = File.ReadAllBytes($"{entry.AssemblyName}.pdb");
+            var umodAssemblyPdbAsBytes = File.ReadAllBytes($"{entry.AssemblyName}.pdb");
             var codeGenAssembly        = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.Netcode.Editor.CodeGen");
+
+            if (codeGenAssembly == null)
+                throw new Exception("Cannot find 'Unity.Netcode.Editor.CodeGen' assembly.");
 
             Type ilppType = codeGenAssembly.GetTypes().FirstOrDefault(t => t.Name == "NetworkBehaviourILPP");
             if (ilppType == null)
@@ -49,7 +52,7 @@ namespace FireworksMania.Core.Editor
             var ilppInstance = Activator.CreateInstance(ilppType);
 
             // Load compiled assembly shim (ICompiledAssembly proxy)
-            var compiledAssemblyProxy = LoadCompiledAssembly(entry.AssemblyName, entry.AssemblyImage, umodAssemblyPbdAsBytes);
+            var compiledAssemblyProxy = LoadCompiledAssembly(entry.AssemblyName, entry.AssemblyImage, umodAssemblyPdbAsBytes);
             
             object resultObj;
             try
@@ -167,10 +170,23 @@ namespace FireworksMania.Core.Editor
                 var unityModule     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "UnityEngine.CoreModule");
                 var netstandard     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "netstandard");
                 var mscorlib        = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "mscorlib");
-                
+
+                if (netcodeAssembly == null)
+                    throw new InvalidOperationException("Required assembly 'Unity.Netcode.Runtime' not found.");
+                if (unityModule == null)
+                    throw new InvalidOperationException("Required assembly 'UnityEngine.CoreModule' not found.");
+                if (netstandard == null)
+                    throw new InvalidOperationException("Required assembly 'netstandard' not found.");
+                if (mscorlib == null)
+                    throw new InvalidOperationException("Required assembly 'mscorlib' not found.");
+
                 References = new string[] { netcodeAssembly.Location, unityModule.Location, netstandard.Location, mscorlib.Location }; 
 
                 var commonAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.CompilationPipeline.Common");
+
+                if (commonAssembly == null)
+                    throw new InvalidOperationException("Required assembly 'Unity.CompilationPipeline.Common' not found in AppDomain.");
+
                 var inMemoryAsmType = commonAssembly.GetType("Unity.CompilationPipeline.Common.ILPostProcessing.InMemoryAssembly", true);
 
                 InMemoryAssembly = Activator.CreateInstance(inMemoryAsmType, umodAssemblyBytes, umodAssemblySymbolsAsBytes) ?? throw new Exception("Failed to create InMemoryAssembly instance.");
