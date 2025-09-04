@@ -139,7 +139,11 @@ namespace FireworksMania.Core.Utilities
 
             if (networkObject.OrNull() != null && networkObject.IsSpawned)
             {
-                networkObject.Despawn(true);
+                if(networkObject.IsSceneObject.HasValue && networkObject.IsSceneObject.Value == true)
+                    networkObject.Despawn(false);
+                else
+                    networkObject.Despawn(true);
+
                 networkObject = null;
             }
             else
