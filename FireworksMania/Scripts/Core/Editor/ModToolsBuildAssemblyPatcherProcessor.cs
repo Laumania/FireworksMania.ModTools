@@ -174,7 +174,7 @@ namespace FireworksMania.Core.Editor
                     if (referencedAssembly == null)
                         throw new InvalidOperationException($"Referenced assembly '{referencedAssemblyName.Name}' not found in AppDomain.");
 
-                    Debug.Log($"Found referenced assembly '{referencedAssemblyName.Name}'");
+                    //Debug.Log($"Found referenced assembly '{referencedAssemblyName.Name}'");
                     referencedAssemblyLocations.Add(referencedAssembly.Location);
                 }
 
