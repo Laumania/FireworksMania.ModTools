@@ -108,11 +108,6 @@ namespace FireworksMania.Core.Behaviors
             }
             
             this.gameObject.DestroyOrDespawn();
-
-            //if(this.NetworkObject.OrNull() != null && this.NetworkObject.IsSpawned)
-            //    this.NetworkObject.Despawn();
-            //else
-            //    Destroy(this.gameObject);
         }
 
 
