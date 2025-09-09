@@ -84,6 +84,7 @@ namespace FireworksMania.Core.Editor
                 return;
             }
 
+
             // InMemoryAssembly.PeData / PdbData
             var inMemType   = inMemObj.GetType();
             var peDataProp  = inMemType.GetProperty("PeData");
@@ -165,22 +166,24 @@ namespace FireworksMania.Core.Editor
                 Bytes = umodAssemblyBytes;
                 Name  = umodAssemblyName;
 
-                //Required references needed for NGO CodeGen to do its magic, else it will skip the assembly.
-                var netcodeAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.Netcode.Runtime");
-                var unityModule     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "UnityEngine.CoreModule");
-                var netstandard     = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "netstandard");
-                var mscorlib        = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "mscorlib");
+                var umodAssembly = Assembly.Load(umodAssemblyBytes);
+                var referencedAssemblyLocations = new List<string>();
+                foreach (var referencedAssemblyName in umodAssembly.GetReferencedAssemblies())
+                {
+                    var referencedAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == referencedAssemblyName.Name);
+                    if (referencedAssembly == null)
+                        throw new InvalidOperationException($"Referenced assembly '{referencedAssemblyName.Name}' not found in AppDomain.");
 
-                if (netcodeAssembly == null)
-                    throw new InvalidOperationException("Required assembly 'Unity.Netcode.Runtime' not found.");
-                if (unityModule == null)
-                    throw new InvalidOperationException("Required assembly 'UnityEngine.CoreModule' not found.");
-                if (netstandard == null)
-                    throw new InvalidOperationException("Required assembly 'netstandard' not found.");
-                if (mscorlib == null)
-                    throw new InvalidOperationException("Required assembly 'mscorlib' not found.");
+                    Debug.Log($"Found referenced assembly '{referencedAssemblyName.Name}'");
+                    referencedAssemblyLocations.Add(referencedAssembly.Location);
+                }
 
-                References = new string[] { netcodeAssembly.Location, unityModule.Location, netstandard.Location, mscorlib.Location }; 
+                //Note: Not 100% sure this is needed, but adding it just in case.
+                var mscorlib = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "mscorlib");
+                if (mscorlib != null)
+                    referencedAssemblyLocations.Add(mscorlib.Location);
+
+                References = referencedAssemblyLocations.ToArray();
 
                 var commonAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Unity.CompilationPipeline.Common");
 
