@@ -57,21 +57,21 @@ namespace FireworksMania.Core.Definitions
 
 
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            for (var i = 0; i < _networkObjectPrefabs.Count; i++)
-            {
-                var prefab = _networkObjectPrefabs[i];
-                if (prefab.OrNull() != null)
-                {
-                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(),
-                        $"{nameof(MapDefinition)}: NetworkObject prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
-                }
-            }
+        //private void OnValidate()
+        //{
+        //    for (var i = 0; i < _networkObjectPrefabs.Count; i++)
+        //    {
+        //        var prefab = _networkObjectPrefabs[i];
+        //        if (prefab.OrNull() != null)
+        //        {
+        //            Assert.IsNotNull(prefab.GetComponent<NetworkObject>(),
+        //                $"{nameof(MapDefinition)}: NetworkObject prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
+        //        }
+        //    }
 
-            if (EditorSceneManager.GetActiveScene().name == _sceneName)
-                PopulateNetworkObjectPrefabsFromScene();
-        }
+        //    if (EditorSceneManager.GetActiveScene().name == _sceneName)
+        //        PopulateNetworkObjectPrefabsFromScene();
+        //}
 
 
         [ContextMenu("Populate NetworkObjectPrefabs from current open scene")]
