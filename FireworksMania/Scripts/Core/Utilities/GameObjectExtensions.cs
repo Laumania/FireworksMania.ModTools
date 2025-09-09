@@ -139,10 +139,14 @@ namespace FireworksMania.Core.Utilities
 
             if (networkObject.OrNull() != null && networkObject.IsSpawned)
             {
-                if(networkObject.IsSceneObject.HasValue && networkObject.IsSceneObject.Value == true)
-                    networkObject.Despawn(false);
-                else
-                    networkObject.Despawn(true);
+                //Note: For now Despawn(false) is not actually removing the object on either client or server, so we have to Despawn(true) and have the warning in the logs
+                //if(networkObject.IsSceneObject.HasValue && networkObject.IsSceneObject.Value == true)
+                //{
+                //    networkObject.Despawn(false);
+                //    //networkObject.gameObject.SetActive(false); //This is apparently needed to hide it on the Server
+                //}
+                //else
+                networkObject.Despawn(true);
 
                 networkObject = null;
             }
