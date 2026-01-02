@@ -7,13 +7,30 @@ namespace FireworksMania.Core.Utilities
     {
         Preconditions() { }
 
+        [Obsolete("Use CheckNotNull(reference, context) instead", true)]
         public static T CheckNotNull<T>(T reference)
         {
-            return CheckNotNull(reference, typeof(T).ToString());
+            return CheckNotNull(reference, typeof(T).ToString(), null);
         }
 
+        [Obsolete("Use CheckNotNull(reference, message, context) instead", true)]
         public static T CheckNotNull<T>(T reference, string message)
         {
+            return CheckNotNull(reference, message, null);
+        }
+
+        public static T CheckNotNull<T>(T reference, UnityEngine.MonoBehaviour context)
+        {
+            return CheckNotNull(reference, typeof(T).ToString(), context);
+        }
+
+        public static T CheckNotNull<T>(T reference, string message, UnityEngine.MonoBehaviour context)
+        {
+            if(context.OrNull() != null && context.gameObject.OrNull() != null)
+            {
+                message = $"'{message}' (Hierarchy Path: '{context.gameObject.GetHierarchyPathAsString()}')";
+            }
+
             // Can find OrNull Extension Method (and others) here: https://github.com/adammyhre/Unity-Utils
             if (reference is UnityEngine.Object obj && obj.OrNull() == null)
             {

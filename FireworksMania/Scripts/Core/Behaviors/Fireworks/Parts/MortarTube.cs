@@ -1,29 +1,31 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Definitions;
 using FireworksMania.Core.Definitions.EntityDefinitions;
+using FireworksMania.Core.Interactions;
+using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Persistence;
+using FireworksMania.Core.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using DG.Tweening;
-using FireworksMania.Core.Attributes;
-using FireworksMania.Core.Messaging;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 using Random = UnityEngine.Random;
-using FireworksMania.Core.Interactions;
-using FireworksMania.Core.Utilities;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/MortarTube")]
-    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint, IAmGameObject
+    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint, IAmGameObject, IFiringSystemReceiver
     {
         internal event Action<Transform, ShellBehavior> OnShellLaunched;
+        public event Action OnFiringSystemReceiverDataUpdated;
 
         [Header("Size")]
         [SerializeField]
@@ -64,6 +66,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private SaveableEntity _saveableEntity;
                 
         private NetworkVariable<MortarTubeState> _tubeState = new NetworkVariable<MortarTubeState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        protected NetworkVariable<FiringSystemReceiverData> _firingSystemReceiverNetworkData = new NetworkVariable<FiringSystemReceiverData>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private MortarTubeState? _restoredState;
 
         private List<Rigidbody> _otherRigidbodiesInsideMortarTube           = new List<Rigidbody>();
@@ -85,7 +88,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             var mortarTubeFusePrefabPath     = "Prefabs/Fireworks/Parts/MortarTubeFusePrefab";
             var mortarTubeFusePrefabResource = Resources.Load<GameObject>(mortarTubeFusePrefabPath);
 
-            Preconditions.CheckNotNull(mortarTubeFusePrefabResource);
+            Preconditions.CheckNotNull(mortarTubeFusePrefabResource, this);
 
             _mortarInternalFuse = Instantiate(mortarTubeFusePrefabResource, this.transform).GetComponent<Fuse>();
         }
@@ -93,8 +96,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void Start()
         {
             _saveableEntity = GetComponentInParent<SaveableEntity>(); //Note: Test for now to see if this is a workable approach... can we be sure it always get the right one?
-            Preconditions.CheckNotNull(_mortarInternalFuse);
-            Preconditions.CheckNotNull(_saveableEntity);
+            Preconditions.CheckNotNull(_mortarInternalFuse, this);
+            Preconditions.CheckNotNull(_saveableEntity, this);
 
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
             _allowedBoundMaxSize = _mortarTubeTop.DetectionRadius * 3f;
@@ -112,6 +115,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 foreach (var rigidbodyInsideMortar in _otherRigidbodiesInsideMortarTube)
                     rigidbodyInsideMortar?.gameObject.DestroyOrDespawn();
+
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
             }
 
             base.OnDestroy();
@@ -123,15 +128,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if (IsServer)
             {
-                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
                 _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
                 _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
             }
 
             if (_restoredState.HasValue)
                 _tubeState.Value = _restoredState.Value;
 
             _tubeState.OnValueChanged += OnMortarTubeStateChanged;
+            _firingSystemReceiverNetworkData.OnValueChanged += (prevData, newData) =>
+            {
+                OnFiringSystemReceiverDataUpdated?.Invoke();
+            };
 
             Setup(_tubeState.Value.ShellEntityId.ToString());
 
@@ -139,10 +148,32 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 LaunchInternally();
         }
 
+        protected override void OnNetworkPostSpawn()
+        {
+            base.OnNetworkPostSpawn();
+
+            if (IsServer && IsShellLoaded == false)
+            {
+                _mortarInternalFuse.MarkAsUsed(); //Hack to make the FuseConnectionPoint not to show up initially on mortar before shell is loaded
+            }
+        }
+
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
             _tubeState.OnValueChanged -= OnMortarTubeStateChanged;
+        }
+
+        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignal arg)
+        {
+            if (this.FiringSystemReceiverData.HasValue &&
+                arg.ModuleIndex == this.FiringSystemReceiverData.ModuleIndex &&
+                arg.CueIndex == this.FiringSystemReceiverData.CueIndex &&
+                _mortarInternalFuse?.IsIgnited == false &&
+                _mortarInternalFuse?.IsUsed == false)
+            {
+                _mortarInternalFuse.IgniteWithoutFuseTime();
+            }
         }
 
         private void OnMortarTubeStateChanged(MortarTubeState prevState, MortarTubeState newState)
@@ -347,15 +378,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         PlayShellLoadSoundClientRpc();
 
                         var sequence = DOTween.Sequence();
-                        sequence.Join(shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.4f));
-                        sequence.Join(shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.4f));
-                        sequence.Append(
+                        await sequence.Join(shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.4f))
+                            .Join(shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.4f))
+                            .Append(
                             DOVirtual.Float(0f, 1f, 2f, (float value) => {
                                 var position = Vector3.Lerp(_mortarTubeTop.transform.position, _mortarTubeBottom.transform.position, value);
                                 shellBehaviorToLoad.gameObject.transform.position = position;
                             })
                         );
-                        await sequence.AsyncWaitForCompletion();
 
                         _tubeState.Value = new MortarTubeState()
                         {
@@ -399,12 +429,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 PlayOtherObjectEnterLoadSoundClientRpc();
 
                 var sequence = DOTween.Sequence();
-                sequence.Join(otherRigidbody.gameObject.transform.DOScale(scaleFactor, 0.2f));
-                sequence.Join(otherRigidbody.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f));
-                sequence.Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f));
-                sequence.Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f));
-                sequence.Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f));
-                await sequence.AsyncWaitForCompletion();
+                await sequence.Join(otherRigidbody.gameObject.transform.DOScale(scaleFactor, 0.2f))
+                    .Join(otherRigidbody.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f))
+                    .Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f))
+                    .Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f))
+                    .Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f));
 
                 otherRigidbody.gameObject.transform.position = _mortarTubeTop.transform.position; //Move it back to be inside the MortarTubeTop so it's loaded in properly when loaded via blueprints
 
@@ -493,6 +522,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (otherObjectRigidbody == null)
                     continue;
 
+                //Note: We have to spawn it before igniting etc. else events are not hooked up on Server and therefore won't actually ignite
+                otherObjectRigidbody.GetComponent<NetworkObject>()?.Spawn(true);
+
                 if (otherObjectRigidbody.GetComponent<IHaveFuse>() != null)
                 {
                     var fuse = otherObjectRigidbody.GetComponent<IHaveFuse>().GetFuse();
@@ -511,7 +543,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 otherObjectRigidbody.rotation = _mortarTubeTop.transform.rotation;
                 otherObjectRigidbody.AddForce(Random.Range(0.8f, 1.2f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
-                otherObjectRigidbody.GetComponent<NetworkObject>()?.Spawn(true);
             }
 
             _otherRigidbodiesInsideMortarTube.Clear();
@@ -552,10 +583,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public void IgniteInstant()
         {
             if (IsShellLoaded)
-                _mortarInternalFuse.IgniteInstant();
+                _mortarInternalFuse.IgniteWithoutFuseTime();
         }
 
-        public Fuse GetFuse()
+        public IFuse GetFuse()
         {
             //if (IsShellLoaded)
             //    return _mortarInternalFuse;
@@ -586,18 +617,35 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if(IsShellLoaded && _shellBehaviorFromPrefab.EntityDefinition is FireworkEntityDefinition fireworkEntityDefinition)
                 return $"{this.ParentEntityDefinition.ItemName}{Environment.NewLine}({fireworkEntityDefinition.ItemName})";
 
-            return this.ParentEntityDefinition.ItemName;
+            return this?.ParentEntityDefinition?.ItemName;
         }
 
-        internal void RestoreTubeState(string shellEntityId)
+        internal MortarTubeSaveData CaptureTubeState()
         {
+            return new MortarTubeSaveData()
+            {
+                ShellEntityId            = _tubeState.Value.ShellEntityId.ToString(),
+                FiringSystemReceiverData = this.FiringSystemReceiverData
+            };
+        }
+
+        internal void RestoreTubeState(MortarTubeSaveData mortarTubeSaveData)
+        {
+            this.FiringSystemReceiverData = mortarTubeSaveData.FiringSystemReceiverData;
+
             _restoredState = new MortarTubeState()
             {
                 IsLaunched             = false,
                 Seed                   = 0,
                 ServerStartTimeAsFloat = 0,
-                ShellEntityId          = shellEntityId
+                ShellEntityId          = mortarTubeSaveData.ShellEntityId
             };
+        }
+
+        public Vector3 GetFiringSystemReceiverWorldPosition()
+        {
+            //return this.GetFuse().ConnectionPoint.Transform.position;
+            return _mortarInternalFuse.transform.position;
         }
 
         private bool IsShellLoaded                            => _shellBehaviorFromPrefab != null;
@@ -615,6 +663,34 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             get;
             set;
         }
+
+        [Rpc(SendTo.Server)]
+        private void SetFiringSystemRecieverDataRpc(FiringSystemReceiverData data)
+        {
+            _firingSystemReceiverNetworkData.Value = data;
+        }
+
+        public FiringSystemReceiverData FiringSystemReceiverData
+        {
+            get
+            {
+                return _firingSystemReceiverNetworkData.Value;
+            }
+            set
+            {
+                if (NetworkManager.IsServer)
+                    _firingSystemReceiverNetworkData.Value = value;
+                else
+                    SetFiringSystemRecieverDataRpc(value);
+            }
+        }
+    }
+
+    [Serializable]
+    public struct MortarTubeSaveData
+    {
+        public string ShellEntityId;
+        public FiringSystemReceiverData FiringSystemReceiverData;
     }
 
     [Serializable]

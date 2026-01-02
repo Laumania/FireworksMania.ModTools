@@ -22,8 +22,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _rigidbody = this.GetComponent<Rigidbody>();
 
-            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on '{this.gameObject.name}'");
-            Preconditions.CheckNotNull(_effect, $"Missing particle effects in {nameof(CakeBehavior)} - '{this.gameObject.name}'!");
+            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on '{this.gameObject.name}'", this);
+            Preconditions.CheckNotNull(_effect, $"Missing particle effects in {nameof(CakeBehavior)} - '{this.gameObject.name}'!", this);
 
             AvoidLoopingEffect();
             StopAllEffects();

@@ -26,7 +26,7 @@ namespace FireworksMania.Core
             var cacheKey = typeof(T).FullName;
             if (_cache.TryGetValue(cacheKey, out var foundInCache))
             {
-                if(foundInCache != null)
+                if(foundInCache != null && (foundInCache as UnityEngine.Object) != null && ReferenceEquals(foundInCache, null) == false)
                 {
                     //Debug.Log($"[{nameof(DependencyResolver)}] Resolved '{cacheKey}' from cache");
                     return (T)foundInCache;
@@ -35,7 +35,7 @@ namespace FireworksMania.Core
                     _cache.Remove(cacheKey);
             }
 
-            var foundImplementation = GameObject.FindObjectsOfType<MonoBehaviour>(true).OfType<T>().FirstOrDefault();
+            var foundImplementation = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).OfType<T>().FirstOrDefault();
             if(foundImplementation != null) 
             {
                 //Debug.Log($"[{nameof(DependencyResolver)}] Added '{cacheKey}' to cache");

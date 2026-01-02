@@ -80,7 +80,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_debrisLayer == -1)
                 Debug.LogError("Debris layer name not found!", this);
 
-            _affectedLayers = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable") | LayerMask.GetMask("Player");
+            _affectedLayers = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable") | LayerMask.GetMask("Player") | LayerMask.GetMask("DestroyItDebris");
         }
 
         private void OnValidate()
@@ -175,10 +175,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (collider == null)
                     break;
 
-                var rangeMultiplier = CalculateRangeMultiplier(position, collider.ClosestPointOnBounds(position));
                 var destructible    = collider.GetComponent<IDestructible>();
                 if (destructible != null)
                 {
+                    var rangeMultiplier = CalculateRangeMultiplier(position, collider.ClosestPointOnBounds(position));
                     destructible.ApplyDamage(_explosionForce * rangeMultiplier);
 
                     if (destructible.IsDestroyed)
@@ -211,9 +211,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         rigidBody.isKinematic = false;
 
                     var actualExplosionForce = _explosionForce * rangeMultiplier;
-
-                    if (_applyForceRelativeToMass)
-                        actualExplosionForce = _explosionForce * CalculateMassMultiplier(rigidBody);
+                    actualExplosionForce     = _explosionForce * CalculateMassMultiplier(rigidBody);
 
                     Messenger.Broadcast(new MessengerEventApplyExplosionForce(rigidBody, actualExplosionForce, position, _range, _upwardsmodifier, _forceMode));
                 }
@@ -240,6 +238,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         
         private float CalculateMassMultiplier(Rigidbody rigidBody)
         {
+            if (_applyForceRelativeToMass == false)
+                return 1f;
+
             return Mathf.Clamp(rigidBody.mass / _explosionForce, .05f, 1f);
         }
 
@@ -263,7 +264,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (collider == null)
                     break;
 
-                var r = collider.GetComponent<Rigidbody>();
+                var r = collider.attachedRigidbody;
                 if (r != null)
                 {
                     if(foundRigidbodies.ContainsKey(r.gameObject.GetInstanceID()) == false)

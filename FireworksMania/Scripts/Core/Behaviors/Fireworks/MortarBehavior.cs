@@ -32,7 +32,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private void Awake()
         {
-            Preconditions.CheckNotNull(_mortarTubes);
+            Preconditions.CheckNotNull(_mortarTubes, this);
             PopulateMortarTubeList();
             Preconditions.CheckState(_mortarTubes.Length != 0, $"'{nameof(_mortarTubes)}' cannot be empty");
 
@@ -111,27 +111,50 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public CustomEntityComponentData CaptureState()
         {
-            var customData       = new CustomEntityComponentData();
-            var shellEntityIds   = new List<string>();
+            var customData            = new CustomEntityComponentData();
+            var mortarTubesSavedata   = new List<MortarTubeSaveData>();
 
             foreach (var mortarTube in _mortarTubes)
             {
-                shellEntityIds.Add(mortarTube.TubeState.ShellEntityId.ToString());
+                mortarTubesSavedata.Add(new MortarTubeSaveData()
+                {
+                    ShellEntityId            = mortarTube.TubeState.ShellEntityId.ToString(),
+                    FiringSystemReceiverData = mortarTube.FiringSystemReceiverData
+                });
             }
 
-            customData.Add<List<string>>("ShellEntityIds", shellEntityIds);
+            customData.Add("MortarTubes", mortarTubesSavedata);
             return customData;
         }
 
         public void RestoreState(CustomEntityComponentData customComponentData)
         {
-            var shellEntityIds = customComponentData.Get<List<string>>("ShellEntityIds");
-
-            for (int i = 0; i < _mortarTubes.Length; i++)
+            var mortarTubesData = customComponentData.Get<List<MortarTubeSaveData>>("MortarTubes");
+            if (mortarTubesData != null)
             {
-                var mortarTube = _mortarTubes[i];
-                mortarTube.RestoreTubeState(shellEntityIds[i]);
+                for (int i = 0; i < _mortarTubes.Length; i++)
+                {
+                    var mortarTube = _mortarTubes[i];
+                    mortarTube.RestoreTubeState(mortarTubesData[i]);
+                }
+                return;
             }
+
+            //Handle legacy blueprint structure in case we don't find MortarTubes data
+            var shellEntityIds = customComponentData.Get<List<string>>("ShellEntityIds");
+            if(shellEntityIds != null)
+            {
+                for (int i = 0; i < _mortarTubes.Length; i++)
+                {
+                    var mortarTube = _mortarTubes[i];
+                    mortarTube.RestoreTubeState(new MortarTubeSaveData()
+                    {
+                        ShellEntityId = shellEntityIds[i],
+                        FiringSystemReceiverData = default
+                    });
+                }
+            }
+            
         }
 
         public void Ignite(float ignitionForce)

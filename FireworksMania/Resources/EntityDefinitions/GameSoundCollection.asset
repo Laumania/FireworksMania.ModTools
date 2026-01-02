@@ -41,6 +41,7 @@ MonoBehaviour:
   - EXP_StrobeBob_SingleStrobes
   - EXP_StrobeBob_TakeOff_Os_001
   - Exp_Basic explosionB_Os
+  - EXP_Building_Explosion_01
   - Exp_Propane tank_Os
   - EXP_Suburb_GasStationPump_Os_001
   - FAN Air Conditioner, Hard Metal Grinding Noise, Hum, Buzz, LOOP
@@ -48,6 +49,7 @@ MonoBehaviour:
   - FireworkRocketLaunch_6
   - FireworkRocketLaunch_13
   - Firework_Explosion_Single_01
+  - Firework_FirecrackerMedium_01
   - Shell_2inch_Explode_Small
   - Shell_2inch_Launch_Small
   - Shell_4inch_Explode_Small
@@ -103,6 +105,8 @@ MonoBehaviour:
   - Koekkenrulle_Sketch_Crack
   - LadyFingerExact
   - Metal_Sheets_Sledgehammer_Hit_02
+  - Button_Off_Click_01
+  - Button_On_Click_01
   - EraserToolEraseSound
   - FastWhoosh
   - JumpSound

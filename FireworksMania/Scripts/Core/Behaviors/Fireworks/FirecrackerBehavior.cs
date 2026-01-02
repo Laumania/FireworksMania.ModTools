@@ -24,10 +24,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _rigidbody = GetComponent<Rigidbody>();
 
-            Preconditions.CheckNotNull(_model, $"Missing model reference in firecracker on '{this.gameObject.name}'");
-            Preconditions.CheckNotNull(_fuse, $"Missing Fuse on firecracker on '{this.gameObject.name}'");
-            Preconditions.CheckNotNull(_explosion, $"Missing IExplosion on firecracker on '{this.gameObject.name}'");
-            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on firecracker on '{this.gameObject.name}'");
+            Preconditions.CheckNotNull(_model, $"Missing model reference in firecracker on '{this.gameObject.name}'", this);
+            Preconditions.CheckNotNull(_fuse, $"Missing Fuse on firecracker on '{this.gameObject.name}'", this);
+            Preconditions.CheckNotNull(_explosion, $"Missing IExplosion on firecracker on '{this.gameObject.name}'", this);
+            Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on firecracker on '{this.gameObject.name}'", this);
 
             _colliders = _rigidbody.GetComponents<Collider>();
         }

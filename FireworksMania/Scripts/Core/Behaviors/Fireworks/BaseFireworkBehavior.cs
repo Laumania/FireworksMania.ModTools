@@ -1,13 +1,13 @@
-﻿using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
+using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Persistence;
 using FireworksMania.Core.Utilities;
+using System;
+using System.Threading;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -17,7 +17,14 @@ using Random = UnityEngine.Random;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [SelectionBase]
-    public abstract class BaseFireworkBehavior : NetworkBehaviour, IAmGameObject, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint
+    public abstract class BaseFireworkBehavior : NetworkBehaviour, 
+        IAmGameObject, 
+        ISaveableComponent,
+        IHaveBaseEntityDefinition, 
+        IIgnitable, 
+        IHaveFuse, 
+        IHaveFuseConnectionPoint, 
+        IFiringSystemReceiver
     {
         [Header("General")]
         [FormerlySerializedAs("_metadata")]
@@ -30,9 +37,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private SaveableEntity _saveableEntity;
 
-        public Action<BaseFireworkBehavior> OnDestroyed;
+        public event Action<BaseFireworkBehavior> OnDestroyed;
+        public event Action OnFiringSystemReceiverDataUpdated;
 
         protected NetworkVariable<LaunchState> _launchState = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        protected NetworkVariable<FiringSystemReceiverData> _firingSystemReceiverNetworkData = new NetworkVariable<FiringSystemReceiverData>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         protected virtual void Awake()
         {
@@ -73,22 +82,59 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_fuse != null)
                 _fuse.OnFuseCompleted -= OnFuseCompleted;
 
+            if(IsServer)
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+
             base.OnDestroy();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _launchState.OnValueChanged -= OnLaunchStateValueChanged;
+            _firingSystemReceiverNetworkData.OnValueChanged -= OnFiringSystemReceiverNetworkDataValueChanged;
+
+            if (IsServer)
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+
+            base.OnNetworkDespawn();
         }
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
+            _launchState.OnValueChanged += OnLaunchStateValueChanged;
+            _firingSystemReceiverNetworkData.OnValueChanged += OnFiringSystemReceiverNetworkDataValueChanged;
 
-            _launchState.OnValueChanged += (prevValue, newValue) =>
-            {
-                //NetworkLog.LogInfo($"[{NetworkManager.Singleton.LocalClientId}] _launchState.OnValueChanged newValue.IsLaunched {newValue.IsLaunched}");
-                if (prevValue.IsLaunched == false && newValue.IsLaunched == true)
-                    LaunchInternalAsync(_cancellationTokentoken).Forget();
-            };
-
-            if(_launchState.Value.IsLaunched)
+            if (_launchState.Value.IsLaunched)
                 LaunchInternalAsync(_cancellationTokentoken).Forget();
+
+            if (IsServer)
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+
+            base.OnNetworkSpawn();
+        }
+
+        private void OnFiringSystemReceiverNetworkDataValueChanged(FiringSystemReceiverData previousValue, FiringSystemReceiverData newValue)
+        {
+            OnFiringSystemReceiverDataUpdated?.Invoke();
+        }
+
+        private void OnLaunchStateValueChanged(LaunchState previousValue, LaunchState newValue)
+        {
+            //NetworkLog.LogInfo($"[{NetworkManager.Singleton.LocalClientId}] _launchState.OnValueChanged newValue.IsLaunched {newValue.IsLaunched}");
+            if (previousValue.IsLaunched == false && newValue.IsLaunched == true)
+                LaunchInternalAsync(_cancellationTokentoken).Forget();
+        }
+
+        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignal arg)
+        {
+            if(this.FiringSystemReceiverData.HasValue &&
+                arg.ModuleIndex == this.FiringSystemReceiverData.ModuleIndex && 
+                arg.CueIndex == this.FiringSystemReceiverData.CueIndex && 
+                _fuse?.IsIgnited == false && 
+                _fuse?.IsUsed == false)
+            {
+                _fuse.IgniteWithoutFuseTime();
+            }
         }
 
         protected virtual void OnValidate()
@@ -236,15 +282,25 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public virtual CustomEntityComponentData CaptureState()
         {
-            return new CustomEntityComponentData();
+            var customComponentData = new CustomEntityComponentData();
+
+            if(this.FiringSystemReceiverData.HasValue &&
+               this.FiringSystemReceiverData.ModuleIndex > 0 &&
+               this.FiringSystemReceiverData.CueIndex > 0)
+            {
+                customComponentData.Add<byte>(nameof(BaseFireworkBehaviorSaveData.ModuleIndex), this.FiringSystemReceiverData.ModuleIndex);
+                customComponentData.Add<byte>(nameof(BaseFireworkBehaviorSaveData.CueIndex), this.FiringSystemReceiverData.CueIndex);
+            }
+
+            return customComponentData;
         }
 
         public virtual void RestoreState(CustomEntityComponentData customComponentData)
         {
-            //This code is here to be able to support legacy blueprints
-            var position    = customComponentData.Get<SerializableVector3>(nameof(BaseFireworkBehaviorData.Position));
-            var rotation    = customComponentData.Get<SerializableRotation>(nameof(BaseFireworkBehaviorData.Rotation));
-            var isKinematic = customComponentData.Get<bool>(nameof(BaseFireworkBehaviorData.IsKinematic));
+            //BEGIN LEGACY: This code is here to be able to support legacy blueprints
+            var position    = customComponentData.Get<SerializableVector3>(nameof(BaseFireworkBehaviorSaveData.Position));
+            var rotation    = customComponentData.Get<SerializableRotation>(nameof(BaseFireworkBehaviorSaveData.Rotation));
+            var isKinematic = customComponentData.Get<bool>(nameof(BaseFireworkBehaviorSaveData.IsKinematic));
 
             this.transform.position = new Vector3(position.X, position.Y, position.Z);
             this.transform.rotation = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
@@ -258,6 +314,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             {
                 networkRigidbody.SetPosition(this.transform.position);
                 networkRigidbody.SetRotation(this.transform.rotation);
+            }
+
+            //END LEGACY
+
+            var moduleIndex = customComponentData.Get<byte>(nameof(BaseFireworkBehaviorSaveData.ModuleIndex));
+            var cueIndex    = customComponentData.Get<byte>(nameof(BaseFireworkBehaviorSaveData.CueIndex));
+
+            if(moduleIndex > 0 && cueIndex > 0)
+            {
+                this.FiringSystemReceiverData = new FiringSystemReceiverData()
+                {
+                    CueIndex = cueIndex,
+                    ModuleIndex = moduleIndex
+                };
             }
         }
 
@@ -291,7 +361,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _fuse.IgniteInstant();
         }
 
-        public virtual Fuse GetFuse()
+        public virtual IFuse GetFuse()
         {
             return _fuse;
         }
@@ -299,6 +369,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected float GetLaunchTimeDifference()
         {
             return this.NetworkManager.ServerTime.TimeAsFloat - _launchState.Value.ServerStartTimeAsFloat;
+        }
+
+        public Vector3 GetFiringSystemReceiverWorldPosition()
+        {
+            return this.GetFuse().ConnectionPoint.Transform.position;
         }
 
         public string SaveableComponentTypeId                 => this.GetType().Name;
@@ -314,15 +389,39 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
         public virtual bool Enabled                           => _fuse.Enabled;
         public virtual bool IsIgnited                         => _fuse.IsIgnited || _launchState.Value.IsLaunched;
+
+
+        [Rpc(SendTo.Server)]
+        private void SetFiringSystemRecieverDataRpc(FiringSystemReceiverData data)
+        {
+            _firingSystemReceiverNetworkData.Value = data;
+        }
+
+        public FiringSystemReceiverData FiringSystemReceiverData 
+        {
+            get
+            {
+                return _firingSystemReceiverNetworkData.Value;
+            }
+            set
+            {
+                if (NetworkManager.IsServer)
+                    _firingSystemReceiverNetworkData.Value = value;
+                else
+                    SetFiringSystemRecieverDataRpc(value);
+            }
+        } 
     }
 
     [Serializable]
-    public struct BaseFireworkBehaviorData
+    public struct BaseFireworkBehaviorSaveData
     {
         public SerializableVector3 Position;
         public SerializableRotation Rotation;
+        public int ModuleIndex;
+        public int CueIndex;
         public bool IsKinematic;
-    }
+    }    
 
     [Serializable]
     public struct LaunchState : INetworkSerializable, System.IEquatable<LaunchState>
