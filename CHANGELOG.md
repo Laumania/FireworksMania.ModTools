@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Always restart Unity after upgrading - very important!
 
+## [v2025.12.8] - 2026-01-02
+Target Unity version: [v6000.2.10f1](https://unity3d.com/unity/whats-new/6000.2.10) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
+
+### Fixed
+- Updated Unity version to match the version the game is build with
+
 ## [v2025.8.1] - 2025-09-04
 Target Unity version: [v6000.2.2f1](https://unity3d.com/unity/whats-new/6000.2.2) (**ATTENTION**: New Unity version - Restart Unity after upgrading to latest version)
 
