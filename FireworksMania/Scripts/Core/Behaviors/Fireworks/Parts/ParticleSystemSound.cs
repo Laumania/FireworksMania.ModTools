@@ -1,5 +1,6 @@
 ﻿using System;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 using Messenger = FireworksMania.Core.Messaging.Messenger;
 using MessengerEventPlaySoundAtVector3 = FireworksMania.Core.Messaging.MessengerEventPlaySoundAtVector3;
@@ -40,9 +41,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         protected virtual void Awake()
         {
             _particleObserver = this.GetComponent<ParticleSystemObserver>();
-            if (_particleObserver == null)
-                Debug.LogError($"Missing {nameof(ParticleSystemObserver)} on {nameof(ParticleSystemSound)}", this);
-
+            Preconditions.CheckNotNull(_particleObserver, $"Missing {nameof(ParticleSystemObserver)} on {nameof(ParticleSystemSound)}", this);
+            
             if (String.IsNullOrEmpty(_particleSpawnedSound))
                 _particleSpawnedSound = _soundGroupNoneValue;
 
@@ -61,6 +61,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void OnEnable()
         {
+            if(_particleObserver == null)
+                return;
+
             if (_particleSpawnedSound != _soundGroupNoneValue)
                 _particleObserver.OnParticleSpawned += PlaySpawnedSound;
 
@@ -70,6 +73,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void OnDisable()
         {
+            if (_particleObserver == null)
+                return;
+
             _particleObserver.OnParticleSpawned -= PlaySpawnedSound;
             _particleObserver.OnParticleDestroyed -= PlayDestroyedSound;
         }

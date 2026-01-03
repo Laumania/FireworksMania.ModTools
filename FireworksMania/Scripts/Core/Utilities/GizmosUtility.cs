@@ -2,7 +2,6 @@
 
 namespace FireworksMania.Core.Utilities
 {
-#if UNITY_EDITOR
     public static class GizmosUtility
     {
         public static void DrawArrow(Vector3 pos, Vector3 direction, Color color, float arrowLength, float arrowHeadLength = 0.25f, float arrowHeadAngle = 20.0f)
@@ -17,5 +16,4 @@ namespace FireworksMania.Core.Utilities
             Gizmos.DrawRay(pos + directionLength, left * arrowHeadLength);
         }
     }
-#endif
 }

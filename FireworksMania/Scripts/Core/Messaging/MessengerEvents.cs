@@ -201,4 +201,16 @@ namespace FireworksMania.Core.Messaging
         public string Title   { get; }
         public string Message { get; }
     }
+
+    public class MessengerEventFiringSystemControllerSendSignal
+    {
+        public MessengerEventFiringSystemControllerSendSignal(int moduleIndex, int cueIndex)
+        {
+            ModuleIndex = moduleIndex;
+            CueIndex     = cueIndex;
+        }
+
+        public int ModuleIndex { get; }
+        public int CueIndex { get; }
+    }
 }

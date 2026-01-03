@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -34,12 +35,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Awake()
         {
-            if (_explosionParticleEffect == null)
-                Debug.LogError("Missing particlesystem on ExplosionBehavior", this);
+            Preconditions.CheckNotNull(_explosionParticleEffect, "Explosion Particle System cannot be null on ExplosionBehavior", this);
 
             _explosionForceEffect = this.GetComponent<ExplosionPhysicsForceEffect>();
-            if (_explosionForceEffect == null)
-                Debug.LogError("Missing ExplosionPhysicsForce on Explosion", this);
+            Preconditions.CheckNotNull(_explosionForceEffect, "ExplosionPhysicsForceEffect cannot be null on ExplosionBehavior", this);
 
             _explosionParticleEffect.gameObject.SetActive(false);
             _cancellationToken = this.GetCancellationTokenOnDestroy();
@@ -111,7 +110,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private async UniTask ExplodeAsync(CancellationToken token)
         {
-            if (!IsServer)
+            if (!IsServer || !IsSpawned) //Note: Attempt to fix https://github.com/Laumania/FireworksMania/issues/1600
                 return;
 
             _launchState.Value = new LaunchState()
@@ -126,6 +125,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying || _isWaitingOnDelayedSound, cancellationToken: token);
             
             token.ThrowIfCancellationRequested();
+
+            if (!IsSpawned) //Note: Attempt to fix https://github.com/Laumania/FireworksMania/issues/1600
+                return;
 
             var prevValue = _launchState.Value;
             _launchState.Value = new LaunchState()

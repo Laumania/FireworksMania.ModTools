@@ -2,6 +2,6 @@
 {
     public interface IHaveFuse
     {
-        Fuse GetFuse();
+        IFuse GetFuse();
     }
 }

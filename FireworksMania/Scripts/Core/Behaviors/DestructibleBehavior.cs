@@ -1,5 +1,6 @@
 ﻿using FireworksMania.Core.Common;
 using FireworksMania.Core.Utilities;
+using System.Collections;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -21,6 +22,11 @@ namespace FireworksMania.Core.Behaviors
         [SerializeField]
         [Tooltip("This prefab will be spawned and replace this gameobject when the CurrentHitPoints reach 0. If no prefab is specified, this gameobject will just be destroyed.")]
         private GameObject _destroyedPrefab;
+
+        [Header("Optional")]
+        [SerializeField]
+        [Tooltip("This optional transform will be used to position/rotate the destroyed prefab instance.")]
+        private Transform _destroyedPrefabSpawnLocation;
 
         private int _debriLayerInt = -1;
 
@@ -102,17 +108,19 @@ namespace FireworksMania.Core.Behaviors
 
             if (_destroyedPrefab.OrNull() != null)
             {
-                var spawnedNetworkObject = DependencyResolver.Instance.Get<IDestructionObjectPool>().GetNetworkObject(_destroyedPrefab, this.transform.position, this.transform.rotation);
+                var spawnLocationTransform = _destroyedPrefabSpawnLocation != null ? _destroyedPrefabSpawnLocation : this.transform;
+                var spawnedNetworkObject = DependencyResolver.Instance.Get<IDestructionObjectPool>().GetNetworkObject(_destroyedPrefab, spawnLocationTransform.position, spawnLocationTransform.rotation);
                 spawnedNetworkObject.gameObject.SetLayersRecursively(_debriLayerInt);
                 spawnedNetworkObject.Spawn(true);
             }
             
-            this.gameObject.DestroyOrDespawn();
+            StartCoroutine(DestroyDelayed());
+        }
 
-            //if(this.NetworkObject.OrNull() != null && this.NetworkObject.IsSpawned)
-            //    this.NetworkObject.Despawn();
-            //else
-            //    Destroy(this.gameObject);
+        private IEnumerator DestroyDelayed()
+        {
+            yield return new WaitForEndOfFrame();
+            this.gameObject.DestroyOrDespawn();
         }
 
 

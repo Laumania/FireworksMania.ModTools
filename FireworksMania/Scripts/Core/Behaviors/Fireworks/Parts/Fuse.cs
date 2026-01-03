@@ -3,8 +3,10 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Netcode;
 using FireworksMania.Core.Persistence;
 using FireworksMania.Core.Utilities;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,7 +15,7 @@ using UnityEngine.Serialization;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/Fuse")]
-    public class Fuse : NetworkBehaviour, IIgnitable, IHaveFuseConnectionPoint
+    public class Fuse : NetworkBehaviour, IFuse, IIgnitable, IHaveFuseConnectionPoint
     {
         [Header("General")]
         [Range(0, 50)]
@@ -23,7 +25,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [Tooltip("Amount of IgnitionForce that is needed before the fuse ignites")]
         [SerializeField]
         private float _ignitionThreshold = 50f;
-        private float _initialIgnitionThredhold;
+        private float _initialIgnitionThreshold;
 
         [SerializeField]
         [FormerlySerializedAs("_ignitePosition")]
@@ -47,27 +49,26 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public event Action OnFuseCompleted;
         public event Action OnFuseIgnited;
 
-        private CancellationToken _token;
-        private MeshRenderer[] _meshRenderer;
-        private Collider[] _colliders;
+        private CancellationToken _cancellationToken;
+        private MeshRenderer[] _enabledMeshRenderers;
+        private Collider[] _enabledColliders;
 
         private readonly NetworkVariable<bool> _isIgnited              = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private readonly NetworkVariable<bool> _isUsed                 = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private readonly NetworkVariable<bool> _isIgnitionVisualsShown = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         private bool _clientRequestForIgnitionSend = false;
 
         private void Awake()
         {
-            Preconditions.CheckNotNull(_fuseConnectionPoint);
-            Preconditions.CheckNotNull(_particleSystem);
+            Preconditions.CheckNotNull(_fuseConnectionPoint, this);
+            Preconditions.CheckNotNull(_particleSystem, this);
 
             _fuseConnectionPoint.Setup(this);
-            _meshRenderer             = this.GetComponentsInChildren<MeshRenderer>();
-            _colliders                = this.GetComponentsInChildren<Collider>();
-            _remainingFuseTime        = _fuseTime;
-            _token                    = this.gameObject.GetCancellationTokenOnDestroy();
-            _initialIgnitionThredhold = _ignitionThreshold;
+            _enabledMeshRenderers                         = this.GetComponentsInChildren<MeshRenderer>(false);
+            _enabledColliders                             = this.GetComponentsInChildren<Collider>(false);
+            _remainingFuseTime                            = this._fuseTime;
+            _cancellationToken                            = this.gameObject.GetCancellationTokenOnDestroy();
+            _initialIgnitionThreshold                     = this._ignitionThreshold;
 
             SetEmissionOnParticleSystems(false);
         }
@@ -76,17 +77,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             base.OnNetworkSpawn();
 
-            _isIgnitionVisualsShown.OnValueChanged += (prevValue, newValue) =>
+            _isIgnited.OnValueChanged += (prevValue, newValue) =>
             {
                 SetEmissionOnParticleSystems(newValue);
             };
 
             _isUsed.OnValueChanged += (prevValue, newValue) =>
             {
+                SetMeshAndColliders(!newValue);
                 _fuseConnectionPoint.ForceRefresh();
             };
 
-            SetEmissionOnParticleSystems(_isIgnitionVisualsShown.Value);
+            SetEmissionOnParticleSystems(_isIgnited.Value);
+            SetMeshAndColliders(!_isUsed.Value);
         }
 
         private void OnValidate()
@@ -142,7 +145,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if(SaveableEntityOwner != null)
                 SaveableEntityOwner.SetIsValidForSaving(false);
             
-            if (_token.IsCancellationRequested)
+            if (_cancellationToken.IsCancellationRequested)
                 return;
 
             if (instantIgnite)
@@ -162,19 +165,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _clientRequestForIgnitionSend = true;
 
-            if (IsServer)
-                RequestIgniteServerOnly();
-            else
-                RequestIgniteServerRpc();   
+            IgniteOnServerRpc();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void RequestIgniteServerRpc()
-        {
-            RequestIgniteServerOnly();
-        }
-
-        private void RequestIgniteServerOnly()
+        [Rpc(SendTo.Server)]
+        private void IgniteOnServerRpc()
         {
             if (IsServer == false)
             {
@@ -185,23 +180,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_isIgnited.Value == false && _isUsed.Value == false)
             {
                 _isIgnited.Value = true;
-
-                if (_remainingFuseTime > 0f)
-                    _isIgnitionVisualsShown.Value = true;
-
-                IgniteAsync(_token).Forget();
+                IgniteAsync(_cancellationToken).Forget();
             }
         }
 
+        //Todo: Could we maybe have a different method only about visuals or something as this seems to only be used for mortarfuses
         internal void MarkAsUsed()
         {
             _isUsed.Value = true;
         }
 
-        public void ResetFuse()
+        internal void ResetFuse()
         {
             _remainingFuseTime            = _fuseTime;
-            _ignitionThreshold            = _initialIgnitionThredhold;
+            _ignitionThreshold            = _initialIgnitionThreshold;
             _clientRequestForIgnitionSend = false;
             SetEmissionOnParticleSystems(false);
 
@@ -212,7 +204,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
 
             _isIgnited.Value             = false;
-            _isIgnitionVisualsShown.Value= false;
             _isUsed.Value                = false;
             _fuseConnectionPoint.ForceRefresh();
         }
@@ -222,11 +213,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _remainingFuseTime = Mathf.Clamp(_remainingFuseTime - ignitionForce * Time.deltaTime, 0f, _fuseTime); 
         }
 
-        public void Extinguish()
+        private void Extinguish()
         {
             if (IsServer)
             {
-                _isIgnitionVisualsShown.Value = false;
                 _isIgnited.Value = false;
             }
 
@@ -269,14 +259,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             SetEmissionOnParticleSystems(false);
 
-            if(_meshRenderer != null)
-                foreach (var renderer in _meshRenderer)
-                    renderer.enabled = false;
-
-            if(_colliders != null)
-                foreach (var collider in _colliders)    
-                    collider.enabled = false;
-
             if (IsServer)
                 return;
             
@@ -292,6 +274,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             
             OnFuseIgnited?.Invoke();
             _onFuseIgnited?.Invoke();
+        }
+
+        private void SetMeshAndColliders(bool enable)
+        {
+            if (_enabledMeshRenderers != null)
+                foreach (var renderer in _enabledMeshRenderers)
+                    renderer.enabled = enable;
+            if (_enabledColliders != null)
+                foreach (var collider in _enabledColliders)
+                    collider.enabled = enable;
         }
 
         private void SetEmissionOnParticleSystems(bool enableEmission)
@@ -330,8 +322,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 #endif
 
         public bool IsIgnited => _isIgnited.Value;
+
+        public FuseNetworkIdentifier FuseNetworkIdentifier => new()
+        {
+            FuseNetworkObjectId   = this.NetworkObjectId,
+            FuseNetworkBehaviorId = this.NetworkBehaviourId,
+            FuseIndex             = this.Index
+        };
+
         public bool IsUsed    => _isUsed.Value;
         public SaveableEntity SaveableEntityOwner   { get; set; }
+        public Transform Transform => this.transform;
 
         public Transform IgnitePositionTransform    => _fuseConnectionPoint.Transform;
         public IFuseConnectionPoint ConnectionPoint => _fuseConnectionPoint;
@@ -339,7 +340,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         /// <summary>
         /// Index of this particular fuse if its on an SaveableEntity that contains multiple fuses. Defaults to 0.
         /// </summary>
-        public int Index { get; internal set; }              = 0;
+        public int Index { get; set; }              = 0;
 
         public float FuseTime
         {
@@ -347,7 +348,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             set => _fuseTime = value;
         }
 
-        internal ParticleSystem Effect => _particleSystem;
-        internal string IgniteSound => _fuseIgnitedSound;
+        public ParticleSystem Effect => _particleSystem;
+        public string IgniteSound => _fuseIgnitedSound;
     }
 }

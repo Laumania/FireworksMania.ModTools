@@ -14,22 +14,21 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [SerializeField]
         private GameObject _activeIndicator;
 
-        //[SerializeField]
-        private Fuse _fuse;
+        private IFuse _fuse;
 
         private readonly Vector3 _punchScaleFactor = new Vector3(3f, 3f, 3f);
 
         private void Awake()
         {
-            Preconditions.CheckNotNull(_activeIndicator);
+            Preconditions.CheckNotNull(_activeIndicator, this);
             HideActiveIndicator();
         }
 
         private void Start()
         {
-            Preconditions.CheckNotNull(_fuse);
+            Preconditions.CheckNotNull(_fuse, $"{nameof(FuseConnectionPoint)} is missing {nameof(_fuse)}", this);
             
-            _fuse.OnFuseIgnited += HideActiveIndicator;
+            _fuse.OnFuseIgnited += ForceRefresh;
 
             if(_activeIndicator != null)
                 Messenger.AddListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
@@ -39,7 +38,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public void ForceRefresh()
         {
-            if (IsFuseConnectionToolEnabled && _fuse.IsUsed == false)
+            if (IsFuseConnectionToolEnabled && _fuse.IsUsed == false && _fuse.IsIgnited == false)
                 ShowActiveIndicator();
             else
                 HideActiveIndicator();
@@ -65,7 +64,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
-        public void Setup(Fuse fuse)
+        public void Setup(IFuse fuse)
         {
             _fuse = fuse;
         }
@@ -96,11 +95,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Messenger.RemoveListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
 
             if (_fuse != null)
-                _fuse.OnFuseIgnited -= HideActiveIndicator;
+                _fuse.OnFuseIgnited -= ForceRefresh;
         }
 
-        public Fuse Fuse           => _fuse;
-        public Vector3 Position    => this.transform.position;
+        public IFuse Fuse           => _fuse;
         public Transform Transform => this.transform;
     }
 }
