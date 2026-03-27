@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - copilot/suggest-documentation-approach
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
