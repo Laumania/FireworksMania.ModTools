@@ -1,0 +1,186 @@
+/* Fireworks Mania brand colors */
+:root {
+  --fm-red: #cc2200;
+  --fm-red-dark: #8b1500;
+  --fm-gold: #ffc200;
+  --fm-gold-dark: #e6a800;
+  --fm-dark: #1a0500;
+}
+
+/* ─── Header / primary color overrides ─── */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        #cc2200;
+  --md-primary-fg-color--light: #e63012;
+  --md-primary-fg-color--dark:  #8b1500;
+  --md-primary-bg-color:        #ffffff;
+  --md-accent-fg-color:         #ffc200;
+  --md-accent-fg-color--transparent: #ffc20033;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #cc2200;
+  --md-primary-fg-color--light: #e63012;
+  --md-primary-fg-color--dark:  #8b1500;
+  --md-primary-bg-color:        #ffffff;
+  --md-accent-fg-color:         #ffc200;
+  --md-accent-fg-color--transparent: #ffc20033;
+  --md-default-bg-color:        #1a1a2e;
+  --md-default-bg-color--light: #222240;
+  --md-default-bg-color--lighter: #2a2a50;
+  --md-default-bg-color--lightest: #33335a;
+}
+
+/* ─── Navigation header ─── */
+.md-header {
+  background: linear-gradient(135deg, #8b1500 0%, #cc2200 50%, #8b1500 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.md-header__title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Logo sizing ─── */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 2rem;
+  width: auto;
+}
+
+/* ─── Navigation tabs ─── */
+.md-tabs {
+  background: linear-gradient(135deg, #8b1500 0%, #cc2200 100%);
+}
+
+.md-tabs__link {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.md-tabs__link:hover,
+.md-tabs__link--active {
+  color: #ffc200 !important;
+  font-weight: 700;
+}
+
+/* ─── Sidebar navigation ─── */
+.md-nav__link:hover,
+.md-nav__link--active {
+  color: var(--fm-red);
+}
+
+[data-md-color-scheme="slate"] .md-nav__link:hover,
+[data-md-color-scheme="slate"] .md-nav__link--active {
+  color: #ffc200;
+}
+
+/* ─── Headings ─── */
+.md-content h1 {
+  color: var(--fm-red);
+  border-bottom: 2px solid var(--fm-red);
+  padding-bottom: 0.3em;
+}
+
+[data-md-color-scheme="slate"] .md-content h1 {
+  color: #ffc200;
+  border-bottom-color: #ffc200;
+}
+
+.md-content h2 {
+  color: var(--fm-red-dark);
+}
+
+[data-md-color-scheme="slate"] .md-content h2 {
+  color: #e63012;
+}
+
+/* ─── Links ─── */
+.md-content a {
+  color: var(--fm-red);
+}
+
+.md-content a:hover {
+  color: var(--fm-red-dark);
+}
+
+[data-md-color-scheme="slate"] .md-content a {
+  color: #ffc200;
+}
+
+[data-md-color-scheme="slate"] .md-content a:hover {
+  color: #e6a800;
+}
+
+/* ─── Code blocks ─── */
+.md-typeset code {
+  background-color: rgba(204, 34, 0, 0.08);
+  border: 1px solid rgba(204, 34, 0, 0.2);
+  color: var(--fm-red-dark);
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  background-color: rgba(255, 194, 0, 0.08);
+  border: 1px solid rgba(255, 194, 0, 0.2);
+  color: #ffc200;
+}
+
+/* ─── Admonition note/tip colors ─── */
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-color: var(--fm-red);
+}
+
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: rgba(204, 34, 0, 0.1);
+}
+
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: var(--fm-red);
+}
+
+/* ─── Search highlight ─── */
+.md-search-result mark {
+  background-color: #ffc20066;
+  color: var(--fm-dark);
+}
+
+/* ─── Footer ─── */
+.md-footer {
+  background: linear-gradient(135deg, #8b1500 0%, #cc2200 100%);
+}
+
+.md-footer-meta {
+  background: #8b1500;
+}
+
+/* ─── "Back to top" button ─── */
+.md-top {
+  background-color: var(--fm-red);
+  color: #ffffff;
+}
+
+.md-top:hover {
+  background-color: var(--fm-red-dark);
+}
+
+/* ─── Table of contents active link ─── */
+.md-nav--secondary .md-nav__link--active {
+  color: var(--fm-red);
+}
+
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__link--active {
+  color: #ffc200;
+}
+
+/* ─── Scrollbar (webkit browsers) ─── */
+::-webkit-scrollbar-thumb {
+  background-color: var(--fm-red);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--fm-red-dark);
+}
