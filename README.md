@@ -1,6 +1,10 @@
 # Fireworks Mania - Mod Tools
 This is the place to start when creating mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/).
 
+📖 **[Full Documentation — https://laumania.github.io/FireworksMania.ModTools/](https://laumania.github.io/FireworksMania.ModTools/)**
+
+The documentation site covers getting started, best practices, optimization, and a complete script reference for every component in the Mod Tools.
+
 # Video Tutorials
 I have created a playlist with various videos about creating mods for Fireworks Mania. That playlist starts with a video of me going through all the stuff below. Further more it contains videos on a lot more stuff you can do with the Fireworks Mania Mod Tools.
 
