@@ -33,6 +33,11 @@ jobs:
       - name: Install MkDocs and theme
         run: pip install mkdocs-material
 
+      - name: Download Fireworks Mania logo
+        run: |
+          curl -L -o docs/assets/logo.png \
+            "https://github.com/user-attachments/assets/159aa071-0932-4c6f-b047-b5cd94ca62b3"
+
       - name: Build docs
         run: mkdocs build --strict
 
