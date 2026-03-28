@@ -37,5 +37,3 @@ The Mod Tools ship with two assembly definition files:
 |---|---|
 | `FireworksMania.Core` | All runtime scripts (behaviors, definitions, utilities) |
 | `FireworksMania.Core.Editor` | Editor-only scripts (property drawers, helpers) |
-
-If you write custom scripts that reference Mod Tools types, add a reference to `FireworksMania.Core` in your own `.asmdef` file.
