@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Utilities;
+using System;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
@@ -31,7 +32,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _fuse.OnFuseIgnited += ForceRefresh;
 
             if(_activeIndicator != null)
+            {
+                Messenger.AddListener<MessengerEventFuseConnectionToolEnableChangedStruct>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
                 Messenger.AddListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
+            }
 
             ForceRefresh();
         }
@@ -43,8 +47,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             else
                 HideActiveIndicator();
         }
-        
+
+        [Obsolete("Obsolete event handler for MessengerEventFuseConnectionToolEnableChanged. Use MessengerEventFuseConnectionToolEnableChangedStruct instead.")]
         private void FuseConnectionPoint_FuseConnectionToolEnableChanged(MessengerEventFuseConnectionToolEnableChanged arg)
+        {
+            FuseConnectionPoint_FuseConnectionToolEnableChanged(new MessengerEventFuseConnectionToolEnableChangedStruct(arg.Tool, arg.Enabled));
+        }
+
+        private void FuseConnectionPoint_FuseConnectionToolEnableChanged(MessengerEventFuseConnectionToolEnableChangedStruct arg)
         {
             if (arg.Enabled)
                 ShowActiveIndicator();
@@ -84,14 +94,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if(active)
             {
-                this.transform.DOPunchScale(_punchScaleFactor, 0.2f);
+                this.transform.DOPunchScale(_punchScaleFactor, 0.2f).SetLink(this.gameObject);
             }
             else
-                this.transform.DOScale(1f, 0.2f);
+                this.transform.DOScale(1f, 0.2f).SetLink(this.gameObject);
         }
 
         private void OnDestroy()
         {
+            Messenger.RemoveListener<MessengerEventFuseConnectionToolEnableChangedStruct>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
             Messenger.RemoveListener<MessengerEventFuseConnectionToolEnableChanged>(FuseConnectionPoint_FuseConnectionToolEnableChanged);
 
             if (_fuse != null)

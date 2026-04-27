@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
@@ -8,19 +7,36 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/ParticleSystemObserver")]
     public class ParticleSystemObserver : MonoBehaviour
     {
-        private IDictionary<uint, ParticleSystem.Particle> _trackedParticles = new Dictionary<uint, ParticleSystem.Particle>();
-        private ParticleSystem _observedParticleSystem;
+        private const int MaxParticlesBufferSize = 10000;
+
+        // Store only the last-known position (Vector3, 12 bytes) rather than the full
+        // ParticleSystem.Particle struct (~120+ bytes) to reduce per-frame memory
+        // operations when many fireworks are active simultaneously.
+        private readonly Dictionary<uint, Vector3> _trackedParticlePositions = new Dictionary<uint, Vector3>();
+        private readonly List<Vector3>             _addedParticlePositions   = new List<Vector3>();
+        private readonly List<Vector3>             _removedParticlePositions = new List<Vector3>();
+        private readonly HashSet<uint>             _currentSeeds             = new HashSet<uint>();
+        private readonly List<uint>                _keysToRemove             = new List<uint>();
+
+        private ParticleSystem          _observedParticleSystem;
+        private ParticleSystem.Particle[] _liveParticlesBuffer = Array.Empty<ParticleSystem.Particle>();
 
         public Action<Vector3> OnParticleSpawned;
         public Action<Vector3> OnParticleDestroyed;
 
         private bool _hasBeenAliveOnce = false;
+        private bool _hasLoggedBufferCapWarning = false;
 
         private void Start()
         {
             _observedParticleSystem = this.GetComponent<ParticleSystem>();
             if (_observedParticleSystem == null)
+            {
                 Debug.LogError($"Missing ParticleSystem on {nameof(ParticleSystemObserver)}", this);
+                return;
+            }
+
+            _liveParticlesBuffer = new ParticleSystem.Particle[GetSafeBufferSize(_observedParticleSystem.main.maxParticles)];
         }
 
         private void OnValidate()
@@ -46,61 +62,78 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (OnParticleSpawned == null && OnParticleDestroyed == null)
                 return;
 
-            var liveParticles = new ParticleSystem.Particle[_observedParticleSystem.particleCount];
-            _observedParticleSystem.GetParticles(liveParticles);
+            var safeBufferSize = GetSafeBufferSize(_observedParticleSystem.main.maxParticles);
+            if (_liveParticlesBuffer.Length < safeBufferSize)
+                _liveParticlesBuffer = new ParticleSystem.Particle[safeBufferSize];
 
-            var particleDelta = GetParticleDelta(liveParticles);
+            var liveParticleCount = _observedParticleSystem.GetParticles(_liveParticlesBuffer);
 
-            foreach (var particleRemoved in particleDelta.Removed)
+            ComputeParticleDelta(liveParticleCount);
+
+            foreach (var removedPosition in _removedParticlePositions)
             {
                 if (OnParticleDestroyed != null)
-                    OnParticleDestroyed.Invoke(particleRemoved.position);
+                    OnParticleDestroyed.Invoke(removedPosition);
             }
 
-            foreach (var particleAdded in particleDelta.Added)
+            foreach (var addedPosition in _addedParticlePositions)
             {
                 if (OnParticleSpawned != null)
-                    OnParticleSpawned.Invoke(particleAdded.position);
+                    OnParticleSpawned.Invoke(addedPosition);
             }
         }
 
-        private ParticleDelta GetParticleDelta(ParticleSystem.Particle[] liveParticles)
+        private void ComputeParticleDelta(int liveParticleCount)
         {
-            var deltaResult = new ParticleDelta();
+            _addedParticlePositions.Clear();
+            _removedParticlePositions.Clear();
+            _currentSeeds.Clear();
 
-            foreach (var activeParticle in liveParticles)
+            for (int i = 0; i < liveParticleCount; i++)
             {
-                ParticleSystem.Particle foundParticle;
-                if (_trackedParticles.TryGetValue(activeParticle.randomSeed, out foundParticle))
+                var particle = _liveParticlesBuffer[i];
+                var seed     = particle.randomSeed;
+                var position = particle.position;
+
+                _currentSeeds.Add(seed);
+
+                if (!_trackedParticlePositions.TryGetValue(seed, out _))
                 {
-                    _trackedParticles[activeParticle.randomSeed] = activeParticle;
+                    _addedParticlePositions.Add(position);
+                    _trackedParticlePositions.Add(seed, position);
                 }
                 else
                 {
-                    deltaResult.Added.Add(activeParticle);
-                    _trackedParticles.Add(activeParticle.randomSeed, activeParticle);
+                    _trackedParticlePositions[seed] = position;
                 }
             }
 
-            var updatedParticleAsDictionary = liveParticles.ToDictionary(x => x.randomSeed, x => x);
-            var dictionaryKeysAsList = _trackedParticles.Keys.ToList();
-
-            foreach (var dictionaryKey in dictionaryKeysAsList)
+            _keysToRemove.Clear();
+            foreach (var key in _trackedParticlePositions.Keys)
             {
-                if (updatedParticleAsDictionary.ContainsKey(dictionaryKey) == false)
-                {
-                    deltaResult.Removed.Add(_trackedParticles[dictionaryKey]);
-                    _trackedParticles.Remove(dictionaryKey);
-                }
+                if (!_currentSeeds.Contains(key))
+                    _keysToRemove.Add(key);
             }
 
-            return deltaResult;
+            foreach (var key in _keysToRemove)
+            {
+                _removedParticlePositions.Add(_trackedParticlePositions[key]);
+                _trackedParticlePositions.Remove(key);
+            }
         }
 
-        private class ParticleDelta
+        private int GetSafeBufferSize(int maxParticles)
         {
-            public IList<ParticleSystem.Particle> Added { get; set; } = new List<ParticleSystem.Particle>();
-            public IList<ParticleSystem.Particle> Removed { get; set; } = new List<ParticleSystem.Particle>();
+            if (maxParticles > MaxParticlesBufferSize)
+            {
+                if (!_hasLoggedBufferCapWarning)
+                {
+                    Debug.LogWarning($"{nameof(ParticleSystemObserver)} on '{this.gameObject.name}' has maxParticles={maxParticles} which exceeds the safe buffer cap of {MaxParticlesBufferSize}. Capping buffer to avoid OutOfMemoryException.", this);
+                    _hasLoggedBufferCapWarning = true;
+                }
+                return MaxParticlesBufferSize;
+            }
+            return maxParticles;
         }
     }
 }

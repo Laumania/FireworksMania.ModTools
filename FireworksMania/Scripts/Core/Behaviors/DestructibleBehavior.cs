@@ -27,13 +27,36 @@ namespace FireworksMania.Core.Behaviors
         [SerializeField]
         [Tooltip("This optional transform will be used to position/rotate the destroyed prefab instance.")]
         private Transform _destroyedPrefabSpawnLocation;
+        [SerializeField]
+        [Tooltip("This optional delays when the original/current (this gameobject this component is one) is destroyed. This can be useful to perfectly time with an effect and sound.")]
+        private float _delayInSecondsUntilOriginalGameObjectIsDetroyed = 0f;
 
         private int _debriLayerInt = -1;
+
+        private Renderer[] _renderers;
+        private Collider[] _colliders;
+        private ParticleSystem[] _particleSystems;
 
         private void Awake()
         {
             _debriLayerInt    = LayerMask.NameToLayer("DestroyItDebris");
             _currentHitPoints = _totalHitPoints;
+
+            // Optional: auto-fill if not set
+            if (_renderers == null || _renderers.Length == 0) _renderers = GetComponentsInChildren<Renderer>(true);
+            if (_colliders == null || _colliders.Length == 0) _colliders = GetComponentsInChildren<Collider>(true);
+            if (_particleSystems == null || _particleSystems.Length == 0) _particleSystems = GetComponentsInChildren<ParticleSystem>(true);
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            // This runs on server + clients when the object despawns
+            foreach (var r in _renderers) if (r) r.enabled = false;
+            foreach (var c in _colliders) if (c) c.enabled = false;
+            foreach (var p in _particleSystems) if (p) p.Stop();
+
+            // If you want it fully gone from the hierarchy interactions:
+            gameObject.SetActive(false);
         }
 
         public void ApplyDamage(float damage)
@@ -46,7 +69,6 @@ namespace FireworksMania.Core.Behaviors
                     DestroyInternally();
             }
         }
-
 
 #if UNITY_EDITOR
 
@@ -112,6 +134,13 @@ namespace FireworksMania.Core.Behaviors
                 var spawnedNetworkObject = DependencyResolver.Instance.Get<IDestructionObjectPool>().GetNetworkObject(_destroyedPrefab, spawnLocationTransform.position, spawnLocationTransform.rotation);
                 spawnedNetworkObject.gameObject.SetLayersRecursively(_debriLayerInt);
                 spawnedNetworkObject.Spawn(true);
+
+                // Keep NetworkTransform in sync (no interpolation)
+                var nt = spawnedNetworkObject.GetComponent<Unity.Netcode.Components.NetworkTransform>();
+                if (nt.OrNull() != null && nt.HasAuthority)
+                    nt.Teleport(spawnLocationTransform.position, spawnLocationTransform.rotation, spawnLocationTransform.localScale);
+
+                DisableCollidersRpc();
             }
             
             StartCoroutine(DestroyDelayed());
@@ -120,9 +149,19 @@ namespace FireworksMania.Core.Behaviors
         private IEnumerator DestroyDelayed()
         {
             yield return new WaitForEndOfFrame();
-            this.gameObject.DestroyOrDespawn();
+            
+            if( _delayInSecondsUntilOriginalGameObjectIsDetroyed > 0f)
+                yield return new WaitForSeconds(_delayInSecondsUntilOriginalGameObjectIsDetroyed);
+
+            //this.gameObject.DestroyOrDespawn();
+            this.NetworkObject.Despawn(false);
         }
 
+        [Rpc(SendTo.Everyone)]
+        private void DisableCollidersRpc()
+        {
+            foreach (var c in _colliders) if (c) c.enabled = false;
+        }
 
         public float TotalHitPoints
         {

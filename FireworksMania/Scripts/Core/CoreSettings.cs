@@ -11,6 +11,7 @@ namespace FireworksMania.Core
         public static bool EnableIgnitionForces         { get; set; }
         public static bool EnableCameraShake            { get; set; }
         public static bool EnableDestruction            { get; set; }
+        public static bool EnableFlyMode                { get; set; }
 
         /// <summary>
         /// This is a temp fix for modders to know if a game is in single or multiplayer mode. Please be aware that this might change in the future.

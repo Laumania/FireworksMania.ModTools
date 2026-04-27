@@ -22,7 +22,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
             _thruster.TurnOn();
-            Messenger.Broadcast(new MessengerEventPlaySound(_startWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_startWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
 
             await UniTask.Delay(200, cancellationToken: token);
             token.ThrowIfCancellationRequested();
@@ -33,7 +33,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();
 
-            Messenger.Broadcast(new MessengerEventPlaySound(_endWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_endWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
 
             //Hang time
             var randomTimeFactor = _randomTimeDelayAfterThruster ? UnityEngine.Random.Range(0.9f, 1.1f) : 1f;

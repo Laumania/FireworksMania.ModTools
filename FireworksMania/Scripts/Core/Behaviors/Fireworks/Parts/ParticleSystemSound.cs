@@ -1,9 +1,8 @@
 ﻿using System;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Utilities;
 using UnityEngine;
-using Messenger = FireworksMania.Core.Messaging.Messenger;
-using MessengerEventPlaySoundAtVector3 = FireworksMania.Core.Messaging.MessengerEventPlaySoundAtVector3;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
@@ -85,7 +84,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_playSingleDestroySound && _havePlayedDestroySound)
                 return;
 
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_particleDestroyedSound, particlePosition, delayBasedOnDistanceToListener: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_particleDestroyedSound, particlePosition, delayBasedOnDistanceToListener: true));
 
             _havePlayedDestroySound = true;
         }
@@ -95,7 +94,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_playSingleSpawnSound && _havePlayedSpawnSound)
                 return;
 
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_particleSpawnedSound, particlePosition, delayBasedOnDistanceToListener: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_particleSpawnedSound, particlePosition, delayBasedOnDistanceToListener: true));
 
             _havePlayedSpawnSound = true;
         }

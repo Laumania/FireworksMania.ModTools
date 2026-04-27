@@ -43,6 +43,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected NetworkVariable<LaunchState> _launchState = new NetworkVariable<LaunchState>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         protected NetworkVariable<FiringSystemReceiverData> _firingSystemReceiverNetworkData = new NetworkVariable<FiringSystemReceiverData>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+
         protected virtual void Awake()
         {
             if (_entityDefinition == null)
@@ -70,6 +71,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _fuse.SaveableEntityOwner       = _saveableEntity;
             _cancellationTokentoken         = this.GetCancellationTokenOnDestroy();
+
+            var particleSystems = this.GetComponentsInChildren<ParticleSystem>(true);
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, particleSystems));
         }
 
         protected virtual void Start()
@@ -79,11 +83,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public override void OnDestroy()
         {
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsUnregisteringStruct(this.gameObject));
+
             if (_fuse != null)
                 _fuse.OnFuseCompleted -= OnFuseCompleted;
 
             if(IsServer)
-                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
 
             base.OnDestroy();
         }
@@ -94,13 +100,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _firingSystemReceiverNetworkData.OnValueChanged -= OnFiringSystemReceiverNetworkDataValueChanged;
 
             if (IsServer)
-                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
 
             base.OnNetworkDespawn();
+
+            if(this.NetworkObject?.IsSceneObject.HasValue == true && this.NetworkObject.IsSceneObject.Value == true)
+                gameObject.SetActive(false);
         }
 
         public override void OnNetworkSpawn()
         {
+            if(this.gameObject.activeInHierarchy == false)
+                this.gameObject.SetActive(true);
+
             _launchState.OnValueChanged += OnLaunchStateValueChanged;
             _firingSystemReceiverNetworkData.OnValueChanged += OnFiringSystemReceiverNetworkDataValueChanged;
 
@@ -108,7 +120,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 LaunchInternalAsync(_cancellationTokentoken).Forget();
 
             if (IsServer)
-                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
 
             base.OnNetworkSpawn();
         }
@@ -125,7 +137,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 LaunchInternalAsync(_cancellationTokentoken).Forget();
         }
 
-        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignal arg)
+        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignalStruct arg)
         {
             if(this.FiringSystemReceiverData.HasValue &&
                 arg.ModuleIndex == this.FiringSystemReceiverData.ModuleIndex && 
@@ -270,9 +282,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 #if UNITY_EDITOR
             Debug.LogWarning("Todo: Implement nice destroy animation in DestroyFireworkAnimatedAsync", this);
 #endif
-            await this.transform.DOShakeScale(.3f, 0.5f, 5, 50f, true).WithCancellation(token);
+            await this.transform.DOShakeScale(.3f, 0.5f, 5, 50f, true).SetLink(transform.gameObject).WithCancellation(token);
             token.ThrowIfCancellationRequested();
-            await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
+            await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).SetLink(transform.gameObject).WithCancellation(token);
             token.ThrowIfCancellationRequested();
 
             OnDestroyed?.Invoke(this);

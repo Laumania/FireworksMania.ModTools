@@ -16,22 +16,35 @@ namespace FireworksMania.Core.Behaviors
         private float velocityThreshold          = .5f;
         private const double PLAY_SOUND_COOLDOWN = 0.3f; // Cooldown to prevent playing the sound too often
         private double _lastImpactTime           = 0f;
+        private float  _velocityThresholdSqr;
+
+        private MessengerEventPlaySoundStruct _playSoundEvent;
+
+        private void Awake()
+        {
+            _velocityThresholdSqr = velocityThreshold * velocityThreshold;
+            _playSoundEvent       = new MessengerEventPlaySoundStruct(_sound, this.transform);
+        }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (this.enabled)
+            if (!this.enabled)
+                return;
+
+            var now = Time.timeAsDouble;
+            if (now - _lastImpactTime < PLAY_SOUND_COOLDOWN)
+                return;
+
+            if (collision.impulse.sqrMagnitude > _velocityThresholdSqr)
             {
-                if (Time.timeAsDouble - _lastImpactTime >= PLAY_SOUND_COOLDOWN && collision.impulse.magnitude > velocityThreshold)
-                {
-                    PlaySingleImpactSound();
-                    _lastImpactTime = Time.timeAsDouble;
-                }
+                PlaySingleImpactSound();
+                _lastImpactTime = now;
             }
         }
 
         public void PlaySingleImpactSound()
         {
-            Messenger.Broadcast(new MessengerEventPlaySound(_sound, this.transform));
+            Messenger.Broadcast(_playSoundEvent);
         }
     }
 }

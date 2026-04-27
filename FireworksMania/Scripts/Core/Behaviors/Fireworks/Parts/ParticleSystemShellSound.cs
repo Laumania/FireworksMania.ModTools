@@ -35,7 +35,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (_playSingleSpawnedInMortarSound && _havePlayedSpawnInMortarSound)
                     return;
 
-                Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_particleSpawnedInMortarSound, particlePosition, delayBasedOnDistanceToListener: true));
+                Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_particleSpawnedInMortarSound, particlePosition, delayBasedOnDistanceToListener: true));
 
                 _havePlayedSpawnInMortarSound = true;
             }

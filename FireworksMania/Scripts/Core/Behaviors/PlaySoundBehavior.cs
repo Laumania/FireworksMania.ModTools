@@ -28,7 +28,7 @@ namespace FireworksMania.Core.Behaviors
         public void PlaySound()
         {
             _isPlaying = true;
-            Messenger.Broadcast(new MessengerEventPlaySound(_sound, this.transform, followTransform: _followTransform));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_sound, this.transform, followTransform: _followTransform));
         }
 
         private void OnDestroy()
@@ -39,7 +39,7 @@ namespace FireworksMania.Core.Behaviors
         public void StopSound()
         {
             _isPlaying = false;
-            Messenger.Broadcast(new MessengerEventStopSound(_sound, this.transform));
+            Messenger.Broadcast(new MessengerEventStopSoundStruct(_sound, this.transform));
         }
 
         public void Toggle()

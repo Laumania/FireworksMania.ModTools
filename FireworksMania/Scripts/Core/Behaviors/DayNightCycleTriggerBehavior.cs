@@ -23,6 +23,7 @@ namespace FireworksMania.Core.Behaviors
 
         private void Awake()
         {
+            Messenger.AddListener<MessengerEventDayNightChangedStruct>(OnDayNightChanged);
             Messenger.AddListener<MessengerEventDayNightChanged>(OnDayNightChanged);
             Initialize();
         }
@@ -74,10 +75,17 @@ namespace FireworksMania.Core.Behaviors
 
         private void OnDestroy()
         {
+            Messenger.RemoveListener<MessengerEventDayNightChangedStruct>(OnDayNightChanged);
             Messenger.RemoveListener<MessengerEventDayNightChanged>(OnDayNightChanged);
         }
 
+        [Obsolete("Use the struct version of the event instead")]
         private void OnDayNightChanged(MessengerEventDayNightChanged args)
+        {
+            OnDayNightChanged(new MessengerEventDayNightChangedStruct(args.IsDay));
+        }
+
+        private void OnDayNightChanged(MessengerEventDayNightChangedStruct args)
         {
             _lastIsDay = args.IsDay;
 

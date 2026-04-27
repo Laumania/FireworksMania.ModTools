@@ -69,7 +69,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _thruster.TurnOn();
 
-            Messenger.Broadcast(new MessengerEventPlaySound(_whistlingSound, this.transform, delayBasedOnDistanceToListener: true, followTransform: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_whistlingSound, this.transform, delayBasedOnDistanceToListener: true, followTransform: true));
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();
 

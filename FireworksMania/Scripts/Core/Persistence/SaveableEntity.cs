@@ -133,7 +133,7 @@ namespace FireworksMania.Core.Persistence
             {
                 X = this.transform.localScale.x,
                 Y = this.transform.localScale.y,
-                Z = this.transform.localScale.y
+                Z = this.transform.localScale.z
             });
 
             customComponentData[TransformComponentTypeIdKey] = customData;
@@ -227,8 +227,19 @@ namespace FireworksMania.Core.Persistence
 
 
     [Serializable]
+    public class BlueprintModInfo
+    {
+        public int    ModId;
+        public string ModName;
+    }
+
+
+    [Serializable]
     public class SaveableBlueprintData : SaveableBlueprintMetaData
     {
+        [JsonProperty(Order = 99, NullValueHandling = NullValueHandling.Ignore)]
+        public List<BlueprintModInfo> Mods;
+
         [JsonProperty(Order = 100)]
         public IEnumerable<SaveableEntityData> Entities;
     }

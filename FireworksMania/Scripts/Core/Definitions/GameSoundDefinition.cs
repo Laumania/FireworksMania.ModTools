@@ -65,7 +65,7 @@ namespace FireworksMania.Core.Definitions
 
 
 #if !UNITY_EDITOR
-        public IEnumerable<AudioClip> AudioVariationClips   => _audioVariationClips;
+        public AudioClip[] AudioVariationClips              => _audioVariationClips;
         public float MinDistance                            => _minDistance;
         public float MaxDistance                            => _maxDistance;
         public float FadeInTime                             => _fadeInTime;

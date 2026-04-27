@@ -59,7 +59,7 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
 
         public void SendFireSignal(int cueIndex)
         {
-            Messenger.Broadcast(new MessengerEventFiringSystemControllerSendSignal(ChannelIndex, cueIndex));
+            Messenger.Broadcast(new MessengerEventFiringSystemControllerSendSignalStruct(ChannelIndex, cueIndex));
         }
 
         public void BeginUse()

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -70,6 +69,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private static Collider[] _nonAllocColliderArray = new Collider[2500];
 
+        // Cached collections to avoid per-explosion heap allocations in FindDistinctRigidbodies
+        private readonly Dictionary<int, Rigidbody> _rigidbodySearchDict  = new Dictionary<int, Rigidbody>();
+        private readonly List<Rigidbody>             _distinctRigidbodies  = new List<Rigidbody>();
+
         void Awake()
         {
             if (_originTransform == null)
@@ -108,7 +111,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             {
                 var foundCount = UnityEngine.Physics.OverlapSphereNonAlloc(position, _range, _nonAllocColliderArray, _affectedLayers);
                 
-                Rigidbody[] foundDistinctRigidbodies = FindDistinctRigidbodies(_nonAllocColliderArray, foundCount);
+                List<Rigidbody> foundDistinctRigidbodies = FindDistinctRigidbodies(_nonAllocColliderArray, foundCount);
 
                 HandleFlammableObjects(_nonAllocColliderArray, foundCount, applyIgnition);
                 HandleIgnitionAndPhysicsForces(foundDistinctRigidbodies, position, applyIgnition, applyPhysicsForce);
@@ -136,8 +139,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (collider == null)
                     break;
 
-                var flammable = collider.GetComponent<IFlammable>();
-                if (flammable != null)
+                if (collider.TryGetComponent<IFlammable>(out var flammable))
                 {
                     if(CoreSettings.EnableIgnitionForces)
                         flammable.ApplyFireForce(_explosionForce);
@@ -148,7 +150,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void HandleShakeEffect(Vector3 position)
         {
             var shakeRange  = CalculateShakeRange();
-            Messenger.Broadcast(new MessengerEventApplyShakeEffect(shakeRange, position));
+            Messenger.Broadcast(new MessengerEventApplyShakeEffectStruct(shakeRange, position));
         }
 
         private void HandleDebris(Vector3 position)
@@ -161,7 +163,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 var rangeMultiplier = CalculateRangeMultiplier(position, destructibleRigidbody.ClosestPointOnBounds(position));
                 var massMultiplier  = CalculateMassMultiplier(destructibleRigidbody);
                 
-                Messenger.Broadcast(new MessengerEventApplyExplosionForce(destructibleRigidbody, (_explosionForce * massMultiplier) * rangeMultiplier, position, _range, _upwardsmodifier, _forceMode));
+                Messenger.Broadcast(new MessengerEventApplyExplosionForceStruct(destructibleRigidbody, (_explosionForce * massMultiplier) * rangeMultiplier, position, _range, _upwardsmodifier, _forceMode));
             }
         }
 
@@ -175,8 +177,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (collider == null)
                     break;
 
-                var destructible    = collider.GetComponent<IDestructible>();
-                if (destructible != null)
+                if (collider.TryGetComponent<IDestructible>(out var destructible))
                 {
                     var rangeMultiplier = CalculateRangeMultiplier(position, collider.ClosestPointOnBounds(position));
                     destructible.ApplyDamage(_explosionForce * rangeMultiplier);
@@ -188,7 +189,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return wasAnyDestructiblesDestroyed;
         }
 
-        private void HandleIgnitionAndPhysicsForces(Rigidbody[] foundDistinctRigidbodies, Vector3 position, bool applyIgnition, bool applyPhysicsForce)
+        private void HandleIgnitionAndPhysicsForces(List<Rigidbody> foundDistinctRigidbodies, Vector3 position, bool applyIgnition, bool applyPhysicsForce)
         {
             foreach (var rigidBody in foundDistinctRigidbodies)
             {
@@ -196,12 +197,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 if (_igniteSurroundingIgnitables && CoreSettings.EnableIgnitionForces && applyIgnition)
                 {
-                    var ignitable = rigidBody.GetComponent<IIgnitable>();
-                    if (ignitable != null)
+                    if (rigidBody.TryGetComponent<IIgnitable>(out var ignitable))
                     {
                         var ignitionForce = _explosionForce;// * CalculateRangeMultiplier(position, ignitable.IgnitePositionTransform.position); - This was removed as it applied too little ignition force and wasn't funny
                         
-                        Messenger.Broadcast(new MessengerEventApplyIgnitableForce(ignitable, ignitionForce));
+                        Messenger.Broadcast(new MessengerEventApplyIgnitableForceStruct(ignitable, ignitionForce));
                     }
                 }
 
@@ -210,23 +210,22 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     if (_ignoreKinematic && rigidBody.CompareTag("Player") == false)
                         rigidBody.isKinematic = false;
 
-                    var actualExplosionForce = _explosionForce * rangeMultiplier;
-                    actualExplosionForce     = _explosionForce * CalculateMassMultiplier(rigidBody);
+                    var actualExplosionForce = _explosionForce * rangeMultiplier * CalculateMassMultiplier(rigidBody);
 
-                    Messenger.Broadcast(new MessengerEventApplyExplosionForce(rigidBody, actualExplosionForce, position, _range, _upwardsmodifier, _forceMode));
+                    Messenger.Broadcast(new MessengerEventApplyExplosionForceStruct(rigidBody, actualExplosionForce, position, _range, _upwardsmodifier, _forceMode));
                 }
             }
         }
 
         private bool ShouldApplyPhysicsForcesToRigidbody(Rigidbody targetRigidBody)
         {
-            if (targetRigidBody.isKinematic && targetRigidBody.gameObject.GetComponent<BaseFireworkBehavior>() != null)
+            if (targetRigidBody.isKinematic && targetRigidBody.gameObject.TryGetComponent<BaseFireworkBehavior>(out _))
             {
                 //Debug.Log($"'{targetRigidBody.gameObject.name}' should not have physics forces applied as it is kinematic and is a firework");
                 return false;
             }
 
-            if (targetRigidBody.gameObject.GetComponent<IIgnoreExplosionPhysicsForcesBehavior>() != null)
+            if (targetRigidBody.gameObject.TryGetComponent<IIgnoreExplosionPhysicsForcesBehavior>(out _))
             {
                 //Debug.Log($"'{targetRigidBody.gameObject.name}' should not have physics forces applied as it have the IIgnoreExplosionPhysicsForcesBehavior component");
                 return false;
@@ -254,9 +253,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return rangeMultiplier;
         }
 
-        private Rigidbody[] FindDistinctRigidbodies(Collider[] colliders, int count)
+        private List<Rigidbody> FindDistinctRigidbodies(Collider[] colliders, int count)
         {
-            var foundRigidbodies                = new Dictionary<int, Rigidbody>();
+            _rigidbodySearchDict.Clear();
             for (int i = 0; i < count; i++)
             {
                 Collider collider = colliders[i];
@@ -267,9 +266,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 var r = collider.attachedRigidbody;
                 if (r != null)
                 {
-                    if(foundRigidbodies.ContainsKey(r.gameObject.GetInstanceID()) == false)
+                    if(_rigidbodySearchDict.ContainsKey(r.gameObject.GetInstanceID()) == false)
                     {
-                        foundRigidbodies.Add(r.gameObject.GetInstanceID(), r);
+                        _rigidbodySearchDict.Add(r.gameObject.GetInstanceID(), r);
                     }
                 }
             }
@@ -281,12 +280,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     if (rigidBodyToIgnore == null)
                         continue;
 
-                    if (foundRigidbodies.ContainsKey(rigidBodyToIgnore.gameObject.GetInstanceID()))
-                        foundRigidbodies.Remove(rigidBodyToIgnore.gameObject.GetInstanceID());
+                    if (_rigidbodySearchDict.ContainsKey(rigidBodyToIgnore.gameObject.GetInstanceID()))
+                        _rigidbodySearchDict.Remove(rigidBodyToIgnore.gameObject.GetInstanceID());
                 }
             }
 
-            return foundRigidbodies.Values.ToArray();
+            _distinctRigidbodies.Clear();
+            foreach (var kvp in _rigidbodySearchDict)
+                _distinctRigidbodies.Add(kvp.Value);
+
+            return _distinctRigidbodies;
         }
 
         private float CalculateShakeRange()

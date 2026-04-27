@@ -56,9 +56,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _smokeEffect.Play(true);
             _ignitionExplosionEffect.ApplyExplosionForce(false, false, true);
 
-            Messenger.Broadcast(new MessengerEventPlaySound(_sound, this.transform, followTransform: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_sound, this.transform, followTransform: true));
             await UniTask.WaitWhile(() => _smokeEffect.isEmitting, cancellationToken: token);
-            Messenger.Broadcast(new MessengerEventStopSound(_sound, this.transform));
+            Messenger.Broadcast(new MessengerEventStopSoundStruct(_sound, this.transform));
 
             await UniTask.WaitWhile(() => _smokeEffect.IsAlive() || _smokeEffect.isPlaying, cancellationToken: token);
 

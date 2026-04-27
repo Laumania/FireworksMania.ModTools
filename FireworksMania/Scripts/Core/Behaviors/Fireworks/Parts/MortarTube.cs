@@ -74,10 +74,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private bool _isShellLoadingInProgress = false;
         private float _allowedBoundMaxSize;
+        private int   _playerLayer;
 
         private void Awake()
         {
             InstantiateMortarTubeFuse();
+
+            _playerLayer = LayerMask.NameToLayer("Player");
 
             if (this.GetComponent<Collider>().OrNull() == null)
                 Debug.LogWarning($"MortarTube (on {this.gameObject.name}) requires at least one collider for the player to be able to ignite, erase, fuse etc. properly", this.gameObject);
@@ -116,9 +119,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 foreach (var rigidbodyInsideMortar in _otherRigidbodiesInsideMortarTube)
                     rigidbodyInsideMortar?.gameObject.DestroyOrDespawn();
 
-                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+                Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
             }
 
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsUnregisteringStruct(this.gameObject));
             base.OnDestroy();
         }
 
@@ -130,7 +134,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             {
                 _mortarInternalFuse.OnFuseCompleted += OnFuseCompleted;
                 _mortarTubeTop.OnTriggerEnterAction += OnTriggerEnterMortarTube;
-                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFiringSystemControllerSendSignal);
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
             }
 
             if (_restoredState.HasValue)
@@ -161,10 +165,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
-            _tubeState.OnValueChanged -= OnMortarTubeStateChanged;
+            _tubeState.OnValueChanged -= OnMortarTubeStateChanged;            
         }
 
-        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignal arg)
+        private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignalStruct arg)
         {
             if (this.FiringSystemReceiverData.HasValue &&
                 arg.ModuleIndex == this.FiringSystemReceiverData.ModuleIndex &&
@@ -256,6 +260,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _shellEffect.transform.rotation = _mortarTubeTop.transform.rotation;
             MarkEffectAsInMortarTube(_shellEffect);
             _shellEffect.gameObject.SetActive(false);
+
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, _shellEffect.GetComponentsInChildren<ParticleSystem>(true)));
 
             var mainEffect           = _shellEffect.main;
             var calculatedStartSpeed = mainEffect.startSpeed.Evaluate(0) * CalculateStartSpeedForceMultiplier(this.DiameterDefinition.Diameter, _shellBehaviorFromPrefab.DiameterDefinition.Diameter);
@@ -385,7 +391,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                                 var position = Vector3.Lerp(_mortarTubeTop.transform.position, _mortarTubeBottom.transform.position, value);
                                 shellBehaviorToLoad.gameObject.transform.position = position;
                             })
-                        );
+                        ).SetLink(shellBehaviorToLoad.gameObject);
 
                         _tubeState.Value = new MortarTubeState()
                         {
@@ -401,7 +407,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     }
                 }
             }
-            else if (IsAllowedToEnterMortarTube(otherRigidbody))
+            else if (IsAllowedToEnterMortarTube(otherRigidbody, out var cachedBounds))
             {
                 //_isShellLoadingInProgress = true; //Removed to remove the cooldown on putting stuff into the mortar tube, as its more fun if it goes fast
                 otherRigidbody.isKinematic = true;
@@ -412,14 +418,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 // Calculate the scale factor to resize objectSize to (0.2, 0.2, 0.2)
                 var targetScaledSize     = _mortarTubeTop.DetectionRadius * 2f;
                 Vector3 scaleFactor      = Vector3.one;
-                var otherRigidbodyBounds = CalculateBounds(otherRigidbody.gameObject);
                 
-                if (otherRigidbodyBounds != null)
+                if (cachedBounds != null)
                 {
                     // Avoid division by zero
-                    scaleFactor.x = otherRigidbodyBounds.Value.size.x != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.x, 0f, 1f) : 1f;
-                    scaleFactor.y = otherRigidbodyBounds.Value.size.y != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.y, 0f, 1f) : 1f;
-                    scaleFactor.z = otherRigidbodyBounds.Value.size.z != 0 ? Math.Clamp(targetScaledSize / otherRigidbodyBounds.Value.size.z, 0f, 1f) : 1f;
+                    scaleFactor.x = cachedBounds.Value.size.x != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.x, 0f, 1f) : 1f;
+                    scaleFactor.y = cachedBounds.Value.size.y != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.y, 0f, 1f) : 1f;
+                    scaleFactor.z = cachedBounds.Value.size.z != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.z, 0f, 1f) : 1f;
 
                     // Use the smallest scale to maintain proportions
                     float uniformScale = Mathf.Min(scaleFactor.x, scaleFactor.y, scaleFactor.z);
@@ -433,11 +438,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     .Join(otherRigidbody.gameObject.transform.DORotateQuaternion(_mortarTubeTop.transform.rotation, 0.2f))
                     .Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f))
                     .Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f))
-                    .Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f));
+                    .Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f))
+                    .SetLink(otherRigidbody.gameObject);
 
                 otherRigidbody.gameObject.transform.position = _mortarTubeTop.transform.position; //Move it back to be inside the MortarTubeTop so it's loaded in properly when loaded via blueprints
 
-                otherRigidbody.GetComponent<NetworkObject>()?.Despawn(false);
+                if (otherRigidbody.TryGetComponent<NetworkObject>(out var netObj))
+                    netObj.Despawn(false);
 
                 _otherRigidbodiesInsideMortarTube.Add(otherRigidbody);
 
@@ -474,7 +481,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_rigidbodiesRejectedThisFrame.ContainsKey(otherRigidbody.GetInstanceID()))
                 return false;
 
-            if (otherRigidbody.gameObject.layer == LayerMask.NameToLayer("Player"))
+            if (otherRigidbody.gameObject.layer == _playerLayer)
                 return false;
 
             if (otherRigidbody.isKinematic)
@@ -483,28 +490,29 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return true;
         }
 
-        private bool IsAllowedToEnterMortarTube(Rigidbody otherRigidbody)
+        private bool IsAllowedToEnterMortarTube(Rigidbody otherRigidbody, out Bounds? calculatedBounds)
         {
-            if (otherRigidbody.gameObject.GetComponent<IIgnitable>() != null &&
-                otherRigidbody.gameObject.GetComponent<IIgnitable>().IsIgnited)
+            calculatedBounds = null;
+
+            if (otherRigidbody.gameObject.TryGetComponent<IIgnitable>(out var ignitable) && ignitable.IsIgnited)
                 return false;
 
             //Note: For some reasons IsSceneObjects are not being destroyed correctly on clients, why we don't want them into a mortar as it behaves oddly. Don't know why it works like that.
-            if (otherRigidbody.GetComponent<NetworkObject>() == null || otherRigidbody.GetComponent<NetworkObject>()?.IsSceneObject == true)
+            if (!otherRigidbody.TryGetComponent<NetworkObject>(out var networkObject) || networkObject.IsSceneObject == true)
                 return false;
 
-            if (otherRigidbody.gameObject.GetComponent<MortarBehavior>() != null)
+            if (otherRigidbody.gameObject.TryGetComponent<MortarBehavior>(out _))
                 return false;
 
-            if (otherRigidbody.gameObject.layer == LayerMask.NameToLayer("Player"))
+            if (otherRigidbody.gameObject.layer == _playerLayer)
                 return false;
 
             
-            var otherRigidbodyBounds = CalculateBounds(otherRigidbody.gameObject);
-            if (otherRigidbodyBounds.HasValue && 
-                otherRigidbodyBounds.Value.size.x > _allowedBoundMaxSize && 
-                otherRigidbodyBounds.Value.size.y > _allowedBoundMaxSize &&
-                otherRigidbodyBounds.Value.size.z > _allowedBoundMaxSize)
+            calculatedBounds = CalculateBounds(otherRigidbody.gameObject);
+            if (calculatedBounds.HasValue && 
+                calculatedBounds.Value.size.x > _allowedBoundMaxSize && 
+                calculatedBounds.Value.size.y > _allowedBoundMaxSize &&
+                calculatedBounds.Value.size.z > _allowedBoundMaxSize)
                 return false;
 
             return true;
@@ -515,34 +523,49 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (!IsServer)
                return;
 
-            var calculatedForce = shellRecoil * 0.5f; //Adjusted force better match how far things are flying
-
+            var calculatedForce = shellRecoil * 0.7f; //Adjusted force better match how far things are flying
             foreach (var otherObjectRigidbody in _otherRigidbodiesInsideMortarTube)
             {
                 if (otherObjectRigidbody == null)
                     continue;
 
                 //Note: We have to spawn it before igniting etc. else events are not hooked up on Server and therefore won't actually ignite
-                otherObjectRigidbody.GetComponent<NetworkObject>()?.Spawn(true);
+                otherObjectRigidbody.transform.localScale = Vector3.one; //Scale have to be set before spawning else scale is wrong on clients
+                if (otherObjectRigidbody.TryGetComponent<NetworkObject>(out var spawnNetObj))
+                    spawnNetObj.Spawn(true);
 
-                if (otherObjectRigidbody.GetComponent<IHaveFuse>() != null)
+                var foundFuse = otherObjectRigidbody.GetComponent<IHaveFuse>()?.GetFuse();
+                if (foundFuse != null)
                 {
-                    var fuse = otherObjectRigidbody.GetComponent<IHaveFuse>().GetFuse();
-                    fuse.FuseTime *= Random.Range(0.05f, 0.5f);
+                    if (otherObjectRigidbody.GetComponent<ShellBehavior>())
+                    {
+                        foundFuse.FuseTime = Random.Range(0.9f, 2.5f);
+                        //Skip main shoot out effect and just explode as it looks better when shooting out of a mortar as shells fly out fast
+                        //var mainModule = otherObjectRigidbody.GetComponent<ShellBehavior>().Effect.main;
+                        //mainModule.startDelay = 0f;
+                        //mainModule.startSpeed = 0f;
+                        //mainModule.startLifetime = 0.1f;
+                    }
+                    else
+                        //fuse.FuseTime *= Random.Range(0.05f, 0.5f);
+                        foundFuse.FuseTime = Random.Range(0.2f, 0.6f);
                 }
 
-                if (otherObjectRigidbody.GetComponent<IIgnitable>() != null)
-                    otherObjectRigidbody.GetComponent<IIgnitable>().IgniteInstant();
+                if (otherObjectRigidbody.TryGetComponent<IIgnitable>(out var ignitable))
+                    ignitable.IgniteInstant();
 
-                otherObjectRigidbody.transform.localScale = Vector3.one;
-                otherObjectRigidbody.MovePosition(((Random.insideUnitSphere * _mortarTubeTop.DetectionRadius * 5f) + _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * 0.5f)));
-                otherObjectRigidbody.isKinematic = false;
+                var calculatedRadius                    = _mortarTubeTop.DetectionRadius * 5f;
+                var randomPositionInMortarTopRadius     = _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * calculatedRadius * 0.5f) + (Random.insideUnitSphere * calculatedRadius);
+                otherObjectRigidbody.transform.position = randomPositionInMortarTopRadius;
+                otherObjectRigidbody.isKinematic        = false;
+                otherObjectRigidbody.linearDamping      = 0f;
+                otherObjectRigidbody.angularDamping     = 0f;
 
                 foreach (var collider in otherObjectRigidbody.gameObject.GetComponentsInChildren<Collider>())
                     collider.enabled = true;
 
                 otherObjectRigidbody.rotation = _mortarTubeTop.transform.rotation;
-                otherObjectRigidbody.AddForce(Random.Range(0.8f, 1.2f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
+                otherObjectRigidbody.AddForce(Random.Range(0.7f, 1.3f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
             }
 
             _otherRigidbodiesInsideMortarTube.Clear();
@@ -551,19 +574,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [Rpc(SendTo.Everyone)]
         private void PlayShellLoadSoundClientRpc()
         {
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_loadSound, _mortarTubeTop.transform.position));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_loadSound, _mortarTubeTop.transform.position));
         }
 
         [Rpc(SendTo.ClientsAndHost)]
         private void PlayOtherObjectEnterLoadSoundClientRpc()
         {
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(OtherObjectEnterSound, _mortarTubeTop.transform.position));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(OtherObjectEnterSound, _mortarTubeTop.transform.position));
         }
 
         [Rpc(SendTo.ClientsAndHost)]
         private void PlayOtherObjectRejectSoundClientRpc()
         {
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(OtherObjectRejectSound, _mortarTubeTop.transform.position));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(OtherObjectRejectSound, _mortarTubeTop.transform.position));
         }
 
         private IEnumerator DestroyWhenFinishedPlayingCoroutine(ParticleSystem shellEffect, ParticleSystem launchEffect)

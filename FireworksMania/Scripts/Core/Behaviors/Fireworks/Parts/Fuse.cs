@@ -291,12 +291,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (enableEmission)
             {
                 _particleSystem.Play(true);
-                Messenger.Broadcast(new MessengerEventPlaySound(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
+                Messenger.Broadcast(new MessengerEventPlaySoundStruct(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
             }
             else
             {
                 _particleSystem.Stop();
-                Messenger.Broadcast(new MessengerEventStopSound(_fuseIgnitedSound, this.transform));
+                Messenger.Broadcast(new MessengerEventStopSoundStruct(_fuseIgnitedSound, this.transform));
             }
         }
 

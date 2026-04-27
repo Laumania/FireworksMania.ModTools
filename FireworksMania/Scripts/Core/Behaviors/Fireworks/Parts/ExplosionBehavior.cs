@@ -93,7 +93,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_forceExplosionAlwaysUp)
                 _explosionForceEffect.gameObject.transform.rotation = Quaternion.identity;
 
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3(_explosionSound, this.transform.position, delayBasedOnDistanceToListener: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_explosionSound, this.transform.position, delayBasedOnDistanceToListener: true));
 
             if (_delayInSecondsBetweenSoundAndExplosionEffect > 0f)
             {
@@ -106,6 +106,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _explosionParticleEffect.gameObject.SetActive(true);
             _explosionParticleEffect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _explosionParticleEffect.Play(true);
+            _explosionForceEffect.ApplyExplosionForce();
         }
 
         private async UniTask ExplodeAsync(CancellationToken token)
@@ -118,9 +119,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 IsLaunched             = true,
                 Seed                   = (byte)Random.Range(0, 254),
                 ServerStartTimeAsFloat = this.NetworkManager.ServerTime.TimeAsFloat + (_delayInSecondsBetweenSoundAndExplosionEffect * 1000f)
-            };
-
-            _explosionForceEffect.ApplyExplosionForce();
+            };            
 
             await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying || _isWaitingOnDelayedSound, cancellationToken: token);
             

@@ -48,12 +48,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
-            Messenger.Broadcast(new MessengerEventPlaySound(_coreSound, this.transform, followTransform: true));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_coreSound, this.transform, followTransform: true));
 
             await UniTask.WaitWhile(() => _effect.isEmitting, cancellationToken: token);
 
-            Messenger.Broadcast(new MessengerEventStopSound(_coreSound, this.transform));
-            Messenger.Broadcast(new MessengerEventPlaySound(_endSound, this.transform, followTransform: true));
+            Messenger.Broadcast(new MessengerEventStopSoundStruct(_coreSound, this.transform));
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_endSound, this.transform, followTransform: true));
 
             await UniTask.WaitWhile(() => _effect.IsAlive(true) || _effect.isPlaying, cancellationToken: token);
 
@@ -63,7 +63,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public override void OnDestroy()
         {
-            Messenger.Broadcast(new MessengerEventStopSound(_coreSound, this.transform));
+            Messenger.Broadcast(new MessengerEventStopSoundStruct(_coreSound, this.transform));
             
             base.OnDestroy();            
         }

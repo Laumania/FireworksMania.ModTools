@@ -50,7 +50,7 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
 
             if (IsServer)
             {
-                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFireSignalReceived);
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFireSignalReceived);
                 
                 if (_restoredCueIndex.HasValue)
                 {
@@ -84,7 +84,7 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
                 _cueIndexVariable.Value = Mathf.Clamp(_cueIndexVariable.Value - 1, 1, MaxCueIndex);
         }
 
-        private void OnFireSignalReceived(MessengerEventFiringSystemControllerSendSignal arg)
+        private void OnFireSignalReceived(MessengerEventFiringSystemControllerSendSignalStruct arg)
         {
             if(arg.ModuleIndex == _channelIndex && arg.CueIndex == _cueIndexVariable.Value)
             {

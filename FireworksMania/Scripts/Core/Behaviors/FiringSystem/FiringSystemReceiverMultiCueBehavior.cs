@@ -46,12 +46,12 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
 
             if (IsServer)
             {
-                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignal>(OnFireSignalReceived);
+                Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFireSignalReceived);
             }
         }
 
 
-        private void OnFireSignalReceived(MessengerEventFiringSystemControllerSendSignal arg)
+        private void OnFireSignalReceived(MessengerEventFiringSystemControllerSendSignalStruct arg)
         {
             if(arg.ModuleIndex == _channelIndex)
             {

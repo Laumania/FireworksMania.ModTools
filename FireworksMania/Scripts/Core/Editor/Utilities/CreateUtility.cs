@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FireworksMania.Core.Definitions;
+using System;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -210,6 +211,72 @@ namespace FireworksMania.Core.Editor.Utilities
 
             // For prefabs, let's mark the scene as dirty for saving
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }
+
+        [MenuItem("Assets/Fireworks Mania/Create GameSoundDefinition from AudioClip", true, priority = 10)]
+        private static bool ValidateCreateGameSoundDefinitionFromAudioClip()
+        {
+            if (Selection.objects == null || Selection.objects.Length == 0)
+                return false;
+
+            foreach (var obj in Selection.objects)
+            {
+                if (!(obj is AudioClip))
+                    return false;
+            }
+
+            return true;
+        }
+
+        [MenuItem("Assets/Fireworks Mania/Create GameSoundDefinition from AudioClip", false, priority = 10)]
+        private static void CreateGameSoundDefinitionFromAudioClipMenu()
+        {
+            CreateGameSoundDefinitionFromAudioClip(Selection.objects);
+        }
+
+        private static void CreateGameSoundDefinitionFromAudioClip(UnityEngine.Object[] selectedObjects)
+        {
+            // Collect all valid AudioClips
+            var audioClips = new System.Collections.Generic.List<AudioClip>();
+            foreach (var obj in selectedObjects)
+            {
+                var audioClip = obj as AudioClip;
+                if (audioClip != null)
+                {
+                    audioClips.Add(audioClip);
+                }
+            }
+
+            if (audioClips.Count == 0)
+            {
+                Debug.LogWarning("No valid AudioClips selected");
+                return;
+            }
+
+            // Create the GameSoundDefinition asset
+            var soundDefinition = ScriptableObject.CreateInstance<GameSoundDefinition>();
+            soundDefinition.AudioVariationClips = audioClips.ToArray();
+            
+            // Use the first AudioClip's name for the definition name
+            soundDefinition.name = audioClips[0].name;
+
+            // Get the path based on the first selected AudioClip
+            string audioClipPath = AssetDatabase.GetAssetPath(audioClips[0]);
+            string directory = System.IO.Path.GetDirectoryName(audioClipPath);
+            string fileName = soundDefinition.name;
+            string newAssetPath = $"{directory}/{fileName}.asset";
+
+            // Ensure unique path
+            newAssetPath = AssetDatabase.GenerateUniqueAssetPath(newAssetPath);
+
+            // Create the asset
+            AssetDatabase.CreateAsset(soundDefinition, newAssetPath);
+            
+            Debug.Log($"Created GameSoundDefinition with {audioClips.Count} variation(s) at: {newAssetPath}");
+
+            // Save and refresh
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }
