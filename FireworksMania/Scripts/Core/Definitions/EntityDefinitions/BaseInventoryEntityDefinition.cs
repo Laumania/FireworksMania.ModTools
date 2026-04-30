@@ -22,6 +22,12 @@ namespace FireworksMania.Core.Definitions.EntityDefinitions
         [FormerlySerializedAs("EntityDefinitionType")]
         private EntityDefinitionType _entityDefinitionType;
 
+        [Header("Brand Collection")]
+        [Tooltip("Optional reference to Brand Collection this item is part of.")]
+        [SerializeField]
+        private BrandCollection _collectionDefinition;
+        public BrandCollection? CollectionDefinition => _collectionDefinition;
+
         protected override void OnValidate()
         {
 #if UNITY_EDITOR
