@@ -216,6 +216,19 @@ public static class RuntimePreviewGenerator
         return GenerateModelPreviewInternal(model, null, null, width, height, shouldCloneModel, shouldIgnoreParticleSystems, null, UseSceneCamera, Scenecamera);
     }
 
+    /// <summary>
+    /// Generates a preview using an exact camera placement (world-space offset + rotation + FOV)
+    /// without any automatic framing/fitting. If the object is only partially in view, the
+    /// resulting texture will reflect that.
+    /// </summary>
+    /// <param name="cameraWorldOffset">World-space offset from the model's root to the camera.</param>
+    /// <param name="cameraWorldRotation">World-space rotation of the camera.</param>
+    /// <param name="fieldOfView">Vertical field of view in degrees.</param>
+    public static Texture2D GenerateModelPreviewStrict(Transform model, int width = 64, int height = 64, bool shouldCloneModel = false, bool shouldIgnoreParticleSystems = true, Vector3? cameraWorldOffset = null, Quaternion? cameraWorldRotation = null, float fieldOfView = 60f)
+    {
+        return GenerateModelPreviewInternal(model, null, null, width, height, shouldCloneModel, shouldIgnoreParticleSystems, null, false, cameraWorldOffset, true, cameraWorldRotation, fieldOfView);
+    }
+
     public static Texture2D GenerateModelPreviewWithShader(Transform model, Shader shader, string replacementTag, int width = 64, int height = 64, bool shouldCloneModel = false, bool shouldIgnoreParticleSystems = true)
     {
         return GenerateModelPreviewInternal(model, shader, replacementTag, width, height, shouldCloneModel, shouldIgnoreParticleSystems);
@@ -234,7 +247,7 @@ public static class RuntimePreviewGenerator
 #endif
 
 #if UNITY_2018_2_OR_NEWER
-    private static Texture2D GenerateModelPreviewInternal(Transform model, Shader shader, string replacementTag, int width, int height, bool shouldCloneModel, bool shouldIgnoreParticleSystems, Action<Texture2D> asyncCallback = null, bool UseSceneCamera = false, Vector3? sceneCamerapos = null)
+    private static Texture2D GenerateModelPreviewInternal(Transform model, Shader shader, string replacementTag, int width, int height, bool shouldCloneModel, bool shouldIgnoreParticleSystems, Action<Texture2D> asyncCallback = null, bool UseSceneCamera = false, Vector3? sceneCamerapos = null, bool strictCameraMode = false, Quaternion? strictCameraRotation = null, float strictFieldOfView = 60f)
 #else
 	private static Texture2D GenerateModelPreviewInternal( Transform model, Shader shader, string replacementTag, int width, int height, bool shouldCloneModel, bool shouldIgnoreParticleSystems )
 #endif
@@ -312,7 +325,7 @@ public static class RuntimePreviewGenerator
 			boundsDebugCube.GetComponent<Renderer>().sharedMaterial = boundsDebugMaterial;
 #endif
             renderCamera.aspect = (float)width / height;
-            if (!UseSceneCamera)
+            if (!UseSceneCamera && !strictCameraMode)
             {
 
                 renderCamera.transform.rotation = Quaternion.LookRotation(previewObject.rotation * m_previewDirection, previewObject.up);
@@ -332,6 +345,14 @@ public static class RuntimePreviewGenerator
                     renderCamera.transform.LookAt(previewObject.transform, previewObject.up);
                     CalculateCameraPosition(renderCamera, previewBounds, m_padding);
                 }
+            }
+            if (strictCameraMode && sceneCamerapos != null)
+            {
+                var worldOffset  = (Vector3)sceneCamerapos;
+                Vector3 cameraPos = new Vector3(PREVIEW_POSITION.x + worldOffset.x, PREVIEW_POSITION.y + worldOffset.y, PREVIEW_POSITION.z + worldOffset.z);
+                renderCamera.transform.position = cameraPos;
+                renderCamera.transform.rotation = strictCameraRotation ?? Quaternion.LookRotation(previewObject.position - cameraPos, Vector3.up);
+                renderCamera.fieldOfView         = strictFieldOfView;
             }
 
             renderCamera.farClipPlane = (renderCamera.transform.position - previewBounds.center).magnitude + previewBounds.size.magnitude;
