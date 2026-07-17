@@ -10,11 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edf3232d67e67b14f9f636fcce7e734b, type: 3}
-  m_Name: GameSoundCollection
+  m_Name: BaseGameGameSoundNameCollection
   m_EditorClassIdentifier: 
   _sounds:
-  - '[Type In]'
-  - '[None]'
   - 50mm_Explosion
   - 50mm_ExplosionCrackling
   - 75mm_Explosion
@@ -25,6 +23,8 @@ MonoBehaviour:
   - CodyB_KokkenRulle_Explosion_Deep
   - DefaultImpact
   - drinks_glasses_touching_003
+  - Dance_Rock_01
+  - SlowClap_01
   - EXP_Firecracker_A
   - EXP_Firecracker_B
   - Exp_Generic Explosion Sharp_Os_001
@@ -109,6 +109,8 @@ MonoBehaviour:
   - Button_On_Click_01
   - EraserToolEraseSound
   - FastWhoosh
+  - FlyModeEnter
+  - FlyModeLeave
   - JumpSound
   - LandSound
   - MortarTubeEnter

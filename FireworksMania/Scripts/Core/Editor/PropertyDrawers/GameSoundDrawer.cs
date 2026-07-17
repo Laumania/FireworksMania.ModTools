@@ -49,9 +49,9 @@ namespace FireworksMania.Core.Editor.PropertyDrawers
         {
             _soundOptions.Clear();
 
-            var soundCollections = AssetDatabaseHelper.FindAssetsByType<SoundCollection>();
+            var soundNameCollections = AssetDatabaseHelper.FindAssetsByType<GameSoundNameCollection>();
 
-            foreach (var foundGameSoundCollectionItem in soundCollections)
+            foreach (var foundGameSoundCollectionItem in soundNameCollections)
             {
                 foreach (var soundItem in foundGameSoundCollectionItem.Sounds)
                 {

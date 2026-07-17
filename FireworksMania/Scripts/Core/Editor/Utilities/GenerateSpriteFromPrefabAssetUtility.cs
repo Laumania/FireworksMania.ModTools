@@ -381,8 +381,7 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         {
             var previewLightingPrefabAssetGuid = AssetDatabase.FindAssets(PreviewLightingPrefabName).FirstOrDefault();
             var previewLightingPrefabPath      = AssetDatabase.GUIDToAssetPath(previewLightingPrefabAssetGuid);
-            var filePathWithOutExtension       = Path.GetFileNameWithoutExtension(previewLightingPrefabPath);
-            PreviewLightingPrefab              = Resources.Load<GameObject>(filePathWithOutExtension);
+            PreviewLightingPrefab              = AssetDatabase.LoadAssetAtPath<GameObject>(previewLightingPrefabPath);
         }
 
         DestroyPreviewLightingPrefabInstance();
