@@ -81,13 +81,13 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   eyeAdaptation:
-    overrideState: 1
+    overrideState: 0
     value: 0
   speedUp:
-    overrideState: 1
+    overrideState: 0
     value: 0.5
   speedDown:
-    overrideState: 1
+    overrideState: 0
     value: 0.5
 --- !u!114 &-1189258775988804845
 MonoBehaviour:
@@ -201,7 +201,7 @@ MonoBehaviour:
     value: {r: 1, g: 1, b: 1, a: 1}
   hueShift:
     overrideState: 0
-    value: 14
+    value: 0
   saturation:
     overrideState: 1
     value: 30
@@ -1468,7 +1468,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 4
+    value: 6
   threshold:
     overrideState: 1
     value: 1
@@ -1476,17 +1476,17 @@ MonoBehaviour:
     overrideState: 0
     value: 0.5
   clamp:
-    overrideState: 1
-    value: 1.5
+    overrideState: 0
+    value: 65472
   diffusion:
     overrideState: 0
-    value: 10
+    value: 7
   anamorphicRatio:
     overrideState: 0
     value: 0
   color:
     overrideState: 0
-    value: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 1}
+    value: {r: 1, g: 1, b: 1, a: 1}
   fastMode:
     overrideState: 1
     value: 1

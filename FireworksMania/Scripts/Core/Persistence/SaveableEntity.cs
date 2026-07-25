@@ -218,6 +218,7 @@ namespace FireworksMania.Core.Persistence
     [Serializable]
     public class SaveableBlueprintMetaData
     {
+        public string Name;
         public string Author;
         public string GameVersion;
         public string Map;
@@ -229,7 +230,7 @@ namespace FireworksMania.Core.Persistence
     [Serializable]
     public class BlueprintModInfo
     {
-        public int    ModId;
+        public long   ModId;
         public string ModName;
     }
 

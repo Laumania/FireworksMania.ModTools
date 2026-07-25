@@ -47,7 +47,7 @@ namespace FireworksMania.Core.Editor.PropertyDrawers
 
         private void PopulateFromGameSoundCollections()
         {
-            _soundOptions.Clear();
+            _soundOptions.Clear();            
 
             var soundNameCollections = AssetDatabaseHelper.FindAssetsByType<GameSoundNameCollection>();
 

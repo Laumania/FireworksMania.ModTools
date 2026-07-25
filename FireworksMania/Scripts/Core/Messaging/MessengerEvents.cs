@@ -492,4 +492,14 @@ namespace FireworksMania.Core.Messaging
 
         public GameObject RootGameObject { get; }
     }
+
+    public struct MessengerEventFireworkEffectStartedStruct
+    {
+        public MessengerEventFireworkEffectStartedStruct(GameObject rootGameObject)
+        {
+            RootGameObject = rootGameObject;
+        }
+
+        public GameObject RootGameObject { get; }
+    }
 }

@@ -25,7 +25,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             base.Awake();
 
             if (String.IsNullOrEmpty(_particleSpawnedInMortarSound))
-                _particleSpawnedInMortarSound = _soundGroupNoneValue;
+                _particleSpawnedInMortarSound = GameSoundAttribute.SoundGroupNoneValue;
         }
 
         protected override void PlaySpawnedSound(Vector3 particlePosition)

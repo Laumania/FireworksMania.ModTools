@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf3232d67e67b14f9f636fcce7e734b, type: 3}
   m_Name: BaseGameGameSoundNameCollection
   m_EditorClassIdentifier: 
+  _info: 0
   _sounds:
+  - '[None]'
   - 50mm_Explosion
   - 50mm_ExplosionCrackling
   - 75mm_Explosion

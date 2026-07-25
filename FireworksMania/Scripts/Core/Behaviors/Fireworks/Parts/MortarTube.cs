@@ -320,6 +320,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (IsShellLoaded)
             {
+                Messenger.Broadcast(new MessengerEventFireworkEffectStartedStruct(this.gameObject));
+
                 _launchEffect.gameObject.SetActive(true);
                 _launchEffect.SetRandomSeed(_tubeState.Value.Seed, GetLaunchTimeDifference());
                 _launchEffect.Play(true);

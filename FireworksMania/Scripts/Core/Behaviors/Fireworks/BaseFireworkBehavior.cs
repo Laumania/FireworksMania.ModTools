@@ -117,7 +117,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _firingSystemReceiverNetworkData.OnValueChanged += OnFiringSystemReceiverNetworkDataValueChanged;
 
             if (_launchState.Value.IsLaunched)
-                LaunchInternalAsync(_cancellationTokentoken).Forget();
+                StartLaunchInternal();
 
             if (IsServer)
                 Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
@@ -134,7 +134,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             //NetworkLog.LogInfo($"[{NetworkManager.Singleton.LocalClientId}] _launchState.OnValueChanged newValue.IsLaunched {newValue.IsLaunched}");
             if (previousValue.IsLaunched == false && newValue.IsLaunched == true)
-                LaunchInternalAsync(_cancellationTokentoken).Forget();
+                StartLaunchInternal();
+        }
+
+        private void StartLaunchInternal()
+        {
+            Messenger.Broadcast(new MessengerEventFireworkEffectStartedStruct(this.gameObject));
+            LaunchInternalAsync(_cancellationTokentoken).Forget();
         }
 
         private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignalStruct arg)

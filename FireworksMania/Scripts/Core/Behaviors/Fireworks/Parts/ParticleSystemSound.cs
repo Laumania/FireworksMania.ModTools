@@ -32,7 +32,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
 
         private ParticleSystemObserver _particleObserver;
-        protected const string _soundGroupNoneValue = "[None]";
 
         private bool _havePlayedDestroySound = false;
         private bool _havePlayedSpawnSound   = false;
@@ -43,10 +42,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             Preconditions.CheckNotNull(_particleObserver, $"Missing {nameof(ParticleSystemObserver)} on {nameof(ParticleSystemSound)}", this);
             
             if (String.IsNullOrEmpty(_particleSpawnedSound))
-                _particleSpawnedSound = _soundGroupNoneValue;
+                _particleSpawnedSound = GameSoundAttribute.SoundGroupNoneValue;
 
             if (String.IsNullOrEmpty(_particleDestroyedSound))
-                _particleDestroyedSound = _soundGroupNoneValue;
+                _particleDestroyedSound = GameSoundAttribute.SoundGroupNoneValue;
         }
 
         private void OnValidate()
@@ -63,10 +62,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if(_particleObserver == null)
                 return;
 
-            if (_particleSpawnedSound != _soundGroupNoneValue)
+            if (_particleSpawnedSound != GameSoundAttribute.SoundGroupNoneValue)
                 _particleObserver.OnParticleSpawned += PlaySpawnedSound;
 
-            if (_particleDestroyedSound != _soundGroupNoneValue)
+            if (_particleDestroyedSound != GameSoundAttribute.SoundGroupNoneValue)
                 _particleObserver.OnParticleDestroyed += PlayDestroyedSound;
         }
 
