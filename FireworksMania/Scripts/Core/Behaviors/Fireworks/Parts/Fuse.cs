@@ -50,6 +50,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public event Action OnFuseIgnited;
 
         private CancellationToken _cancellationToken;
+        private CancellationTokenSource _effectDrainCancellationTokenSource;
         private MeshRenderer[] _enabledMeshRenderers;
         private Collider[] _enabledColliders;
 
@@ -69,6 +70,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _remainingFuseTime                            = this._fuseTime;
             _cancellationToken                            = this.gameObject.GetCancellationTokenOnDestroy();
             _initialIgnitionThreshold                     = this._ignitionThreshold;
+
+            //Fuse models never cast shadows: the thin rope's shadow is invisible, but every caster
+            //is still drawn into all shadow cascades. Enforced in code so modded fuses are covered too.
+            foreach (var renderer in _enabledMeshRenderers)
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
             SetEmissionOnParticleSystems(false);
         }
@@ -121,6 +127,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 Extinguish();
         }
 
+        public override void OnDestroy()
+        {
+            CancelPendingEffectDeactivation();
+            base.OnDestroy();
+        }
+
         public void IgniteWithoutFuseTime()
         {
             _remainingFuseTime = 0f;
@@ -140,6 +152,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void InternalIgnite(float ignitionForce, bool instantIgnite)
         {
             if (_clientRequestForIgnitionSend || _isIgnited.Value)
+                return;
+
+            //Note: The RPC below requires the NetworkObject to be spawned, which it isn't for the physics
+            //frame a blueprint load leaves between Instantiate and NetworkObject.Spawn. Fire or a torch can
+            //reach the firework in that window. Nothing is consumed here, so a later ignition still works (#2245)
+            if (IsSpawned == false)
                 return;
 
             if(SaveableEntityOwner != null)
@@ -280,16 +298,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (_enabledMeshRenderers != null)
                 foreach (var renderer in _enabledMeshRenderers)
-                    renderer.enabled = enable;
+                    if (renderer.OrNull() != null)
+                        renderer.enabled = enable;
             if (_enabledColliders != null)
                 foreach (var collider in _enabledColliders)
-                    collider.enabled = enable;
+                    if (collider.OrNull() != null)
+                        collider.enabled = enable;
         }
 
         private void SetEmissionOnParticleSystems(bool enableEmission)
         {
+            CancelPendingEffectDeactivation();
+
             if (enableEmission)
             {
+                if (CanToggleEffectGameObject)
+                    _particleSystem.gameObject.SetActive(true);
+
                 _particleSystem.Play(true);
                 Messenger.Broadcast(new MessengerEventPlaySoundStruct(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
             }
@@ -297,15 +322,60 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             {
                 _particleSystem.Stop();
                 Messenger.Broadcast(new MessengerEventStopSoundStruct(_fuseIgnitedSound, this.transform));
+                DeactivateEffectWhenDrained();
             }
+        }
+
+        //Stop() leaves every particle system in the effect on Unity's update list for the lifetime
+        //of the object - only a deactivated GameObject stops ticking (#2277)
+        private void DeactivateEffectWhenDrained()
+        {
+            if (CanToggleEffectGameObject == false)
+                return;
+
+            if (_particleSystem.IsAlive(true))
+            {
+                _effectDrainCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken);
+                DeactivateEffectWhenDrainedAsync(_particleSystem, _effectDrainCancellationTokenSource.Token).Forget();
+            }
+            else
+                _particleSystem.gameObject.SetActive(false);
+        }
+
+        private async UniTask DeactivateEffectWhenDrainedAsync(ParticleSystem effect, CancellationToken token)
+        {
+            //Deactivating while particles are alive would make them visibly pop out of existence
+            await UniTask.WaitWhile(() => effect != null && (effect.IsAlive(true) || effect.isPlaying), cancellationToken: token);
+
+            if (effect != null)
+                effect.gameObject.SetActive(false);
+        }
+
+        private void CancelPendingEffectDeactivation()
+        {
+            if (_effectDrainCancellationTokenSource == null)
+                return;
+
+            _effectDrainCancellationTokenSource.Cancel();
+            _effectDrainCancellationTokenSource.Dispose();
+            _effectDrainCancellationTokenSource = null;
         }
 
         internal void ReplaceEffect(ParticleSystem newEffect, string igniteSound = null)
         {
             if (_particleSystem != newEffect)
             {
-                if(_particleSystem != null)
-                    GameObject.Destroy(_particleSystem);
+                CancelPendingEffectDeactivation();
+
+                if (_particleSystem != null)
+                {
+                    //Destroying only the ParticleSystem component would orphan its GameObject and
+                    //children as forever-ticking particle systems nothing references anymore (#2279)
+                    if (CanToggleEffectGameObject)
+                        GameObject.Destroy(_particleSystem.gameObject);
+                    else
+                        GameObject.Destroy(_particleSystem);
+                }
 
                 _particleSystem = newEffect;
             }
@@ -313,6 +383,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (igniteSound != null)
                 _fuseIgnitedSound = igniteSound;
         }
+
+        //Deactivating or destroying the effect GameObject is only safe when the fuse itself doesn't
+        //sit on or under it - deactivating the fuse's own GameObject would extinguish it via OnDisable
+        private bool CanToggleEffectGameObject => _particleSystem != null && this.transform.IsChildOf(_particleSystem.transform) == false;
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()

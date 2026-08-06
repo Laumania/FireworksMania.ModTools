@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Messaging;
@@ -283,19 +283,29 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         private async UniTask DestroyFireworkAnimatedAsync(CancellationToken token)
         {
+            await PlayDestroyAnimationAsync(token);
+            token.ThrowIfCancellationRequested();
+
             if (!IsServer)
                 return;
-#if UNITY_EDITOR
-            Debug.LogWarning("Todo: Implement nice destroy animation in DestroyFireworkAnimatedAsync", this);
-#endif
-            await this.transform.DOShakeScale(.3f, 0.5f, 5, 50f, true).SetLink(transform.gameObject).WithCancellation(token);
-            token.ThrowIfCancellationRequested();
-            await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).SetLink(transform.gameObject).WithCancellation(token);
+
+            await DestroyAnimation.WaitForClientsAsync(NetworkManager, token);
             token.ThrowIfCancellationRequested();
 
             OnDestroyed?.Invoke(this);
-            
+
             this.gameObject.DestroyOrDespawn();
+        }
+
+        /// <summary>
+        /// The destroy animation is played on host and clients alike so fireworks doesn't just pop out of
+        /// existence on clients. Only the host despawns the firework once the animation is done. The timing
+        /// is varied by the replicated launch seed, so all peers plays the exact same animation and it
+        /// therefore ends at the same time on all of them.
+        /// </summary>
+        protected virtual UniTask PlayDestroyAnimationAsync(CancellationToken token)
+        {
+            return DestroyAnimation.PlayAsync(this.transform, _launchState.Value.Seed / (float)byte.MaxValue, token);
         }
 
         public virtual CustomEntityComponentData CaptureState()

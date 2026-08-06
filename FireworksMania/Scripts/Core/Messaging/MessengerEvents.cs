@@ -121,6 +121,22 @@ namespace FireworksMania.Core.Messaging
         public Transform SourceTransform { get; }
     }
 
+    public struct MessengerEventStopAllSoundsOfTransformStruct
+    {
+        /// <summary>
+        /// Stops every sound playing from the specified sourceTransform, no matter which sound group it
+        /// belongs to. Useful when an object leaves the world and whatever it was playing should go with it,
+        /// as a sound following a transform lives on the audio system and not on the object itself.
+        /// </summary>
+        /// <param name="sourceTransform">Transform to stop all sounds for</param>
+        public MessengerEventStopAllSoundsOfTransformStruct(Transform sourceTransform)
+        {
+            SourceTransform = sourceTransform;
+        }
+
+        public Transform SourceTransform { get; }
+    }
+
     [Obsolete("This message is deprecated, please use MessengerEventApplyExplosionForceStruct instead to avoid unnecessary heap allocations.")]
     public class MessengerEventApplyExplosionForce
     {
@@ -427,14 +443,20 @@ namespace FireworksMania.Core.Messaging
 
     public struct MessengerEventShowNotificationStruct
     {
-        public MessengerEventShowNotificationStruct(string title, string message)
+        public MessengerEventShowNotificationStruct(string title, string message) : this(title, message, null)
+        {
+        }
+
+        public MessengerEventShowNotificationStruct(string title, string message, Sprite icon)
         {
             Title   = title;
             Message = message;
+            Icon    = icon;
         }
 
         public string Title   { get; }
         public string Message { get; }
+        public Sprite Icon    { get; }
     }
     
     public struct MessengerEventFiringSystemControllerSendSignalStruct

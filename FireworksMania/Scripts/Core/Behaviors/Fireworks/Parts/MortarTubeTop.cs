@@ -13,9 +13,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private SphereCollider _sphereCollider;
 
+        //Registry of live tube tops, so tools can enumerate placement targets without physics
+        //queries (overlap buffers silently truncate in busy scenes - #1105 ghost previews)
+        private static readonly List<MortarTubeTop> _activeMortarTubeTops = new List<MortarTubeTop>();
+        public static IReadOnlyList<MortarTubeTop> ActiveMortarTubeTops => _activeMortarTubeTops;
+
         private void Awake()
         {
             _sphereCollider = GetComponent<SphereCollider>();
+            _activeMortarTubeTops.Add(this);
+        }
+
+        private void OnDestroy()
+        {
+            _activeMortarTubeTops.Remove(this);
         }
 
         private void OnTriggerEnter(Collider other)

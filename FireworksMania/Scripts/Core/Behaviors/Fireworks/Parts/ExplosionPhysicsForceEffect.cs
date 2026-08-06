@@ -110,18 +110,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (applyPhysicsForce || applyIgnition)
             {
                 var foundCount = UnityEngine.Physics.OverlapSphereNonAlloc(position, _range, _nonAllocColliderArray, _affectedLayers);
-                
+
                 List<Rigidbody> foundDistinctRigidbodies = FindDistinctRigidbodies(_nonAllocColliderArray, foundCount);
 
                 HandleFlammableObjects(_nonAllocColliderArray, foundCount, applyIgnition);
+
+                //Destruction runs before the physics force pass so freshly destroyed objects are already
+                //marked IsDestroyed and skipped by it - their debris receives the explosion force when it
+                //spawns (staggered over frames) instead of the doomed original being launched
+                var wasAnyDestructiblesDestroyed = false;
+                if (applyPhysicsForce && CoreSettings.EnableExplosionPhysicsForces && CoreSettings.EnableDestruction)
+                    wasAnyDestructiblesDestroyed = HandleDestructibles(_nonAllocColliderArray, foundCount, position);
+
                 HandleIgnitionAndPhysicsForces(foundDistinctRigidbodies, position, applyIgnition, applyPhysicsForce);
 
-                if (applyPhysicsForce && CoreSettings.EnableExplosionPhysicsForces)
+                if (wasAnyDestructiblesDestroyed)
                 {
-                    if (CoreSettings.EnableDestruction && HandleDestructibles(_nonAllocColliderArray, foundCount, position))
-                    {
-                        HandleDebris(position);
-                    }
+                    HandleDebris(position);
                 }
             }
 
@@ -170,6 +175,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private bool HandleDestructibles(Collider[] surroundingColliders, int count, Vector3 position)
         {
             var wasAnyDestructiblesDestroyed = false;
+            var explosionSource              = new ExplosionDamageSource(position, _explosionForce, _range, _upwardsmodifier, _forceMode, _applyForceRelativeToMass);
             for (int i = 0; i < count; i++)
             {
                 var collider = surroundingColliders[i];
@@ -179,10 +185,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 if (collider.TryGetComponent<IDestructible>(out var destructible))
                 {
-                    var rangeMultiplier = CalculateRangeMultiplier(position, collider.ClosestPointOnBounds(position));
-                    destructible.ApplyDamage(_explosionForce * rangeMultiplier);
+                    var wasAlreadyDestroyed = destructible.IsDestroyed;
+                    var rangeMultiplier     = CalculateRangeMultiplier(position, collider.ClosestPointOnBounds(position));
+                    destructible.ApplyDamage(_explosionForce * rangeMultiplier, explosionSource);
 
-                    if (destructible.IsDestroyed)
+                    //Only destructions caused by THIS explosion trigger the debris pass - an object still
+                    //waiting for its staggered debris swap was already counted by the explosion that killed it
+                    if (wasAlreadyDestroyed == false && destructible.IsDestroyed)
                         wasAnyDestructiblesDestroyed = true;
                 }
             }
@@ -231,25 +240,42 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return false;
             }
 
+            if (targetRigidBody.TryGetComponent<IDestructible>(out var destructible) && destructible.IsDestroyed)
+            {
+                //A destroyed destructible is only still around because its debris swap is staggered over
+                //frames - launching the doomed original would apply the explosion twice, as the debris
+                //receives the explosion force when it spawns
+                return false;
+            }
+
             //Debug.Log($"'{targetRigidBody.gameObject.name}' should have physics forces applied");
             return true;
         }
         
         private float CalculateMassMultiplier(Rigidbody rigidBody)
         {
-            if (_applyForceRelativeToMass == false)
+            return CalculateMassMultiplier(rigidBody.mass, _explosionForce, _applyForceRelativeToMass);
+        }
+
+        public static float CalculateMassMultiplier(float mass, float explosionForce, bool applyForceRelativeToMass)
+        {
+            if (applyForceRelativeToMass == false)
                 return 1f;
 
-            return Mathf.Clamp(rigidBody.mass / _explosionForce, .05f, 1f);
+            return Mathf.Clamp(mass / explosionForce, .05f, 1f);
         }
 
         private float CalculateRangeMultiplier(Vector3 explosionPosition, Vector3 targetPosition)
         {
+            return CalculateRangeMultiplier(explosionPosition, targetPosition, _range);
+        }
+
+        public static float CalculateRangeMultiplier(Vector3 explosionPosition, Vector3 targetPosition, float range)
+        {
             var distance        = Vector3.Distance(explosionPosition, targetPosition);
-            var relativeToRange = Mathf.Clamp(distance / _range, 0f, 1f);
+            var relativeToRange = Mathf.Clamp(distance / range, 0f, 1f);
             var rangeMultiplier = Mathf.Clamp(1f - relativeToRange, 0f, 1f);
 
-            //return Mathf.Clamp(1f - (Mathf.Clamp(Vector3.Distance(explosionPosition, targetPosition) / _range, 0f, 1f)), 0f, 1f);
             return rangeMultiplier;
         }
 

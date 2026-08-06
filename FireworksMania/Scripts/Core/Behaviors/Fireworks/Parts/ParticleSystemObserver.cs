@@ -18,8 +18,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private readonly HashSet<uint>             _currentSeeds             = new HashSet<uint>();
         private readonly List<uint>                _keysToRemove             = new List<uint>();
 
-        private ParticleSystem          _observedParticleSystem;
-        private ParticleSystem.Particle[] _liveParticlesBuffer = Array.Empty<ParticleSystem.Particle>();
+        private ParticleSystem _observedParticleSystem;
 
         public Action<Vector3> OnParticleSpawned;
         public Action<Vector3> OnParticleDestroyed;
@@ -31,12 +30,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             _observedParticleSystem = this.GetComponent<ParticleSystem>();
             if (_observedParticleSystem == null)
-            {
                 Debug.LogError($"Missing ParticleSystem on {nameof(ParticleSystemObserver)}", this);
-                return;
-            }
-
-            _liveParticlesBuffer = new ParticleSystem.Particle[GetSafeBufferSize(_observedParticleSystem.main.maxParticles)];
         }
 
         private void OnValidate()
@@ -62,13 +56,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (OnParticleSpawned == null && OnParticleDestroyed == null)
                 return;
 
-            var safeBufferSize = GetSafeBufferSize(_observedParticleSystem.main.maxParticles);
-            if (_liveParticlesBuffer.Length < safeBufferSize)
-                _liveParticlesBuffer = new ParticleSystem.Particle[safeBufferSize];
+            // Shared across all observers - only valid for the duration of this call, see ParticleBufferPool
+            var liveParticlesBuffer = ParticleBufferPool.Rent(GetSafeBufferSize(_observedParticleSystem.main.maxParticles));
+            var liveParticleCount   = _observedParticleSystem.GetParticles(liveParticlesBuffer);
 
-            var liveParticleCount = _observedParticleSystem.GetParticles(_liveParticlesBuffer);
-
-            ComputeParticleDelta(liveParticleCount);
+            ComputeParticleDelta(liveParticlesBuffer, liveParticleCount);
 
             foreach (var removedPosition in _removedParticlePositions)
             {
@@ -83,7 +75,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
-        private void ComputeParticleDelta(int liveParticleCount)
+        private void ComputeParticleDelta(ParticleSystem.Particle[] liveParticlesBuffer, int liveParticleCount)
         {
             _addedParticlePositions.Clear();
             _removedParticlePositions.Clear();
@@ -91,7 +83,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             for (int i = 0; i < liveParticleCount; i++)
             {
-                var particle = _liveParticlesBuffer[i];
+                var particle = liveParticlesBuffer[i];
                 var seed     = particle.randomSeed;
                 var position = particle.position;
 

@@ -96,6 +96,24 @@ namespace FireworksMania.Core.Messaging
             }
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Dev-only: listener count per event type. Un-unsubscribed listeners are a standing hazard
+        /// here - every Broadcast walks the invocation list, so a list that only ever grows is both a
+        /// leak and a per-frame cost. The performance fingerprint (#2270) reads this to spot event
+        /// types whose count never comes back down across a session boundary.
+        /// </summary>
+        public static Dictionary<string, int> GetListenerCounts()
+        {
+            var counts = new Dictionary<string, int>(_eventTable.Count);
+
+            foreach (KeyValuePair<string, Delegate> pair in _eventTable)
+                counts[pair.Key] = pair.Value == null ? 0 : pair.Value.GetInvocationList().Length;
+
+            return counts;
+        }
+#endif
+
         public static void PrintEventTable()
         {
             Debug.Log("\t\t\t=== MESSENGER PrintEventTable ===");

@@ -67,6 +67,13 @@ namespace FireworksMania.Core.Editor.Utilities
             ConvertToTemplate(gameObject);
         }
 
+        [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Single Shot Rack Template", priority = 1)]
+        public static void CreateSingleShotRackTemplate(MenuCommand menuCommand)
+        {
+            var gameObject = CreateUtility.CreatePrefabAsChild("Editor/ModSamples/Prefabs/SingleShotRack_Template_Prefab", menuCommand.context as GameObject);
+            ConvertToTemplate(gameObject);
+        }
+
         [MenuItem("GameObject/Fireworks Mania/Templates/Fireworks/Smoke Bomb Template", priority = 1)]
         public static void CreateSmokeBombTemplate(MenuCommand menuCommand)
         {

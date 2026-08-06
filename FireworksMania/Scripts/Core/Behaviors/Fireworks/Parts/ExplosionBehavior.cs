@@ -107,6 +107,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _explosionParticleEffect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _explosionParticleEffect.Play(true);
             _explosionForceEffect.ApplyExplosionForce();
+
+            //A drained ParticleSystem keeps ticking in Unity's particle update as long as its GameObject is
+            //active, so every peer that activated the effect deactivates it again once it has fully drained
+            var wasCancelled = await UniTask.WaitWhile(() => _explosionParticleEffect.IsAlive(true) || _explosionParticleEffect.isPlaying, cancellationToken: token).SuppressCancellationThrow();
+            if (wasCancelled)
+                return;
+
+            _explosionParticleEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            _explosionParticleEffect.gameObject.SetActive(false);
         }
 
         private async UniTask ExplodeAsync(CancellationToken token)

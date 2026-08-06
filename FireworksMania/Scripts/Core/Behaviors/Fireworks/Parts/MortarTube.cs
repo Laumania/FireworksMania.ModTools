@@ -104,6 +104,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _mortarInternalFuse.SaveableEntityOwner = _saveableEntity;
             _allowedBoundMaxSize = _mortarTubeTop.DetectionRadius * 3f;
+
+            //FixedUpdate/LateUpdate only have work while rigidbodies are inside the tube or queued
+            //for rejection, and with thousands of tubes the empty per-frame calls alone cost
+            //milliseconds - so the component sleeps until the trigger fills either collection.
+            //Must happen after Start's initialization: Start never runs on a disabled component.
+            this.enabled = false;
         }
 
         public override void OnDestroy()
@@ -226,6 +232,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private void LateUpdate()
         {
             UpdatePositionOfObjectsInsideMortar();
+
+            if (_otherRigidbodiesInsideMortarTube.Count == 0 && _rigidbodiesRejectedThisFrame.Count == 0)
+                this.enabled = false;
         }
 
         private void UpdatePositionOfObjectsInsideMortar()
@@ -449,33 +458,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     netObj.Despawn(false);
 
                 _otherRigidbodiesInsideMortarTube.Add(otherRigidbody);
+                this.enabled = true;
 
                 //_isShellLoadingInProgress = false;
             }
             else if(ShouldBeRejectedWithForce(otherRigidbody))
             {
                 _rigidbodiesRejectedThisFrame.Add(otherRigidbody.GetInstanceID(), otherRigidbody);
+                this.enabled = true;
             }
-        }
-
-        private Bounds? CalculateBounds(GameObject gameObject)
-        {
-            var originalRotation          = gameObject.transform.rotation;
-            gameObject.transform.rotation = Quaternion.identity; //Reset rotation to calculate bounds correctly
-
-            var meshRenderers      = gameObject.GetComponentsInChildren<MeshRenderer>();
-            if (meshRenderers.Length > 0)
-            {
-                Bounds resultingBounds = meshRenderers[0].bounds;
-                for (int i = 1; i < meshRenderers.Length; i++)
-                {
-                    resultingBounds.Encapsulate(meshRenderers[i].bounds);
-                }
-
-                gameObject.transform.rotation = originalRotation; //Restore original rotation
-                return resultingBounds;
-            }
-            return null;
         }
 
         private bool ShouldBeRejectedWithForce(Rigidbody otherRigidbody)
@@ -503,14 +494,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (!otherRigidbody.TryGetComponent<NetworkObject>(out var networkObject) || networkObject.IsSceneObject == true)
                 return false;
 
-            if (otherRigidbody.gameObject.TryGetComponent<MortarBehavior>(out _))
+            //Holders never go into holders - no mortars inside mortars, and no firework mount
+            //racks swallowed as "extra items" either (#2288)
+            if (otherRigidbody.TryGetComponent<IFireworkEntityHolder>(out _))
                 return false;
 
             if (otherRigidbody.gameObject.layer == _playerLayer)
                 return false;
 
-            
-            calculatedBounds = CalculateBounds(otherRigidbody.gameObject);
+
+            calculatedBounds = FireworkMountRules.CalculateUprightRendererBounds(otherRigidbody.gameObject);
             if (calculatedBounds.HasValue && 
                 calculatedBounds.Value.size.x > _allowedBoundMaxSize && 
                 calculatedBounds.Value.size.y > _allowedBoundMaxSize &&

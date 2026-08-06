@@ -1,6 +1,6 @@
-﻿using System.Threading;
+using System.Threading;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Interactions;
 using FireworksMania.Core.Utilities;
 using Unity.Netcode;
@@ -20,36 +20,62 @@ namespace FireworksMania.Core.Behaviors
             _cancellationTokentoken = this.GetCancellationTokenOnDestroy();
         }
 
-        public async void Erase()
+        /// <summary>
+        /// Server only - it tells every peer to play the erase animation, and the object despawns itself
+        /// once that is done. Don't despawn it from the outside, that would cut the animation short.
+        /// </summary>
+        public void Erase()
         {
-            if (_isErasing == false)
+            if (_isErasing)
+                return;
+
+            if (IsSpawned == false)
             {
-                _isErasing = true;
-                await EraseAsync(_cancellationTokentoken);
+                //Not spawned means there is nobody to tell about it, so just erase it right here
+                StartErasing();
+                return;
             }
+
+            if (IsServer == false)
+            {
+                Debug.LogError($"'{nameof(Erase)}' can only be called on the server - '{this.gameObject.name}' was not erased", this);
+                return;
+            }
+
+            EraseOnAllPeersRpc();
         }
 
-        //public override async void OnNetworkDespawn()
-        //{
-        //    await EraseAsync(_cancellationTokentoken).ContinueWith(() =>
-        //    {
-        //        base.OnNetworkDespawn();
-        //    });
-        //}
+        [Rpc(SendTo.Everyone)]
+        private void EraseOnAllPeersRpc()
+        {
+            StartErasing();
+        }
+
+        private void StartErasing()
+        {
+            if (_isErasing)
+                return;
+
+            _isErasing = true;
+            EraseAsync(_cancellationTokentoken).SuppressCancellationThrow().Forget();
+        }
 
         private async UniTask EraseAsync(CancellationToken token)
         {
-#if UNITY_EDITOR
-            Debug.LogWarning("Todo: Implement nice Erase animation in ErasableBehavior", this);
-#endif
-            await UniTask.CompletedTask;
-            this.gameObject.DestroyOrDespawn();
-            //await this.transform.DOShakeScale(.15f, 0.7f, 5, 50f, true).WithCancellation(token);
-            //token.ThrowIfCancellationRequested();
-            //await this.transform.DOScale(0f, UnityEngine.Random.Range(.1f, .2f)).WithCancellation(token);
-            //token.ThrowIfCancellationRequested();
+            //The network id is used to vary the animation a bit, as it's the one thing all peers agrees on
+            var variation = IsSpawned ? (NetworkObjectId % 100) / 99f : 0.5f;
 
-            //Destroy(this.gameObject);
+            await DestroyAnimation.PlayAsync(this.transform, variation, token);
+            token.ThrowIfCancellationRequested();
+
+            //Clients only play the animation, the server is the one actually removing the object for everybody
+            if (IsSpawned && IsServer == false)
+                return;
+
+            await DestroyAnimation.WaitForClientsAsync(NetworkManager, token);
+            token.ThrowIfCancellationRequested();
+
+            this.gameObject.DestroyOrDespawn();
         }
     }
 }

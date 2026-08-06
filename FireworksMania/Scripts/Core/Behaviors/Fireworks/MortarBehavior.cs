@@ -14,7 +14,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/MortarBehavior")]
     [SelectionBase]
-    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition
+    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition, IFireworkEntityHolder
     {
         [Header("General")]
         [SerializeField]

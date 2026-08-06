@@ -13,6 +13,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public Transform IgnitePosition => _ignitePosition;
 
+        private void Awake()
+        {
+            //Same rule as Fuse: fuse models never cast shadows
+            foreach (var renderer in GetComponentsInChildren<MeshRenderer>(true))
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
 #if UNITY_EDITOR
 
         private void OnDrawGizmos()

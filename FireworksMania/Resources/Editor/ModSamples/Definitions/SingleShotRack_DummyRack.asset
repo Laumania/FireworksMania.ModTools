@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7029976d5733448893cd5be7a3662a, type: 3}
+  m_Name: SingleShotRack_DummyRack
+  m_EditorClassIdentifier: FireworksMania.Core::FireworksMania.Core.Definitions.EntityDefinitions.FireworkEntityDefinition
+  _id: SingleShotRack_DummyRack
+  _prefabGameObject: {fileID: 4362002453052372355, guid: 900cf1f42d2409944821ece590aa158d,
+    type: 3}
+  _itemName: Single Shot Rack Template
+  _icon: {fileID: 21300000, guid: 6b6944068c6bb6745a1bb485f61ab7de, type: 3}
+  _entityDefinitionType: {fileID: 11400000, guid: d049a36475ac7b54d9de521c8d51c933,
+    type: 2}
+  _collectionDefinition: {fileID: 0}

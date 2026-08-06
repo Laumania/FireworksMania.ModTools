@@ -62,6 +62,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             await UniTask.WaitWhile(() => _smokeEffect.IsAlive() || _smokeEffect.isPlaying, cancellationToken: token);
 
+            //A drained ParticleSystem keeps ticking in Unity's particle update as long as its GameObject is active
+            StopAllEffects();
+
             if (CoreSettings.AutoDespawnFireworks)
                 await DestroyFireworkAsync(token);
         }

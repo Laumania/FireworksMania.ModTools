@@ -1,5 +1,8 @@
-﻿using FireworksMania.Core.Attributes;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -49,6 +52,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private float _remainingThrustTime;
         private Transform _thrusterTransform;
         private Rigidbody _rigidbody;
+        private CancellationToken _cancellationToken;
+        private CancellationTokenSource _effectDrainCancellationTokenSource;
 
         private NetworkVariable<bool> _isThrusting = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -59,6 +64,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _thrusterTransform = this.transform;
             _remainingThrustTime = _thrustTime * Random.Range(0.9f, 1.1f);
+            _cancellationToken = this.gameObject.GetCancellationTokenOnDestroy();
             SetEmissionOnParticleSystems(false);
         }
 
@@ -109,7 +115,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 _curveDeltaTime += Time.fixedDeltaTime;
 
-                var thrust = _thrusterTransform.up * _thrustForcePerSecond * _thrustEffectCurve.Evaluate(_curveDeltaTime) * Time.fixedDeltaTime;
+                //ForceMode.Force and ForceMode.Acceleration are already integrated over the fixed
+                //timestep by Unity, so scaling by the live Time.fixedDeltaTime here applied it twice
+                //and made rockets fly higher whenever PerformanceManager throttled physics (issue #2233)
+                var thrustTimestep = PhysicsForceUtility.GetForceTimestep(_thrustForceMode, Time.fixedDeltaTime);
+
+                var thrust = _thrusterTransform.up * _thrustForcePerSecond * _thrustEffectCurve.Evaluate(_curveDeltaTime) * thrustTimestep;
 
                 if (_thrustAtPosition)
                     _rigidbody.AddForceAtPosition(thrust, _thrusterTransform.position, _thrustForceMode);
@@ -176,14 +187,64 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void SetEmissionOnParticleSystems(bool enableEmission)
         {
+            CancelPendingEffectDeactivation();
+
             if (enableEmission)
+            {
+                if (CanToggleEffectGameObject)
+                    _effect.gameObject.SetActive(true);
+
                 _effect.Play();
+            }
             else
+            {
                 _effect.Stop();
+                DeactivateEffectWhenDrained();
+            }
         }
+
+        //Stop() leaves every particle system in the effect on Unity's update list for the lifetime
+        //of the object - only a deactivated GameObject stops ticking (#2283)
+        private void DeactivateEffectWhenDrained()
+        {
+            if (CanToggleEffectGameObject == false)
+                return;
+
+            if (_effect.IsAlive(true))
+            {
+                _effectDrainCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken);
+                DeactivateEffectWhenDrainedAsync(_effect, _effectDrainCancellationTokenSource.Token).Forget();
+            }
+            else
+                _effect.gameObject.SetActive(false);
+        }
+
+        private async UniTask DeactivateEffectWhenDrainedAsync(ParticleSystem effect, CancellationToken token)
+        {
+            //Deactivating while particles are alive would make them visibly pop out of existence
+            await UniTask.WaitWhile(() => effect != null && (effect.IsAlive(true) || effect.isPlaying), cancellationToken: token);
+
+            if (effect != null)
+                effect.gameObject.SetActive(false);
+        }
+
+        private void CancelPendingEffectDeactivation()
+        {
+            if (_effectDrainCancellationTokenSource == null)
+                return;
+
+            _effectDrainCancellationTokenSource.Cancel();
+            _effectDrainCancellationTokenSource.Dispose();
+            _effectDrainCancellationTokenSource = null;
+        }
+
+        //Deactivating the effect GameObject is only safe when the Thruster itself doesn't sit on or
+        //under it - deactivating the Thruster's own GameObject would stop thrust and network sync
+        private bool CanToggleEffectGameObject => _effect != null && this.transform.IsChildOf(_effect.transform) == false;
 
         public override void OnDestroy()
         {
+            CancelPendingEffectDeactivation();
             TurnOff();
             base.OnDestroy();
         }
