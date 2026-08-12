@@ -410,18 +410,13 @@ If you get a lot of bugs like missing FuseIndicator, Reimport All or restart Uni
 
 # Known limitations
 
-## Netcode For GameObjects
-The game uses Unity's new Netcode for GameObject (NGO) package for multiplayer. It works pretty well in the game and Unity clear spend a lot of time updating it, so new stuff being added over time.
-
-However, in relation to mods in Fireworks Mania, there are some limitations when it comes to NGO. NGO depends on some "CodeGen" to run when the actual game is build, to make some NGO features work, lige RPC's and NetworkVariables.
-
-The CodeGen can currently not be executed when building a mod, meaning you cannot utialize any of these features from within a mod - yet. It's very annoying as it's fundamental to a multiplayer game, but we have to wait a bit for it to work from within custom scripting in mods.
-
-I have been in dialog with Unity about this for a while and it sounds like they want to support it, however, it still haven't happened. So crossing fingers. You can follow the issue here on NGO's Github page: https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/issues/2747
-
-
 ## Network Prefabs in MapDefinitions
-Most likely due to the same as above, some CodeGen stuff that NGO depends on, the "Network Prefabs" list in a MapDefinition is not working for modded maps. This field is suppose to hold network prefabs of objects that are placed in the scene and/or destructible versions of them. However, this is sadly not working in a custom map in a mod, only for maps that is build into the game. I hope when the above CodeGen issue is fixed, this will be fixed too. This means you can't have moveable objects placed in a custom map, or you can but they won't be synced with other players, making it not very fun.
+The "Network Prefabs" list in a MapDefinition is not working for modded maps. This field is suppose to hold network prefabs of objects that are placed in the scene and/or destructible versions of them. However, this is sadly not working in a custom map in a mod, only for maps that is build into the game. This means you can't have moveable objects placed in a custom map, or you can but they won't be synced with other players, making it not very fun.
+
+# Custom scripting
+You can write your own C# scripts in a mod, and since Mod Tools v2025.8.1 that includes Netcode for GameObjects features like `NetworkVariable` and `[Rpc]` - the mod build pipeline now runs NGO's CodeGen over your mod assembly.
+
+See the [Scripting section of the documentation](https://laumania.github.io/FireworksMania.ModTools/scripting/) to get started.
 
 
 
