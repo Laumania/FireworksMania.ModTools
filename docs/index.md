@@ -1,6 +1,6 @@
 # Fireworks Mania Mod Tools
 
-Welcome to the **Fireworks Mania Mod Tools** documentation. This site covers everything you need to know to create mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/) — from setting up your first project to an in-depth reference for every script and component.
+Documentation for the **Fireworks Mania Mod Tools** — the Unity package you use to build mods for [Fireworks Mania](https://store.steampowered.com/app/1079260/Fireworks_Mania__An_Explosive_Simulator/). It runs from setting up your first project through to a field reference for every script and component.
 
 ---
 
@@ -9,15 +9,19 @@ Welcome to the **Fireworks Mania Mod Tools** documentation. This site covers eve
 | Topic | Description |
 |---|---|
 | [Getting Started](getting-started.md) | Install the tools and build your first mod |
+| [Guides](guides/index.md) | Task-based how-tos — templates, icons, sounds, maps, publishing |
+| [Troubleshooting](guides/troubleshooting.md) | Build errors and common problems, with fixes |
+| [FAQ](faq.md) | Quick answers to the questions modders ask most |
+| [Scripting](scripting/index.md) | Write custom C# in your mod — with code samples |
+| [Script Reference](script-reference/index.md) | Detailed documentation for every component |
 | [Best Practices](best-practices.md) | Naming conventions, folder structure, and tips |
 | [Optimization](optimization.md) | Keep file sizes small and load times fast |
-| [Script Reference](script-reference/index.md) | Detailed documentation for every component |
 
 ---
 
 ## What Are the Mod Tools?
 
-The Fireworks Mania Mod Tools are a [Unity Package](https://github.com/Laumania/FireworksMania.ModTools) that gives mod creators everything they need to build, preview, and export custom content for Fireworks Mania.
+The Fireworks Mania Mod Tools are a [Unity Package](https://github.com/Laumania/FireworksMania.ModTools) for building, previewing and exporting custom content for Fireworks Mania.
 
 With the Mod Tools you can create:
 
@@ -41,3 +45,5 @@ A full video playlist covering mod creation is available on YouTube:
 ## Current Unity Version
 
 Always use the Unity version listed in the [CHANGELOG](https://github.com/Laumania/FireworksMania.ModTools/blob/main/CHANGELOG.md) for the current release. Using a different version may cause unexpected issues.
+
+Each release entry names its target version, and clicking that version number takes you to Unity's site where you can install it straight into Unity Hub. See [Getting Started](getting-started.md) for the full walkthrough.

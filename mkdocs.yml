@@ -29,10 +29,14 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.code.copy
     - content.action.edit
+    - content.tooltips
 
 extra_css:
   - stylesheets/extra.css
@@ -40,13 +44,31 @@ extra_css:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
-  - Best Practices: best-practices.md
-  - Optimization: optimization.md
+  - Guides:
+    - guides/index.md
+    - Editor Menu Reference: guides/editor-tools.md
+    - Templates & Sample Assets: guides/templates-and-samples.md
+    - Icons & Sounds: guides/icons-and-sounds.md
+    - Custom Maps: guides/custom-maps.md
+    - Troubleshooting & Build Errors: guides/troubleshooting.md
+    - Publishing Your Mod: guides/publishing.md
+    - Best Practices: best-practices.md
+    - Optimization: optimization.md
+  - Scripting:
+    - scripting/index.md
+    - Setting Up Scripts in a Mod: scripting/setup.md
+    - Entry Points & Lifecycle: scripting/entry-points.md
+    - Writing a Custom Firework: scripting/custom-fireworks.md
+    - Multiplayer & Netcode: scripting/networking.md
+    - The Messenger Event Bus: scripting/messaging.md
+    - Saving & Loading: scripting/persistence.md
+    - Services & Interfaces: scripting/services-and-interfaces.md
   - Script Reference:
-    - Overview: script-reference/index.md
+    - script-reference/index.md
     - Definitions: script-reference/definitions.md
     - Behaviors: script-reference/behaviors.md
     - Firework Parts: script-reference/firework-parts.md
+  - FAQ: faq.md
 
 markdown_extensions:
   - admonition
@@ -56,8 +78,15 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - attr_list
   - md_in_html
+  - def_list
+  - footnotes
   - tables
   - toc:
       permalink: true
