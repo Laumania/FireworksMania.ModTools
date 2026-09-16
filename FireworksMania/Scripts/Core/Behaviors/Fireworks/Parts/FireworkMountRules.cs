@@ -1,3 +1,4 @@
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
@@ -45,9 +46,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return isKinematic == false || isPickedUp == true;
         }
 
-        public static bool ShouldRejectWithForce(bool canMountIgnoringFit, bool fitsDiameter, bool isKinematic, bool isIgnited)
+        public static bool ShouldRejectWithForce(bool canMountIgnoringFit, bool fitsDiameter, bool isKinematic, bool isIgnited, bool isPickedUp)
         {
             if (isKinematic)
+                return false;
+
+            //A carried item is not a failed placement - it is a player holding something at the socket
+            //while they line it up. Bouncing it out of their hands, with the reject sound, in the middle
+            //of that is nonsense. ObjectPickup never reached here because it carries things KINEMATIC
+            //and so takes the early out above; the PhysicsTool carries them dynamic, so the moment
+            //IsPickedUp started making CanMount say no, every firework carried up to a socket got
+            //rejected on the spot - "it snaps, plays the reject sound and pops straight out" (#2471)
+            if (isPickedUp)
                 return false;
 
             //An ignited firework is leaving under its own power - a launching rocket sweeps
@@ -60,9 +70,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         }
 
         /// <summary>
-        /// Combined MeshRenderer bounds of the GameObject measured with its rotation reset, so the
-        /// footprint is comparable no matter how the object is currently tumbling. Shared by mount
-        /// points, mortar tubes and the spawn tool. Returns null when there are no renderers.
+        /// Combined bounds of the GameObject's MeshRenderers and enabled SkinnedMeshRenderers, measured
+        /// with its rotation reset, so the footprint is comparable no matter how the object is currently
+        /// tumbling. Shared by mount points, mortar tubes and the spawn tool. Returns null when there is
+        /// nothing to measure.
         /// </summary>
         public static Bounds? CalculateUprightRendererBounds(GameObject targetGameObject)
         {
@@ -71,15 +82,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             try
             {
-                var meshRenderers = targetGameObject.GetComponentsInChildren<MeshRenderer>();
-                if (meshRenderers.Length == 0)
-                    return null;
-
-                var resultingBounds = meshRenderers[0].bounds;
+                var meshRenderers   = targetGameObject.GetComponentsInChildren<MeshRenderer>();
+                var hasBounds       = meshRenderers.Length > 0;
+                var resultingBounds = hasBounds ? meshRenderers[0].bounds : default;
                 for (int i = 1; i < meshRenderers.Length; i++)
                     resultingBounds.Encapsulate(meshRenderers[i].bounds);
 
-                return resultingBounds;
+                //A skinned body at rest, where its renderer sits - never SkinnedMeshRenderer.bounds, which
+                //are padded import bounds that follow the root bone. Measured by MeshRenderers alone, the
+                //Hell Yeah Mod's cats were just their fuse: The Kitty seated itself in a 4.6 cm rack socket
+                //and UIA Cat went down a 2-inch mortar (#2857). Disabled ones are skipped, as the ghost does.
+                foreach (var skinnedMeshRenderer in targetGameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if (skinnedMeshRenderer.enabled && skinnedMeshRenderer.sharedMesh != null)
+                        MeshBoundsUtility.EncapsulateMesh(skinnedMeshRenderer.sharedMesh.bounds, skinnedMeshRenderer.transform.localToWorldMatrix, ref resultingBounds, ref hasBounds);
+                }
+
+                return hasBounds ? resultingBounds : (Bounds?)null;
             }
             finally
             {

@@ -57,11 +57,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _model.SetActive(false);
 
             _explosion.Explode();
-            await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
+
+            await _explosion.WaitForExplosionToFinishAsync(token);
 
             if(IsServer)
                 this.gameObject.DestroyOrDespawn();
         }
+
+        /// <summary>A firecracker is its bang (#2657).</summary>
+        public override float EstimateDurationInSeconds() => _explosion.OrNull() != null ? _explosion.EstimateDurationInSeconds() : 0f;
 
         private void DisableRigidBodyAndColliders()
         {

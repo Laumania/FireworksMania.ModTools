@@ -1,4 +1,5 @@
-﻿using FireworksMania.Core.Behaviors.Fireworks.Parts;
+﻿using FireworksMania.Core.Behaviors;
+using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Tools;
 using System;
 using UnityEngine;
@@ -196,13 +197,22 @@ namespace FireworksMania.Core.Messaging
     public struct MessengerEventApplyIgnitableForceStruct
     {
         public MessengerEventApplyIgnitableForceStruct(IIgnitable ignitable, float ignitionForce)
+            : this(ignitable, ignitionForce, FireworksMania.Core.Behaviors.ExplosionDamageSource.NoCauser)
         {
-            Ignitable     = ignitable;
-            IgnitionForce = ignitionForce;
+        }
+
+        public MessengerEventApplyIgnitableForceStruct(IIgnitable ignitable, float ignitionForce, ulong causerClientId)
+        {
+            Ignitable      = ignitable;
+            IgnitionForce  = ignitionForce;
+            CauserClientId = causerClientId;
         }
 
         public IIgnitable Ignitable   { get; }
         public float IgnitionForce    { get; }
+
+        /// <summary>The player whose exploding firework pushes this ignition, or NoCauser.</summary>
+        public ulong CauserClientId   { get; }
     }
 
     /// <summary>
@@ -515,6 +525,68 @@ namespace FireworksMania.Core.Messaging
         public GameObject RootGameObject { get; }
     }
 
+    public struct MessengerEventEntityRespawnedOutsideSpawnPathStruct
+    {
+        /// <summary>
+        /// Asks whoever owns the spawned entities to take this one back, because it was just given a fresh
+        /// <c>Spawn()</c> that did not go through the normal spawn path.
+        ///
+        /// Needed because a despawn clears the parent Netcode has recorded, so the next <c>Spawn()</c>
+        /// applies "no parent" and drops the object at the scene root. Everything that works off the
+        /// entity hierarchy then skips it - the host's Clear All, blueprint save, blueprint load's
+        /// duplicate removal and the fuse-connection scan all only walk <c>FireworksManager</c>'s own
+        /// children (#2452). Re-parenting is only legal in the moment right after the spawn, which is
+        /// why this is a message rather than something a later pass could tidy up.
+        ///
+        /// A message rather than a direct call because the re-spawning code lives in
+        /// <c>FireworksMania.Core</c>, which cannot reference the assembly the entity hierarchy lives
+        /// in - the same direction, and the same reason, as
+        /// <see cref="MessengerEventFireworkParticleSystemsRegisteringStruct"/> and
+        /// <see cref="MessengerEventPlaySoundAtVector3Struct"/>.
+        /// </summary>
+        public MessengerEventEntityRespawnedOutsideSpawnPathStruct(GameObject entityGameObject)
+        {
+            EntityGameObject = entityGameObject;
+        }
+
+        public GameObject EntityGameObject { get; }
+    }
+
+    /// <summary>
+    /// A mortar tube has swallowed a shell: the shell GameObject is about to be destroyed and the tube
+    /// takes over playing its effects. Broadcast on the server only, right before the shell goes.
+    ///
+    /// The host's spawn limit listens so the shell keeps costing whoever spawned it a slot for as long
+    /// as the tube holds it - without this the shell simply vanished from the count, and a player could
+    /// free a slot per tube by loading a rack of mortars (#2630).
+    /// </summary>
+    public struct MessengerEventShellSwallowedByMortarTubeStruct
+    {
+        public MessengerEventShellSwallowedByMortarTubeStruct(GameObject shellGameObject, MortarTube mortarTube)
+        {
+            ShellGameObject = shellGameObject;
+            MortarTube      = mortarTube;
+        }
+
+        public GameObject ShellGameObject { get; }
+        public MortarTube MortarTube      { get; }
+    }
+
+    /// <summary>
+    /// A shell a mortar tube swallowed has gone spent - it has been fired and its effect has stopped
+    /// throwing out new particles. Broadcast once per fired shell, so a tube reloaded while the previous
+    /// shell is still in the air sends one of these for each of them, in the order they were fired.
+    /// </summary>
+    public struct MessengerEventMortarTubeShellSpentStruct
+    {
+        public MessengerEventMortarTubeShellSpentStruct(MortarTube mortarTube)
+        {
+            MortarTube = mortarTube;
+        }
+
+        public MortarTube MortarTube { get; }
+    }
+
     public struct MessengerEventFireworkEffectStartedStruct
     {
         public MessengerEventFireworkEffectStartedStruct(GameObject rootGameObject)
@@ -523,5 +595,27 @@ namespace FireworksMania.Core.Messaging
         }
 
         public GameObject RootGameObject { get; }
+    }
+
+    public struct MessengerEventDestructibleDestroyedStruct
+    {
+        public MessengerEventDestructibleDestroyedStruct(DestructibleKind kind)
+            : this(kind, FireworksMania.Core.Behaviors.ExplosionDamageSource.NoCauser)
+        {
+        }
+
+        public MessengerEventDestructibleDestroyedStruct(DestructibleKind kind, ulong causerClientId)
+        {
+            Kind           = kind;
+            CauserClientId = causerClientId;
+        }
+
+        public DestructibleKind Kind { get; }
+
+        /// <summary>
+        /// The client whose firework caused this, or NoCauser. The damage path is server-only, so on
+        /// the host this is frequently somebody else's id - FireworksManager relays each client's share.
+        /// </summary>
+        public ulong CauserClientId { get; }
     }
 }

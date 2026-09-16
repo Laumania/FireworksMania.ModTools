@@ -31,6 +31,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_model == null)
                 Debug.LogError($"Missing model reference", this);
 
+            _effect.DisableEndlessLooping();
             StopAllEffects();
         }
 
@@ -53,7 +54,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
-            await UniTask.WaitWhile(() => _effect.IsAlive() || _effect.isPlaying, cancellationToken: token);
+            await WaitForEffectToFinishAsync(_effect, token);
 
             //A drained ParticleSystem keeps ticking in Unity's particle update as long as its GameObject is active
             StopAllEffects();
@@ -61,6 +62,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if(CoreSettings.AutoDespawnFireworks)
                 await DestroyFireworkAsync(token);
         }
+
+        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        public override ParticleSystem PrimaryEffect => _effect;
 
         private void StopAllEffects()
         {

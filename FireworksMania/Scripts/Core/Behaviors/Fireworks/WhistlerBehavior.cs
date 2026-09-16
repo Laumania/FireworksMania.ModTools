@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 using ExplosionBehavior = FireworksMania.Core.Behaviors.Fireworks.Parts.ExplosionBehavior;
 using Thruster = FireworksMania.Core.Behaviors.Fireworks.Parts.Thruster;
@@ -79,7 +80,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _model.SetActive(false);
                 _explosion.Explode();
 
-                await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
+                await _explosion.WaitForExplosionToFinishAsync(token);
                 token.ThrowIfCancellationRequested();
             }
 
@@ -92,6 +93,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 token.ThrowIfCancellationRequested();
             }
         }
+
+        /// <summary>
+        /// A whistler is its flight. It only ever explodes when a player stepped on it first, which no
+        /// estimate should assume (#2657).
+        /// </summary>
+        public override float EstimateDurationInSeconds() => _thruster.OrNull() != null ? _thruster.MaxThrustTimeInSeconds : 0f;
 
         private void OnTriggerEnter(Collider other)
         {

@@ -14,7 +14,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/MortarBehavior")]
     [SelectionBase]
-    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition, IFireworkEntityHolder
+    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition, IFireworkEntityHolder, IIgnitionCauserCarrier
     {
         [Header("General")]
         [SerializeField]
@@ -29,6 +29,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private MortarTube[] _mortarTubes;
 
         private Rigidbody _rigidbody;
+        private IgnitionCauser _ignitionCauser;
 
         private void Awake()
         {
@@ -159,12 +160,24 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public void Ignite(float ignitionForce)
         {
-            GetNextIgnitable()?.Ignite(ignitionForce);
+            GetNextIgnitable()?.Ignite(ignitionForce, IgnitionCauserClientId);
+        }
+
+        public void Ignite(float ignitionForce, ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            Ignite(ignitionForce);
         }
 
         public void IgniteInstant()
         {
-            GetNextIgnitable()?.IgniteInstant();
+            GetNextIgnitable()?.IgniteInstant(IgnitionCauserClientId);
+        }
+
+        public void IgniteInstant(ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            IgniteInstant();
         }
 
         private IIgnitable GetNextIgnitable()
@@ -196,5 +209,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public bool Enabled                                    => _mortarTubes.Any(x => x.Enabled);
         public bool IsIgnited                                  => _mortarTubes.Any(x => x.IsIgnited);
         public EntityDiameterDefinition DiameterDefinition     => _diameter;
+
+        public ulong IgnitionCauserClientId                 => _ignitionCauser.Value;
+        public void TrySetIgnitionCauser(ulong causerClientId) => _ignitionCauser.TrySet(causerClientId);
+        public void ResetIgnitionCauser()                      => _ignitionCauser.Reset();
     }
 }

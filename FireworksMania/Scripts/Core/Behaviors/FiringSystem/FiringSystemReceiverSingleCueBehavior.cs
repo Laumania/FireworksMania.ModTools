@@ -59,12 +59,37 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
                 }
             }
 
-            _cueIndexVariable.OnValueChanged += (value, newValue) =>
-            {
-                UpdateCueIndexText();
-            };
+            // Named handler, paired with the OnNetworkDespawn removal: an anonymous lambda cannot be
+            // unsubscribed, so every respawn of a scene object added another one
+            _cueIndexVariable.OnValueChanged += OnCueIndexChanged;
 
             UpdateCueIndexText();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _cueIndexVariable.OnValueChanged -= OnCueIndexChanged;
+
+            // Despawn, not just destroy: a scene object is despawned and can be spawned again, and the
+            // listener is re-added by OnNetworkSpawn. The OnDestroy removal below stays as the backstop
+            // for instances that are destroyed without ever being despawned (#2306).
+            Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFireSignalReceived);
+
+            base.OnNetworkDespawn();
+        }
+
+        private void OnCueIndexChanged(int previousValue, int newValue)
+        {
+            UpdateCueIndexText();
+        }
+
+        public override void OnDestroy()
+        {
+            // Unconditional: removing a never-added listener is a no-op, and every despawned
+            // receiver otherwise left its listener in the static Messenger table (#2306).
+            Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFireSignalReceived);
+
+            base.OnDestroy();
         }
 
         private void UpdateCueIndexText()
@@ -88,6 +113,10 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
         {
             if(arg.ModuleIndex == _channelIndex && arg.CueIndex == _cueIndexVariable.Value)
             {
+                //A cue firing is an unambiguous fresh origin (same rule as a mortar reload), so a
+                //causer left on the socket by an earlier burned-in chain must not outrank the runner
+                _electricFuse.ResetIgnitionCauser();
+                _electricFuse.TrySetIgnitionCauser(NetworkManager.LocalClientId);
                 _electricFuse.IgniteInstant();
             }
         }

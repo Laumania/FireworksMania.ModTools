@@ -12,6 +12,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         //Hacky way to show fuse connection points if FuseConnectionTool is in hand at spawn time - for shells in mortars
         public static bool IsFuseConnectionToolEnabled = false;
 
+        //The tool clears this when it is unequipped, but leaving play mode with it in hand never gets
+        //there - and with Domain Reload disabled the 'true' would then carry into the next session and
+        //make every spawned firework show its connection points with no tool in hand (#2612).
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState() => IsFuseConnectionToolEnabled = false;
+
         [SerializeField]
         private GameObject _activeIndicator;
 

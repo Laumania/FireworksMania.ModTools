@@ -50,13 +50,28 @@ namespace FireworksMania.Core.Behaviors.FiringSystem
             }
         }
 
+        public override void OnDestroy()
+        {
+            // Unconditional: removing a never-added listener is a no-op, and every despawned
+            // receiver otherwise left its listener in the static Messenger table (#2306).
+            Messenger.RemoveListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFireSignalReceived);
+
+            base.OnDestroy();
+        }
+
 
         private void OnFireSignalReceived(MessengerEventFiringSystemControllerSendSignalStruct arg)
         {
             if(arg.ModuleIndex == _channelIndex)
             {
                 if (arg.CueIndex <= _electricFuses.Length)
+                {
+                    //A cue firing is an unambiguous fresh origin (same rule as a mortar reload), so a
+                    //causer left on the socket by an earlier burned-in chain must not outrank the runner
+                    _electricFuses[arg.CueIndex-1].ResetIgnitionCauser();
+                    _electricFuses[arg.CueIndex-1].TrySetIgnitionCauser(NetworkManager.LocalClientId);
                     _electricFuses[arg.CueIndex-1].IgniteInstant();
+                }
             }
         }
         

@@ -9,6 +9,37 @@ namespace NaughtyAttributes.Editor
 {
     public static class PropertyUtility
     {
+        public static bool TryGetNumericValue(SerializedProperty property, string memberName, out float value)
+        {
+            value = 0f;
+
+            object target = GetTargetObjectWithProperty(property);
+            if (target == null)
+            {
+                return false;
+            }
+
+            FieldInfo field = ReflectionUtility.GetField(target, memberName);
+            if (field != null)
+            {
+                return TryConvertNumericValue(field.GetValue(target), out value);
+            }
+
+            PropertyInfo prop = ReflectionUtility.GetProperty(target, memberName);
+            if (prop != null)
+            {
+                return TryConvertNumericValue(prop.GetValue(target), out value);
+            }
+
+            MethodInfo method = ReflectionUtility.GetMethod(target, memberName);
+            if (method != null && method.GetParameters().Length == 0)
+            {
+                return TryConvertNumericValue(method.Invoke(target, null), out value);
+            }
+
+            return false;
+        }
+
         public static T GetAttribute<T>(SerializedProperty property) where T : class
         {
             T[] attributes = GetAttributes<T>(property);
@@ -369,6 +400,49 @@ namespace NaughtyAttributes.Editor
             }
 
             return enumerator.Current;
+        }
+
+        private static bool TryConvertNumericValue(object value, out float result)
+        {
+            switch (value)
+            {
+                case byte b:
+                    result = b;
+                    return true;
+                case sbyte sb:
+                    result = sb;
+                    return true;
+                case short s:
+                    result = s;
+                    return true;
+                case ushort us:
+                    result = us;
+                    return true;
+                case int i:
+                    result = i;
+                    return true;
+                case uint ui:
+                    result = ui;
+                    return true;
+                case long l:
+                    result = l;
+                    return true;
+                case ulong ul:
+                    result = ul;
+                    return true;
+                case float f:
+                    result = f;
+                    return true;
+                case double d:
+                    result = (float)d;
+                    return true;
+                case decimal m:
+                    result = (float)m;
+                    return true;
+                default:
+                    result = 0f;
+                    return false;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 //Credit goes to Panini for creating the original version of this script and allowing me to use it as a base for this one.
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using NaughtyAttributes;
 
@@ -39,6 +40,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public string LocalTime = "0 Seconds";
 
         private float CurrTime;
+
+        //Last value of CurrTime that LocalTime was formatted from, so an idle zipper stops re-allocating
+        //the same string every frame - and, more importantly, stops rewriting a serialized field for no reason.
+        private float LastFormattedTime;
 
         [Foldout("Zipper Settings")]
         [Space(10)]
@@ -135,6 +140,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [SerializeField]
         public List<Color> CycleColors = new List<Color>();
 
+        [Foldout("Advanced Settings")]
+        [Header("Log Every Step To The Console")]
+        [Tooltip("Editor only. Logs a line for every cycle and every burst while the zipper plays, which is useful when authoring one but noisy (and slow) during normal play")]
+        public bool EnableDebugLogging = false;
+
         public enum DirectionalType
         {
             LeftToRight = 0,
@@ -167,11 +177,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             CyclePos = (ZDistance / NumberOfCycles);
 
 #if UNITY_EDITOR
-            TotalDuration = GetTime().ToString() + " seconds";
+            //These three are serialized, so they have to format the same way on every machine. Without
+            //InvariantCulture a Danish editor writes "0,25 seconds" where an English one writes "0.25 seconds",
+            //and the prefabs then ping-pong in git between machines on every reimport.
+            TotalDuration = GetTime().ToString(CultureInfo.InvariantCulture) + " seconds";
             int effectnumber = NumberOfBursts * NumberOfCycles;
-            TotalEffects = effectnumber.ToString() + " effects";
+            TotalEffects = effectnumber.ToString(CultureInfo.InvariantCulture) + " effects";
             float cycleduration = NumberOfBursts * TimeBetweenBursts;
-            TimePerCycle = cycleduration.ToString() + " seconds";
+            TimePerCycle = cycleduration.ToString(CultureInfo.InvariantCulture) + " seconds";
 
             if (this.MainSystem == null)
             {
@@ -211,6 +224,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             emission.rateOverDistance = 0;
         }
 
+        /// <summary>
+        /// How long this zipper keeps firing, from the moment its system is played until its last burst
+        /// goes out - <see cref="StartDelay"/> and every cycle delay included.
+        ///
+        /// Exposed because a zipper emits through <c>ParticleSystem.Emit</c> and
+        /// <see cref="UpdateParticleSystem"/> deliberately blanks the emission module of the system it
+        /// drives, so there is nothing in that module for
+        /// <see cref="FireworksMania.Core.Common.ParticleEffectDuration"/> to read. Without this the
+        /// firework measures 0 seconds, which reads as already spent in the inventory and to the host's
+        /// spawn limit (#2822).
+        /// </summary>
+        public float FiringDurationInSeconds => GetTime();
+
         private float GetTime()
         {
             float Time = (((TimeBetweenBursts * NumberOfBursts) + TimeBetweenBursts) * NumberOfCycles) + StartDelay;
@@ -234,7 +260,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         BurstPos = (XDistance / NumberOfBursts);
                         CyclePos = (ZDistance / NumberOfCycles);
 #if UNITY_EDITOR
-                        Debug.Log("Starting Animation");
+                        if (EnableDebugLogging) Debug.Log("Starting Animation");
 #endif
                         Started = true;
                         StartAnimation();
@@ -252,7 +278,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 {
                     if (MainSystem.isPlaying)
                     {
-                        Debug.Log("Starting Animation");
+                        if (EnableDebugLogging) Debug.Log("Starting Animation");
                         Started = true;
                         StartAnimation();
                     }
@@ -269,8 +295,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 }
             }
 
-            LocalTime = CurrTime.ToString("000.00") + " Seconds";
-
+            //Only reformat when the time actually moved. LocalTime is a display-only field, and writing it
+            //unconditionally allocated two strings per frame per zipper - in edit mode as well, because of
+            //[ExecuteAlways] - and rewrote a serialized field on prefabs that were just sitting there.
+            //InvariantCulture for the same reason as in OnValidate: this string gets serialized.
+            if (CurrTime != LastFormattedTime)
+            {
+                LastFormattedTime = CurrTime;
+                LocalTime         = CurrTime.ToString("000.00", CultureInfo.InvariantCulture) + " Seconds";
+            }
         }
 #endif
 
@@ -289,14 +322,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 StartCoroutine(PyramidAnimator());
 #if UNITY_EDITOR
-                Debug.Log("Pyramid Animation");
+                if (EnableDebugLogging) Debug.Log("Pyramid Animation");
 #endif
             }
             else
             {
                 StartCoroutine(UniformAnmimator());
 #if UNITY_EDITOR
-                Debug.Log("Uniform Animation");
+                if (EnableDebugLogging) Debug.Log("Uniform Animation");
 #endif
             }
         }
@@ -315,9 +348,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     float StartAngle = StartanlgePyramid();
                     float StartPos = StartPosPyramid();
 #if UNITY_EDITOR
-                    Debug.Log($"StartAngle = {StartAngle}");
+                    if (EnableDebugLogging) Debug.Log($"StartAngle = {StartAngle}");
 
-                    Debug.Log("Cycle: " + i);
+                    if (EnableDebugLogging) Debug.Log("Cycle: " + i);
 #endif
 
                     Vector3 Cyclepos = new Vector3(MainSystem.gameObject.transform.localPosition.x, MainSystem.transform.localPosition.y, CycleModifier);
@@ -352,7 +385,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         }
                         MainSystem.Emit(emitParams2, 1);
 #if UNITY_EDITOR
-                        Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
+                        if (EnableDebugLogging) Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
 #endif
 
                         if (StartAngle != 0)
@@ -366,7 +399,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                             }
                             MainSystem.Emit(emitParams3, 1);
 #if UNITY_EDITOR
-                            Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
+                            if (EnableDebugLogging) Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
 #endif
                         }
 
@@ -384,9 +417,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 for (int i = 0; i <= NumberOfCycles - 1; i++)
                 {
 #if UNITY_EDITOR
-                    Debug.Log($"StartAngle = {StartAngle}");
+                    if (EnableDebugLogging) Debug.Log($"StartAngle = {StartAngle}");
 
-                    Debug.Log("Cycle: " + i);
+                    if (EnableDebugLogging) Debug.Log("Cycle: " + i);
 #endif
 
                     Vector3 Cyclepos = new Vector3(MainSystem.gameObject.transform.localPosition.x, MainSystem.transform.localPosition.y, CycleModifier);
@@ -423,7 +456,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                             }
                             MainSystem.Emit(emitParams2, 1);
 #if UNITY_EDITOR
-                            Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
+                            if (EnableDebugLogging) Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
 #endif
                             if (StartAngle != 0)
                             {
@@ -436,7 +469,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                                 }
                                 MainSystem.Emit(emitParams3, 1);
 #if UNITY_EDITOR
-                                Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
+                                if (EnableDebugLogging) Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
 #endif
                             }
 
@@ -476,7 +509,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                             }
                             MainSystem.Emit(emitParams2, 1);
 #if UNITY_EDITOR
-                            Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
+                            if (EnableDebugLogging) Debug.Log("Setting rotation 1 to: " + setangle2 + " Time: " + CurrTime.ToString("00.00"));
 #endif
                             if (StartAngle != 0)
                             {
@@ -489,7 +522,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                                 }
                                 MainSystem.Emit(emitParams3, 1);
 #if UNITY_EDITOR
-                                Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
+                                if (EnableDebugLogging) Debug.Log("Setting rotation 2 to: " + setangle3 + " Time: " + CurrTime.ToString("00.00"));
 #endif
                             }
 
@@ -524,8 +557,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
 
 #if UNITY_EDITOR
-            Debug.Log("StartAngle =  " + start);
-            Debug.Log("StartPos =  " + pos);
+            if (EnableDebugLogging) Debug.Log("StartAngle =  " + start);
+            if (EnableDebugLogging) Debug.Log("StartPos =  " + pos);
 #endif
 
             yield return new WaitForSeconds(StartDelay);
@@ -538,7 +571,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 for (int i = 0; i <= NumberOfCycles - 1; i++)
                 {
 #if UNITY_EDITOR
-                    Debug.Log("Cycle: " + i);
+                    if (EnableDebugLogging) Debug.Log("Cycle: " + i);
 #endif
                     Vector3 Cyclepos = new Vector3(MainSystem.gameObject.transform.localPosition.x, MainSystem.transform.localPosition.y, CycleModifier);
 
@@ -591,7 +624,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                             }
                             MainSystem.Emit(emitParams, 1);
 #if UNITY_EDITOR
-                            Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
+                            if (EnableDebugLogging) Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
 #endif
 
                         }
@@ -632,7 +665,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                             }
                             MainSystem.Emit(emitParams, 1);
 #if UNITY_EDITOR
-                            Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
+                            if (EnableDebugLogging) Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
 #endif
 
                         }
@@ -649,7 +682,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 for (int i = 0; i <= NumberOfCycles - 1; i++)
                 {
 #if UNITY_EDITOR
-                    Debug.Log("Cycle: " + i);
+                    if (EnableDebugLogging) Debug.Log("Cycle: " + i);
 #endif
                     Vector3 Cyclepos = new Vector3(MainSystem.gameObject.transform.localPosition.x, MainSystem.transform.localPosition.y, CycleModifier);
 
@@ -695,7 +728,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                         MainSystem.Emit(emitParams, 1);
 
 #if UNITY_EDITOR
-                        Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
+                        if (EnableDebugLogging) Debug.Log("Setting rotation to: " + setangle + " Time: " + CurrTime.ToString("00.00"));
 #endif
 
                     }

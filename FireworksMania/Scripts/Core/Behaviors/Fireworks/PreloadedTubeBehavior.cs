@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Common;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -33,6 +34,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_effect == null)
                 Debug.LogError($"Missing particle effect", this);
 
+            _effect.DisableEndlessLooping();
             StopEffect();
         }
         
@@ -46,7 +48,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
-            _OnLaunched?.Invoke();
+            //Guarded: a throwing listener here would skip the effect, the recoil force and the await
+            //below, so the tube would never launch at all.
+            _OnLaunched.InvokeSafe(this, nameof(_OnLaunched));
 
             _effect.gameObject.SetActive(true);
             _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
@@ -54,7 +58,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             ApplyRecoilForce();
 
-            await UniTask.WaitWhile(() => _effect.IsAlive() || _effect.isPlaying, cancellationToken: token);
+            await WaitForEffectToFinishAsync(_effect, token);
 
             //A drained ParticleSystem keeps ticking in Unity's particle update as long as its GameObject is active
             StopEffect();
@@ -67,6 +71,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         {
             _rigidbody.AddForceAtPosition(-_rigidbody.transform.up * _recoilForce, _effect.transform.position, ForceMode.Impulse);
         }
+
+        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        public override ParticleSystem PrimaryEffect => _effect;
 
         private void StopEffect()
         {

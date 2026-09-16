@@ -102,6 +102,7 @@ MonoBehaviour:
   - IMP_TrashCanAImpact_Os
   - IMP_TrashCanBImpact_Os
   - IMP_WasteBagImpact
+  - Ragdoll_Impact
   - IMPACT_Wood_Plank_On_Wood_Pile_06_Short_mono
   - Jingle-bells-sound-effect-mix01
   - Koekkenrulle_Sketch_Crack
@@ -118,6 +119,7 @@ MonoBehaviour:
   - MortarTubeEnter
   - MortarTubeReject
   - PlayerPerspectiveSwitchSound
+  - Ragdoll_Scream
   - FireworksManiaSong1
   - NeonLightBuzzing
   - PhysicsTool_Laser_Off
@@ -138,4 +140,100 @@ MonoBehaviour:
   - Torch_Small_Burn
   - Torch_Small_End
   - TOY_Squeeky_Bright_mono
+  - TOY_Squeeky_Bright_mono_deep
   - Zipper_Launch
+  - BaseGame - 20mmBurst1
+  - BaseGame - 20mmBurstSalute
+  - BaseGame - 20mmCrackleNew3
+  - BaseGame - 20mmCrossetteBurst
+  - BaseGame - 20mmLaunch
+  - BaseGame - 25mmBurst1
+  - BaseGame - 25mmBurstSalute
+  - BaseGame - 25mmLaunch
+  - BaseGame - 30mmBurst1
+  - BaseGame - 30mmBurst2
+  - BaseGame - 30mmBurstQuieter
+  - BaseGame - 30mmBurstSalute
+  - BaseGame - 30mmBurstSaluteLouder
+  - BaseGame - 30mmCrossetteBurst
+  - BaseGame - 30mmLaunch
+  - BaseGame - 30mmWaterfallBurst
+  - BaseGame - 38mmBurst1
+  - BaseGame - 38mmBurstSalute
+  - BaseGame - 38mmLaunch1
+  - BaseGame - 50mmBurst
+  - BaseGame - 50mmBurst2
+  - BaseGame - 50mmBurstSalute
+  - BaseGame - 50mmCrossetteInitial
+  - BaseGame - 50mmCrossetteSecondary
+  - BaseGame - 50mmLaunch
+  - BaseGame - 75mmBurst
+  - BaseGame - 75mmCrossetteSecondary
+  - BaseGame - 75mmLaunch
+  - BaseGame - 100mmBurst
+  - BaseGame - 100mmLaunch
+  - BaseGame - 100mmPfeifScreams
+  - BaseGame - 100mmScala
+  - BaseGame - 100mmScalaInitial
+  - BaseGame - ChuteBoiRocketBurst
+  - BaseGame - Cobber905Burst
+  - BaseGame - CrackleChrysAddShort1
+  - BaseGame - CrackleChrysAddShortHeavy1
+  - BaseGame - CrackleChrysAddShortMINE
+  - BaseGame - CrackleCometTailAdd1
+  - BaseGame - CrackleMineAdd1
+  - BaseGame - CrackleSpiderWillowAdd
+  - BaseGame - CrackleWillowAdd1
+  - BaseGame - CrackleWillowFastAdd
+  - BaseGame - DelayedCrackle11SecondsAdd
+  - BaseGame - Firecracker5g
+  - BaseGame - Firecracker50g
+  - BaseGame - Firecracker100g
+  - BaseGame - Firecracker200g
+  - BaseGame - FirecrackerLadyFinger
+  - BaseGame - FirecrackerPreburner1Second
+  - BaseGame - FoxyBurst
+  - BaseGame - HeavyCrackleHalfSecondDelayAdd
+  - BaseGame - LaunchWhistleAdd
+  - BaseGame - LaunchWhistleTwirlAdd
+  - BaseGame - MediumCrackleHalfSecondDelayAdd
+  - BaseGame - MediumCrackleOneOneQuarterSecondDelayAdd
+  - BaseGame - MediumCrackleThreeQuarterSecondDelayAdd
+  - BaseGame - Mozzie
+  - BaseGame - RocketLaunchLarge
+  - BaseGame - RocketLaunchMedium1
+  - BaseGame - RocketLaunchMedium2
+  - BaseGame - RocketLaunchSmall
+  - BaseGame - RocketLaunchStrobe
+  - BaseGame - RomanCandle20mmBurst1
+  - BaseGame - RomanCandleBurstTiny
+  - BaseGame - RomanCandleLaunch15mm
+  - BaseGame - RomanCandleLaunch20mm
+  - BaseGame - RomanCandleLaunchLarge
+  - BaseGame - RomanCandleWhistleAdd
+  - BaseGame - SmokeBalls
+  - BaseGame - SnapCrackleAdd1
+  - BaseGame - SnapCrackleAddFast1
+  - BaseGame - StrobeRocketBurst
+  - 3InchShellLaunchGround
+  - 3InchShellLaunchNEW
+  - 4InchShellFallingLeaves
+  - 4InchShellLaunchGround
+  - 4InchShellLaunchNEW
+  - 5InchHorsetailNEW
+  - 5InchShellBurst1
+  - 5InchShellFallingLeaves
+  - 5InchShellLaunchGround
+  - 5InchShellLaunchNEW
+  - 6InchShellBurst1
+  - 6InchShellLaunchGround
+  - 6InchShellLaunchNEW
+  - 8InchShellBurst1
+  - 8InchShellLaunch1
+  - CrossetteBurst
+  - DelayedCracklingChrysShorter
+  - FarfalleBurstSizzleAdd
+  - FarfalleBurstSizzleShortAdd
+  - Scala8InitialBurst
+  - Scala8ReportBurst
+  - ShellCracklingPistilHalfSecond

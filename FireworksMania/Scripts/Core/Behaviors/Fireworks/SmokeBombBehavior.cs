@@ -38,6 +38,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_smokeEffect == null)
                 Debug.LogError($"Missing particle effect in {nameof(SmokeBombBehavior)}!");
 
+            _smokeEffect.DisableEndlessLooping();
             StopAllEffects();
         }
 
@@ -57,7 +58,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _ignitionExplosionEffect.ApplyExplosionForce(false, false, true);
 
             Messenger.Broadcast(new MessengerEventPlaySoundStruct(_sound, this.transform, followTransform: true));
+            //The sound follows the pumping and stops when the bomb stops emitting; the spawn limit does not
+            //hang off this - IsSpent counts the firework's duration down on its own (#2657)
             await UniTask.WaitWhile(() => _smokeEffect.isEmitting, cancellationToken: token);
+
             Messenger.Broadcast(new MessengerEventStopSoundStruct(_sound, this.transform));
 
             await UniTask.WaitWhile(() => _smokeEffect.IsAlive() || _smokeEffect.isPlaying, cancellationToken: token);
@@ -68,6 +72,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (CoreSettings.AutoDespawnFireworks)
                 await DestroyFireworkAsync(token);
         }
+
+        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        public override ParticleSystem PrimaryEffect => _smokeEffect;
 
         private void StopAllEffects()
         {

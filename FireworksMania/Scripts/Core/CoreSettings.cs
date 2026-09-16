@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 namespace FireworksMania.Core
 {
     /// <summary>
@@ -6,6 +8,23 @@ namespace FireworksMania.Core
     /// </summary>
     public static class CoreSettings
     {
+        //These are written when a game starts, so between games they hold whatever the last one used -
+        //and with Domain Reload disabled that now reaches across play sessions too, leaving the main
+        //menu of a fresh session running on the previous game's host configuration (#2612).
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            AutoDespawnFireworks         = false;
+            EnableExplosionPhysicsForces = false;
+            EnableIgnitionForces         = false;
+            EnableCameraShake            = false;
+            EnableDestruction            = false;
+            EnableFlyMode                = false;
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
+            IsMultiplayer                = false;
+#endif
+        }
+
         public static bool AutoDespawnFireworks         { get; set; }
         public static bool EnableExplosionPhysicsForces { get; set; }
         public static bool EnableIgnitionForces         { get; set; }

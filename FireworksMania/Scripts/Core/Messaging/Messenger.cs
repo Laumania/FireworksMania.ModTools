@@ -47,6 +47,17 @@ namespace FireworksMania.Core.Messaging
         private static List<string> _permanentMessages = new List<string>();
         #endregion
 
+        //With Domain Reload disabled the event table survives play-mode exit, so every listener from
+        //the previous session is still subscribed - all of them pointing at destroyed objects (#2612).
+        //SubsystemRegistration runs before any scene loads and before Bootstrapper.LoadMain, so nothing
+        //has had the chance to subscribe for the new session yet.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            _eventTable.Clear();
+            _permanentMessages.Clear();
+        }
+
         #region Helper methods
         //Marks a certain message as permanent.
         public static void MarkAsPermanent<T>()
@@ -96,12 +107,14 @@ namespace FireworksMania.Core.Messaging
             }
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || DEDICATED_SERVER
         /// <summary>
-        /// Dev-only: listener count per event type. Un-unsubscribed listeners are a standing hazard
-        /// here - every Broadcast walks the invocation list, so a list that only ever grows is both a
-        /// leak and a per-frame cost. The performance fingerprint (#2270) reads this to spot event
-        /// types whose count never comes back down across a session boundary.
+        /// Diagnostics-only: listener count per event type. Un-unsubscribed listeners are a standing
+        /// hazard here - every Broadcast walks the invocation list, so a list that only ever grows is
+        /// both a leak and a per-frame cost. The performance fingerprint (#2270) reads this to spot
+        /// event types whose count never comes back down across a session boundary, which is also why
+        /// a dedicated server compiles it (#2674) - a server runs for days without ever tearing its
+        /// event table down.
         /// </summary>
         public static Dictionary<string, int> GetListenerCounts()
         {

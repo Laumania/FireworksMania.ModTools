@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
+using FireworksMania.Core.Behaviors;
 using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Netcode;
 using FireworksMania.Core.Persistence;
@@ -34,6 +35,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [SerializeField]
         private ParticleSystem _particleSystem;
 
+        //Serialization must stay unconditional: the exported MortarTubeFusePrefab carries this flag
+        //into the Mod Tools project, where FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS is not defined -
+        //only the inspector visibility is internal
+        [SerializeField]
+#if !FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
+        [HideInInspector]
+#endif
+        [Tooltip("Internal: the game's mortar tube fuse gets its effect provided by code when a shell is loaded, so its Particle System is deliberately left empty and not flagged as an error")]
+        private bool _effectProvidedAtRuntime = false;
+
         [Header("Sound")]
         [GameSound]
         [SerializeField]
@@ -58,11 +69,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private readonly NetworkVariable<bool> _isUsed                 = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         private bool _clientRequestForIgnitionSend = false;
+        private IIgnitionCauserCarrier _causerCarrier;
+        private bool                   _causerCarrierResolved;
 
         private void Awake()
         {
             Preconditions.CheckNotNull(_fuseConnectionPoint, this);
-            Preconditions.CheckNotNull(_particleSystem, this);
+            if (_effectProvidedAtRuntime == false)
+                Preconditions.CheckNotNull(_particleSystem, this);
 
             _fuseConnectionPoint.Setup(this);
             _enabledMeshRenderers                         = this.GetComponentsInChildren<MeshRenderer>(false);
@@ -109,7 +123,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             }
                 
-            if(_particleSystem == null)
+            if(_particleSystem == null && _effectProvidedAtRuntime == false)
             {
                 Debug.LogError($"Missing ParticleSystem on '{typeof(Fuse)}' on gameobject '{this.gameObject.name}'", this);
                 return;
@@ -135,21 +149,39 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public void IgniteWithoutFuseTime()
         {
+            IgniteWithoutFuseTime(ExplosionDamageSource.NoCauser);
+        }
+
+        public void IgniteWithoutFuseTime(ulong causerClientId)
+        {
+            //Zeroing the field here only covers this machine, which is why the intent also travels with the
+            //request below - see RequestIgniteRpc. It is still done locally because it is the only thing
+            //that can cut short a burn that is already running: InternalIgnite returns early once ignited
             _remainingFuseTime = 0f;
-            IgniteInstant();
+            InternalIgnite(0f, instantIgnite: true, skipRemainingFuseTime: true, causerClientId);
         }
 
         public void IgniteInstant()
         {
-            InternalIgnite(0f, true);
+            IgniteInstant(ExplosionDamageSource.NoCauser);
+        }
+
+        public void IgniteInstant(ulong causerClientId)
+        {
+            InternalIgnite(0f, instantIgnite: true, skipRemainingFuseTime: false, causerClientId);
         }
 
         public void Ignite(float ignitionForce)
         {
-            InternalIgnite(ignitionForce, false);
+            Ignite(ignitionForce, ExplosionDamageSource.NoCauser);
         }
 
-        private void InternalIgnite(float ignitionForce, bool instantIgnite)
+        public void Ignite(float ignitionForce, ulong causerClientId)
+        {
+            InternalIgnite(ignitionForce, instantIgnite: false, skipRemainingFuseTime: false, causerClientId);
+        }
+
+        private void InternalIgnite(float ignitionForce, bool instantIgnite, bool skipRemainingFuseTime, ulong causerClientId)
         {
             if (_clientRequestForIgnitionSend || _isIgnited.Value)
                 return;
@@ -162,7 +194,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if(SaveableEntityOwner != null)
                 SaveableEntityOwner.SetIsValidForSaving(false);
-            
+
             if (_cancellationToken.IsCancellationRequested)
                 return;
 
@@ -183,11 +215,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             _clientRequestForIgnitionSend = true;
 
-            IgniteOnServerRpc();
+            RequestIgniteRpc(skipRemainingFuseTime, causerClientId);
         }
 
         [Rpc(SendTo.Server)]
-        private void IgniteOnServerRpc()
+        private void RequestIgniteRpc(bool skipRemainingFuseTime, ulong causerClientId)
         {
             if (IsServer == false)
             {
@@ -197,9 +229,35 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if (_isIgnited.Value == false && _isUsed.Value == false)
             {
+                //Attribution: the first ignition names the player whose chain lit this firework. The
+                //carrier sits on the behavior above this fuse (BaseFireworkBehavior / MortarTube), so
+                //the explosion effects - parented under the same behavior - resolve the same value.
+                StampCauserCarrier(causerClientId);
+
+                //_remainingFuseTime is plain local state and the burn in IgniteAsync only runs on the server,
+                //so a client zeroing its own copy in IgniteWithoutFuseTime never reached here and the firework
+                //sat out its full fuse time instead of going off at once. That is what a fuse connection whose
+                //spark happened to arrive on a client first looked like (#2351)
+                if (skipRemainingFuseTime)
+                    _remainingFuseTime = 0f;
+
                 _isIgnited.Value = true;
                 IgniteAsync(_cancellationToken).Forget();
             }
+        }
+
+        private void StampCauserCarrier(ulong causerClientId)
+        {
+            if (causerClientId == ExplosionDamageSource.NoCauser)
+                return;
+
+            if (_causerCarrierResolved == false)
+            {
+                _causerCarrierResolved = true;
+                _causerCarrier         = GetComponentInParent<IIgnitionCauserCarrier>();
+            }
+
+            _causerCarrier?.TrySetIgnitionCauser(causerClientId);
         }
 
         //Todo: Could we maybe have a different method only about visuals or something as this seems to only be used for mortarfuses
@@ -233,13 +291,24 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void Extinguish()
         {
+            //Reached from OnDisable, which also runs when a firework is despawned while still burning.
+            //Writing a NetworkVariable after despawn is the hazard in Docs/Development/netcode-gotchas.md,
+            //so the write is skipped there - but the write was doing two jobs. Locally it fired
+            //_isIgnited.OnValueChanged, which is what stops the burning effect and broadcasts the stop for
+            //its looping ignited sound. Skipping the whole block would leave that sound playing, so the
+            //local half is done directly instead.
             if (IsServer)
             {
-                _isIgnited.Value = false;
+                if (IsSpawned)
+                    _isIgnited.Value = false;
+                else
+                    SetEmissionOnParticleSystems(false);
             }
 
+            //Null-guarded like every other use of this field (see ResetFuse): the owner is assigned by
+            //BaseFireworkBehavior or MortarTube, so a Fuse authored without either never gets one
             if(IsUsed == false && _remainingFuseTime > 0f)
-                SaveableEntityOwner.SetIsValidForSaving(true);
+                SaveableEntityOwner.OrNull()?.SetIsValidForSaving(true);
         }
 
         private async UniTask IgniteAsync(CancellationToken token)
@@ -251,8 +320,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
 
             OnFuseIgnited?.Invoke();
-            _onFuseIgnited?.Invoke();
-            OnFuseIgnitedClientRpc();
+            //Guarded: this runs on the server before the client RPC and before the burn timer, so a
+            //throwing listener would leave the firework unfired AND the clients never told.
+            _onFuseIgnited.InvokeSafe(this, nameof(_onFuseIgnited));
+            OnFuseIgnitedRpc();
 
             if(_remainingFuseTime > 0f)
             {
@@ -266,14 +337,18 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _isUsed.Value = true;
 
             OnFuseCompleted?.Invoke();
-            _onFuseCompleted?.Invoke();
-            OnFuseCompletedClientRpc();
-            
-            Extinguish();            
+            //Guarded: a throwing listener would skip the client RPC and Extinguish() below.
+            _onFuseCompleted.InvokeSafe(this, nameof(_onFuseCompleted));
+            OnFuseCompletedRpc();
+
+            Extinguish();
         }
 
-        [ClientRpc(Delivery = RpcDelivery.Reliable)]
-        private void OnFuseCompletedClientRpc()
+        //ClientsAndHost, not NotServer: a [ClientRpc] runs on the host too, which is what stops the
+        //host's own fuse particles below - the IsServer guard after it is there because the server
+        //raises the events itself at the call site.
+        [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Reliable, InvokePermission = RpcInvokePermission.Server)]
+        private void OnFuseCompletedRpc()
         {
             SetEmissionOnParticleSystems(false);
 
@@ -281,17 +356,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             
             OnFuseCompleted?.Invoke();
-            _onFuseCompleted?.Invoke();
+            _onFuseCompleted.InvokeSafe(this, nameof(_onFuseCompleted));
         }
 
-        [ClientRpc(Delivery = RpcDelivery.Reliable)]
-        private void OnFuseIgnitedClientRpc()
+        [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Reliable, InvokePermission = RpcInvokePermission.Server)]
+        private void OnFuseIgnitedRpc()
         {
             if (IsServer)
                 return;
             
             OnFuseIgnited?.Invoke();
-            _onFuseIgnited?.Invoke();
+            _onFuseIgnited.InvokeSafe(this, nameof(_onFuseIgnited));
         }
 
         private void SetMeshAndColliders(bool enable)
@@ -308,6 +383,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void SetEmissionOnParticleSystems(bool enableEmission)
         {
+            //The effect can be absent until ReplaceEffect provides one - the mortar tube's internal
+            //fuse starts without an effect (_effectProvidedAtRuntime) and gets one on shell load
+            if (_particleSystem == null)
+                return;
+
             CancelPendingEffectDeactivation();
 
             if (enableEmission)

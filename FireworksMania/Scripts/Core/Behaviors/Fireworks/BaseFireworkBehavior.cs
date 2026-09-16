@@ -17,14 +17,15 @@ using Random = UnityEngine.Random;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [SelectionBase]
-    public abstract class BaseFireworkBehavior : NetworkBehaviour, 
-        IAmGameObject, 
+    public abstract class BaseFireworkBehavior : NetworkBehaviour,
+        IAmGameObject,
         ISaveableComponent,
-        IHaveBaseEntityDefinition, 
-        IIgnitable, 
-        IHaveFuse, 
-        IHaveFuseConnectionPoint, 
-        IFiringSystemReceiver
+        IHaveBaseEntityDefinition,
+        IIgnitable,
+        IHaveFuse,
+        IHaveFuseConnectionPoint,
+        IFiringSystemReceiver,
+        IIgnitionCauserCarrier
     {
         [Header("General")]
         [FormerlySerializedAs("_metadata")]
@@ -36,6 +37,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         protected CancellationToken _cancellationTokentoken;
 
         private SaveableEntity _saveableEntity;
+        private IgnitionCauser _ignitionCauser;
+        private bool _isSpent;
+        private float _durationInSeconds = -1f;
 
         public event Action<BaseFireworkBehavior> OnDestroyed;
         public event Action OnFiringSystemReceiverDataUpdated;
@@ -117,12 +121,28 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _firingSystemReceiverNetworkData.OnValueChanged += OnFiringSystemReceiverNetworkDataValueChanged;
 
             if (_launchState.Value.IsLaunched)
-                StartLaunchInternal();
+                CatchUpLaunchAfterSpawnAsync().Forget();
 
             if (IsServer)
                 Messenger.AddListener<MessengerEventFiringSystemControllerSendSignalStruct>(OnFiringSystemControllerSendSignal);
 
             base.OnNetworkSpawn();
+        }
+
+        //A peer can spawn a firework whose replicated state is already "launched" - a late joiner, or
+        //ObjectVisibilityManager revealing it mid-effect. The catch-up launch must not start inside NGO's
+        //OnNetworkSpawn loop: behaviors like FirecrackerBehavior synchronously deactivate their model, and
+        //a Fuse nested under it is then skipped by NGO ("Disabled NetworkBehaviours will be excluded...")
+        //so its OnNetworkSpawn never runs on this peer (#2558). Yield once so the spawn loop finishes over
+        //an intact hierarchy, then re-check state in case it changed while deferred.
+        private async UniTask CatchUpLaunchAfterSpawnAsync()
+        {
+            await UniTask.Yield(_cancellationTokentoken);
+
+            if (this.IsSpawned == false || _launchState.Value.IsLaunched == false)
+                return;
+
+            StartLaunchInternal();
         }
 
         private void OnFiringSystemReceiverNetworkDataValueChanged(FiringSystemReceiverData previousValue, FiringSystemReceiverData newValue)
@@ -140,7 +160,35 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private void StartLaunchInternal()
         {
             Messenger.Broadcast(new MessengerEventFireworkEffectStartedStruct(this.gameObject));
-            LaunchInternalAsync(_cancellationTokentoken).Forget();
+            LaunchAndMarkFinishedAsync().Forget();
+        }
+
+        //No try/catch on purpose: a cancellation means this firework is being destroyed mid-effect, and
+        //the exception should reach the same Forget() it always did - it just must not mark a firework
+        //that never finished as finished.
+        private async UniTask LaunchAndMarkFinishedAsync()
+        {
+            await LaunchInternalAsync(_cancellationTokentoken);
+            HasFinishedEffect = true;
+
+            //Order matters: IsSpent latches on HasFinishedEffect above, so clearing the launch state
+            //here cannot cost this firework its place in the host's spawn limit. Auto-despawn runs
+            //inside LaunchInternalAsync, so the destroy animation has already read its seed by now.
+            ResetLaunchState();
+        }
+
+        /// <summary>
+        /// The wait a firework built around a single particle effect needs: first until the firework is
+        /// spent - the same moment the host's spawn limit stops counting it, a float compare per frame -
+        /// and then until the last particle is gone, so nothing is destroyed mid-effect.
+        /// </summary>
+        protected async UniTask WaitForEffectToFinishAsync(ParticleSystem effect, CancellationToken token)
+        {
+            await UniTask.WaitUntil(() => IsSpent, cancellationToken: token);
+
+            //A drained ParticleSystem keeps ticking in Unity's particle update as long as its GameObject
+            //is active, which is what isPlaying catches here
+            await UniTask.WaitWhile(() => effect.IsAlive(true) || effect.isPlaying, cancellationToken: token);
         }
 
         private void OnFiringSystemControllerSendSignal(MessengerEventFiringSystemControllerSendSignalStruct arg)
@@ -151,7 +199,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 _fuse?.IsIgnited == false && 
                 _fuse?.IsUsed == false)
             {
-                _fuse.IgniteWithoutFuseTime();
+                //The firing-system signal is a purely local broadcast and this handler is only
+                //subscribed on the server, so the sequence runner is this machine
+                _fuse.IgniteWithoutFuseTime(NetworkManager.LocalClientId);
             }
         }
 
@@ -263,11 +313,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
         }
 
+        /// <summary>
+        /// Puts the firework back to "not launched" once its effect has run through. Until #2746 this was
+        /// never called, so <see cref="IsIgnited"/> stayed true for the rest of a fired firework's life -
+        /// and with auto-despawn off that life is the rest of the session. ObjectVisibilityManager reads
+        /// IsIgnited to decide what a joining client must be shown immediately, so a world of spent
+        /// fireworks was streamed to every joiner in a single tick.
+        ///
+        /// IsSpawned is checked as well as IsServer because a NetworkVariable write on a despawned object
+        /// is a Debug.LogError per write rather than an exception (Docs/Development/netcode-gotchas.md),
+        /// and with auto-despawn on this runs right after the firework has despawned itself - so without
+        /// the guard every firework in a show would log one on its way out.
+        /// </summary>
         protected virtual void ResetLaunchState()
         {
-            if (IsServer)
+            if (IsSpawned && IsServer)
             {
-                _launchState.Value = default;
+                //Seed survives on purpose. It is what varies the destroy animation's length, and with
+                //auto-despawn off a spent firework is destroyed much later - by Clear All or the eraser -
+                //so zeroing it here would make every one of them shrink away in perfect lockstep.
+                _launchState.Value = new LaunchState()
+                {
+                    IsLaunched             = false,
+                    ServerStartTimeAsFloat = 0f,
+                    Seed                   = _launchState.Value.Seed
+                };
             }
         }
 
@@ -371,7 +441,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 return;
             }
 
-            _fuse.Ignite(ignitionForce);
+            _fuse.Ignite(ignitionForce, IgnitionCauserClientId);
+        }
+
+        public virtual void Ignite(float ignitionForce, ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            Ignite(ignitionForce);
         }
 
         public virtual void IgniteInstant()
@@ -379,14 +455,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (_fuse == null)
             {
                 Debug.LogError($"Trying to call Ignite on '{this.gameObject.name}' but Fuse is null... that's a problem - trying to delete firework to avoid further issues");
-                
+
                 if(NetworkManager.IsServer)
                     this.gameObject.DestroyOrDespawn();
 
                 return;
             }
 
-            _fuse.IgniteInstant();
+            _fuse.IgniteInstant(IgnitionCauserClientId);
+        }
+
+        public virtual void IgniteInstant(ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            IgniteInstant();
         }
 
         public virtual IFuse GetFuse()
@@ -413,6 +495,75 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             set => _entityDefinition = (FireworkEntityDefinition)value;
         }
 
+        /// <summary>
+        /// True once this firework has run its effect all the way through - it is done, and is only still
+        /// in the world because Auto Despawn is off (with it on, the firework is destroyed at that same
+        /// moment). Deliberately not networked: the only thing that asks is the host's spawn limit
+        /// (#2455), and the launch runs on every peer anyway. Never goes back to false - nothing re-arms
+        /// a spent firework.
+        /// </summary>
+        public bool HasFinishedEffect                         { get; private set; }
+
+        /// <summary>
+        /// True once this firework is spent as far as the host's spawn limit is concerned: its
+        /// <see cref="DurationInSeconds"/> - the very number the inventory shows for it - has passed since
+        /// launch, or its effect has run all the way through, whichever comes first. So a player gets the
+        /// slot back the moment their firework has stopped firing rather than when the last wisp of smoke
+        /// has faded (#2651), and the inventory's number is a promise the spawn limit keeps (#2657).
+        ///
+        /// Counted against the replicated launch time, so every peer agrees and a late joiner is not off by
+        /// however long it took to arrive; not networked itself, because the only thing that asks is the
+        /// host's spawn limit. <see cref="HasFinishedEffect"/> is the later moment and remains what the
+        /// firework is destroyed on - nothing is destroyed any earlier than it was. Never goes back to
+        /// false: nothing re-arms a spent firework.
+        /// </summary>
+        public bool IsSpent
+        {
+            get
+            {
+                if (_isSpent == false && (HasFinishedEffect || (IsSpawned && _launchState.Value.IsLaunched && GetLaunchTimeDifference() >= DurationInSeconds)))
+                    _isSpent = true;
+
+                return _isSpent;
+            }
+        }
+
+        /// <summary>
+        /// How long this firework keeps firing, from launch until its last stage has gone off - the number
+        /// the inventory shows for it and the one <see cref="IsSpent"/> counts down. Read once from the catalog the map load
+        /// filled; content the catalog never saw - a firework spawned before the map's entities were
+        /// registered, say - is estimated on the spot instead.
+        /// </summary>
+        public float DurationInSeconds
+        {
+            get
+            {
+                if (_durationInSeconds < 0f)
+                    _durationInSeconds = FireworkDurationCatalog.TryGetDurationInSeconds(_entityDefinition, out var cached) ? cached : EstimateDurationInSeconds();
+
+                return _durationInSeconds;
+            }
+        }
+
+        /// <summary>
+        /// The effect this firework's own behavior plays, or null for one whose show is an
+        /// <see cref="Parts.ExplosionBehavior"/>. Only there so the duration catalog can measure it on the
+        /// prefab before anything is spawned - a firework never needs to read its own effect back.
+        /// </summary>
+        public virtual ParticleSystem PrimaryEffect           => null;
+
+        /// <summary>
+        /// Roughly how many seconds this firework keeps firing, from the fuse burning through until its last
+        /// stage has gone off - the number the inventory's item details show a player, and the one the host's
+        /// spawn limit counts down through <see cref="IsSpent"/>, so the two are one and the same (#2657).
+        /// Evaluated on the PREFAB while the map loads, so only serialized fields and other prefab components
+        /// may be read: Awake has not run. The default is the firing duration of <see cref="PrimaryEffect"/>;
+        /// a behavior with a sequence of its own - thrust, hang time, then a burst - overrides it. What is
+        /// left in the air afterwards is the tail and does not count, so a bang measures zero. The fuse is
+        /// deliberately not part of it either: how long that burns depends on how the firework was lit.
+        /// </summary>
+        public virtual float EstimateDurationInSeconds() => ParticleEffectDuration.MeasureFiringDurationInSeconds(PrimaryEffect);
+
         public virtual Transform IgnitePositionTransform      => _fuse.IgnitePositionTransform;
         public IFuseConnectionPoint ConnectionPoint           => _fuse.ConnectionPoint;
         public virtual bool Enabled                           => _fuse.Enabled;
@@ -425,7 +576,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _firingSystemReceiverNetworkData.Value = data;
         }
 
-        public FiringSystemReceiverData FiringSystemReceiverData 
+        public FiringSystemReceiverData FiringSystemReceiverData
         {
             get
             {
@@ -438,7 +589,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 else
                     SetFiringSystemRecieverDataRpc(value);
             }
-        } 
+        }
+
+        public ulong IgnitionCauserClientId                 => _ignitionCauser.Value;
+        public void TrySetIgnitionCauser(ulong causerClientId) => _ignitionCauser.TrySet(causerClientId);
+        public void ResetIgnitionCauser()                      => _ignitionCauser.Reset();
     }
 
     [Serializable]

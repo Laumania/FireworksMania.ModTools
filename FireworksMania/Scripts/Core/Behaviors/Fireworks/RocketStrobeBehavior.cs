@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
@@ -18,6 +19,26 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private string _endWhistleSound;
         [SerializeField]
         private float _hangTimeInSecondsAfterThrusterFinish = 1.5f;
+
+        //LaunchInternalAsync stretches the hang time by up to this much when the random delay is on; the
+        //duration estimate takes all of it (#2657)
+        private const float MaxHangTimeFactor = 1.1f;
+
+        /// <summary>Thrust, the hang time, then the burst (#2657).</summary>
+        public override float EstimateDurationInSeconds()
+        {
+            var seconds = 0f;
+
+            if (_thruster.OrNull() != null)
+                seconds += _thruster.MaxThrustTimeInSeconds;
+
+            seconds += _hangTimeInSecondsAfterThrusterFinish * (_randomTimeDelayAfterThruster ? MaxHangTimeFactor : 1f);
+
+            if (_explosion.OrNull() != null)
+                seconds += _explosion.EstimateDurationInSeconds();
+
+            return seconds;
+        }
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
@@ -36,7 +57,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             Messenger.Broadcast(new MessengerEventPlaySoundStruct(_endWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
 
             //Hang time
-            var randomTimeFactor = _randomTimeDelayAfterThruster ? UnityEngine.Random.Range(0.9f, 1.1f) : 1f;
+            var randomTimeFactor = _randomTimeDelayAfterThruster ? UnityEngine.Random.Range(0.9f, MaxHangTimeFactor) : 1f;
             //Debug.Log($"randomTimeFactor: {randomTimeFactor}");
             await UniTask.Delay(Mathf.RoundToInt(_hangTimeInSecondsAfterThrusterFinish * 1000f * randomTimeFactor), cancellationToken: token);
             token.ThrowIfCancellationRequested();
@@ -48,7 +69,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
             
             _explosion.Explode();
-            await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
+
+            await _explosion.WaitForExplosionToFinishAsync(token);
             token.ThrowIfCancellationRequested();
 
             if (CoreSettings.AutoDespawnFireworks)

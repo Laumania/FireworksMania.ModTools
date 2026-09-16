@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FireworksMania.Core.Common;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
@@ -23,8 +24,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public Action<Vector3> OnParticleSpawned;
         public Action<Vector3> OnParticleDestroyed;
 
-        private bool _hasBeenAliveOnce = false;
-        private bool _hasLoggedBufferCapWarning = false;
+        private bool _hasBeenAliveOnce           = false;
+        private bool _hasCheckedBufferCapWarning = false;
+
+        /// <summary>
+        /// The item this observer's effect belongs to, for the log. Only set where the hierarchy can't tell: a
+        /// shell effect loaded into a mortar tube hangs under the tube, which would otherwise be blamed for it.
+        /// </summary>
+        internal string ItemName { get; set; }
 
         private void Start()
         {
@@ -118,14 +125,33 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             if (maxParticles > MaxParticlesBufferSize)
             {
-                if (!_hasLoggedBufferCapWarning)
+                //Asked every frame the effect plays, so each instance only looks once - resolving the item and
+                //building the key both allocate
+                if (!_hasCheckedBufferCapWarning)
                 {
-                    Debug.LogWarning($"{nameof(ParticleSystemObserver)} on '{this.gameObject.name}' has maxParticles={maxParticles} which exceeds the safe buffer cap of {MaxParticlesBufferSize}. Capping buffer to avoid OutOfMemoryException.", this);
-                    _hasLoggedBufferCapWarning = true;
+                    _hasCheckedBufferCapWarning = true;
+                    WarnAboutBufferCap(maxParticles);
                 }
                 return MaxParticlesBufferSize;
             }
             return maxParticles;
+        }
+
+        /// <summary>
+        /// Logged once per item per session, not per instance: every copy of the same firework has the same
+        /// maxParticles, so a client's log used to get the same line again for every one launched (#2856).
+        /// </summary>
+        private void WarnAboutBufferCap(int maxParticles)
+        {
+            if (ContentWarnings.AreLogged == false)
+                return;
+
+            var itemName = string.IsNullOrEmpty(ItemName) ? ContentWarnings.ResolveItemName(this) : ItemName;
+            if (ContentWarnings.ShouldLog(nameof(ParticleSystemObserver), itemName, this.gameObject.name) == false)
+                return;
+
+            //Hardcoded English on purpose - it tells whoever built the content which particle system to fix
+            Debug.LogWarning($"{nameof(ParticleSystemObserver)} on '{ContentWarnings.WithoutCloneSuffix(this.gameObject.name)}' in '{itemName}' has maxParticles={maxParticles} which exceeds the safe buffer cap of {MaxParticlesBufferSize}. Capping buffer to avoid OutOfMemoryException. This is only logged once - the buffer is still capped on every instance you place.", this);
         }
     }
 }

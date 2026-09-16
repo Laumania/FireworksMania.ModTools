@@ -25,14 +25,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             Preconditions.CheckNotNull(_rigidbody, $"Missing Rigidbody on '{this.gameObject.name}'", this);
             Preconditions.CheckNotNull(_effect, $"Missing particle effects in {nameof(CakeBehavior)} - '{this.gameObject.name}'!", this);
 
-            AvoidLoopingEffect();
+            _effect.DisableEndlessLooping();
             StopAllEffects();
-        }
-
-        private void AvoidLoopingEffect()
-        {
-            var mainParticleSystem = _effect.main;
-            mainParticleSystem.loop = false;
         }
 
         protected override void OnValidate()
@@ -54,7 +48,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.SetRandomSeed(_launchState.Value.Seed, GetLaunchTimeDifference());
             _effect.Play(true);
 
-            await UniTask.WaitWhile(() => _effect.IsAlive() || _effect.isPlaying, cancellationToken: token);
+            await WaitForEffectToFinishAsync(_effect, token);
 
             token.ThrowIfCancellationRequested();
 
@@ -64,6 +58,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (CoreSettings.AutoDespawnFireworks)
                 await DestroyFireworkAsync(token);
         }
+
+        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        public override ParticleSystem PrimaryEffect => _effect;
 
         private void StopAllEffects()
         {

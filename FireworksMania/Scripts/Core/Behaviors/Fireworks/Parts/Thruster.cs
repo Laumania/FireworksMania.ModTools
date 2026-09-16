@@ -48,6 +48,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         [SerializeField]
         private string _thrustSound;
 
+        //Awake randomises the burn inside this range, and the duration estimate the inventory shows takes
+        //the top of it - keep the two together so they cannot drift apart (#2657)
+        private const float MinThrustTimeFactor = 0.9f;
+        private const float MaxThrustTimeFactor = 1.1f;
+
         private float _curveDeltaTime = 0.0f;
         private float _remainingThrustTime;
         private Transform _thrusterTransform;
@@ -63,7 +68,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 Debug.LogError("Missing at least one particle system on Thruster", this);
 
             _thrusterTransform = this.transform;
-            _remainingThrustTime = _thrustTime * Random.Range(0.9f, 1.1f);
+            _remainingThrustTime = _thrustTime * Random.Range(MinThrustTimeFactor, MaxThrustTimeFactor);
             _cancellationToken = this.gameObject.GetCancellationTokenOnDestroy();
             SetEmissionOnParticleSystems(false);
         }
@@ -250,5 +255,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         }
 
         public bool IsThrusting => _isThrusting.Value;
+
+        /// <summary>
+        /// The longest this thruster can burn, for estimating a firework's duration on its prefab (#2657).
+        /// </summary>
+        public float MaxThrustTimeInSeconds => _thrustTime * MaxThrustTimeFactor;
     }
 }

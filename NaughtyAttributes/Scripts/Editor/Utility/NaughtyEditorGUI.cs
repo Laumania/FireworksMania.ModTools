@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -163,28 +164,60 @@ namespace NaughtyAttributes.Editor
                 if (GUILayout.Button(buttonText, _buttonStyle))
                 {
                     object[] defaultParams = methodInfo.GetParameters().Select(p => p.DefaultValue).ToArray();
-                    IEnumerator methodResult = methodInfo.Invoke(target, defaultParams) as IEnumerator;
+                    Type targetType = target.GetType();
+                    List<UnityEngine.Object> targets = new List<UnityEngine.Object>();
 
-                    if (!Application.isPlaying)
+                    foreach (UnityEngine.Object obj in Selection.objects)
                     {
-                        // Set target object and scene dirty to serialize changes to disk
-                        EditorUtility.SetDirty(target);
-
-                        PrefabStage stage = PrefabStageUtility.GetCurrentPrefabStage();
-                        if (stage != null)
+                        if (obj == null)
                         {
-                            // Prefab mode
-                            EditorSceneManager.MarkSceneDirty(stage.scene);
+                            continue;
                         }
-                        else
+
+                        if (obj is GameObject go)
                         {
-                            // Normal scene
-                            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                            Component component = go.GetComponent(targetType);
+                            if (component != null)
+                            {
+                                targets.Add(component);
+                            }
+                        }
+                        else if (targetType.IsInstanceOfType(obj))
+                        {
+                            targets.Add(obj);
                         }
                     }
-                    else if (methodResult != null && target is MonoBehaviour behaviour)
+
+                    if (targets.Count == 0)
                     {
-                        behaviour.StartCoroutine(methodResult);
+                        targets.Add(target);
+                    }
+
+                    foreach (UnityEngine.Object t in targets)
+                    {
+                        IEnumerator methodResult = methodInfo.Invoke(t, defaultParams) as IEnumerator;
+
+                        if (!Application.isPlaying)
+                        {
+                            // Set target object and scene dirty to serialize changes to disk
+                            EditorUtility.SetDirty(t);
+
+                            PrefabStage stage = PrefabStageUtility.GetCurrentPrefabStage();
+                            if (stage != null)
+                            {
+                                // Prefab mode
+                                EditorSceneManager.MarkSceneDirty(stage.scene);
+                            }
+                            else
+                            {
+                                // Normal scene
+                                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                            }
+                        }
+                        else if (methodResult != null && t is MonoBehaviour behaviour)
+                        {
+                            behaviour.StartCoroutine(methodResult);
+                        }
                     }
                 }
 

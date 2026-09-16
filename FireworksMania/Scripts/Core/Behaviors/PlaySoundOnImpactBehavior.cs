@@ -21,11 +21,12 @@ namespace FireworksMania.Core.Behaviors
 
         private MessengerEventPlaySoundStruct _playSoundEvent;
         private ImpactCollisionRelay          _relay;
+        private Transform                     _impactSource;
 
         private void Awake()
         {
             _velocityThresholdSqr = velocityThreshold * velocityThreshold;
-            _playSoundEvent       = new MessengerEventPlaySoundStruct(_sound, this.transform);
+            _playSoundEvent       = new MessengerEventPlaySoundStruct(_sound, ImpactSource);
         }
 
         private void OnEnable()
@@ -44,14 +45,56 @@ namespace FireworksMania.Core.Behaviors
             //events, so it costs nothing while disabled, and destroying it here would race the
             //pooled-debris path (Destroy is deferred to end of frame, so a same-frame re-activate
             //would try to add a second relay while the first is still pending destruction).
+            //A relay on ANOTHER GameObject is the exception (see SetImpactSource): that GameObject
+            //stays active when this one goes, so the relay would be left behind serving a target
+            //that is gone - on the character's bone, after every ragdoll knockdown (#2853).
+            if (_relay != null && _relay.gameObject != this.gameObject)
+                SetCarryingCollisionMessage(false);
+
             ImpactSoundRegistry.Unregister(this);
         }
 
-        Vector3 IImpactSoundCarrier.Position => this.transform.position;
+        Vector3 IImpactSoundCarrier.Position => ImpactSource.position;
+
+        /// <summary>
+        /// The transform whose collisions this behaviour listens to, and where its sound plays. Its own transform,
+        /// unless <see cref="SetImpactSource"/> pointed it somewhere else - and again once that has been destroyed.
+        /// </summary>
+        public Transform ImpactSource => _impactSource != null ? _impactSource : this.transform;
+
+        /// <summary>
+        /// Listens for impacts on <paramref name="source"/> and plays the sound there, instead of on this GameObject.
+        /// For physics that only exists at runtime and so has nowhere to author this behaviour: the player ragdoll's
+        /// bodies are built onto whatever character is in use, so their impact sounds sit on the ragdoll's pose
+        /// slots and are pointed at the bones (#2853). Null goes back to this GameObject.
+        /// </summary>
+        public void SetImpactSource(Transform source)
+        {
+            if (ReferenceEquals(source, this.transform))
+                source = null;
+
+            //ReferenceEquals rather than ==: a source destroyed since it was set compares equal to null, and going
+            //back to this GameObject must still rebuild the sound event away from the dead transform.
+            if (ReferenceEquals(source, _impactSource))
+                return;
+
+            //A relay only ever hears the GameObject it sits on, so a relay the sweep already granted is given
+            //back where it is and asked for again where the behaviour is going.
+            var wasCarrying = IsCarryingCollisionMessage;
+
+            if (wasCarrying)
+                SetCarryingCollisionMessage(false);
+
+            _impactSource   = source;
+            _playSoundEvent = new MessengerEventPlaySoundStruct(_sound, ImpactSource);
+
+            if (wasCarrying)
+                SetCarryingCollisionMessage(true);
+        }
 
         /// <summary>
         /// Whether this object currently makes Unity marshal a managed Collision per contact pair.
-        /// Driven by the impact-sound manager - see <see cref="ImpactCarrierSweep"/> and #2236.
+        /// Driven by the game's impact-sound manager - see its <c>ImpactCarrierSweep</c> and #2236.
         /// </summary>
         public bool IsCarryingCollisionMessage => _relay != null;
 
@@ -62,13 +105,16 @@ namespace FireworksMania.Core.Behaviors
 
             if (carrying)
             {
+                //On the impact source, which is this GameObject unless SetImpactSource said otherwise (#2853).
+                var source = ImpactSource.gameObject;
+
                 //A GameObject may carry several of these - two colliders wanting two different sounds
                 //is legal authoring and mod content does it - but only ONE relay, so they share it.
                 //AddComponent returns null rather than a second one (#2241).
-                var relay = this.gameObject.GetComponent<ImpactCollisionRelay>();
+                var relay = source.GetComponent<ImpactCollisionRelay>();
 
                 if (relay == null)
-                    relay = this.gameObject.AddComponent<ImpactCollisionRelay>();
+                    relay = source.AddComponent<ImpactCollisionRelay>();
 
                 //Still null means a relay released earlier this frame is pending destruction and is
                 //blocking the add. Nothing to do but stay uncarried - the sweep comes back around.

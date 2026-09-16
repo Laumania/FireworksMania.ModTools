@@ -47,6 +47,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private int                  _playerLayer;
         private Collider[]           _rackColliders;
         private Collider             _triggerCollider;
+        private Transform            _mountRootTransform;
+        private float?               _openingHeightAlongBore;
 
         private readonly List<(Collider RackCollider, Collider SeatedCollider)> _ignoredCollisionPairs = new List<(Collider, Collider)>();
         private readonly Dictionary<int, Rigidbody> _rigidbodiesRejectedThisFrame                      = new Dictionary<int, Rigidbody>();
@@ -68,7 +70,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             var mountRoot = GetComponentInParent<FireworkMountBehavior>();
             Preconditions.CheckNotNull(mountRoot, this);
-            _rackColliders = mountRoot.GetComponentsInChildren<Collider>();
+            _rackColliders      = mountRoot.GetComponentsInChildren<Collider>();
+            _mountRootTransform = mountRoot.transform;
 
             //Update methods only have work while something is seated or queued for rejection, so the
             //component sleeps until then - same pattern as MortarTube. Trigger callbacks still fire
@@ -150,6 +153,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             var seatedId = _mountedEntityNetworkObjectId.Value;
             if (seatedId == 0)
+                return false;
+
+            //Erasing a rack that still has something seated reaches here from FireworkMountBehavior's
+            //OnDestroy, and on scene teardown the NetworkManager (or its SpawnManager) is already gone -
+            //an unguarded walk threw a NullReferenceException out of OnDestroy, which then abandoned the
+            //rest of the rack's teardown. Nothing to resolve against at that point anyway.
+            if (NetworkManager == null || NetworkManager.SpawnManager == null)
                 return false;
 
             if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(seatedId, out var seatedNetworkObject) == false)
@@ -254,20 +264,32 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             }
 
-            var isPickedUp = _mountedRigidbody.TryGetComponent<IsPickedUp>(out _);
-
-            if (IsServer && FireworkMountRules.ShouldRelease(_mountedRigidbody.OrNull() != null, _mountedRigidbody.isKinematic, isPickedUp))
+            if (IsServer)
             {
-                //Block instant re-seating until the object has left the trigger, else a grab-out
-                //would snap it straight back into the socket
-                _reSeatBlockedRigidbodyId          = _mountedRigidbody.GetInstanceID();
-                _mountedEntityNetworkObjectId.Value = 0; //OnValueChanged does the local cleanup on every peer
-                return;
+                //Both tools stamp IsPickedUp inside a server Rpc, so the marker only ever exists here -
+                //asking for it on a client always answers false (#2488). Kept inside the guard so clients
+                //don't pay a TryGetComponent per seated tube per frame for an answer they can't use.
+                var isPickedUp = _mountedRigidbody.TryGetComponent<IsPickedUp>(out _);
+
+                if (FireworkMountRules.ShouldRelease(_mountedRigidbody.OrNull() != null, _mountedRigidbody.isKinematic, isPickedUp))
+                {
+                    //Block instant re-seating until the object has left the trigger, else a grab-out
+                    //would snap it straight back into the socket
+                    _reSeatBlockedRigidbodyId          = _mountedRigidbody.GetInstanceID();
+                    _mountedEntityNetworkObjectId.Value = 0; //OnValueChanged does the local cleanup on every peer
+                    return;
+                }
             }
 
-            //Pin on every peer while seated - the rack can move and its tubes follow with zero lag
-            if (_mountedRigidbody.isKinematic && isPickedUp == false)
-                _mountedRigidbody.transform.SetPositionAndRotation(GetMountWorldPosition(), _mountPoseTransform.rotation);
+            //Pin on every peer while seated - the rack can move and its tubes follow with zero lag.
+            //The replicated id is the whole gate: on the server ShouldRelease has just established the
+            //entity is still seated, and a client has nothing else to go on anyway. This can not pin
+            //something that was actually let go, because the release can never arrive late - the
+            //authority samples its transform in PreUpdate, BEFORE anything moves it that frame, while
+            //this socket is freed in LateUpdate, so id=0 always ships in the same tick as the first
+            //moved pose and ahead of it in the batch. Freeing the socket has to stay in LateUpdate for
+            //that to hold (#2488).
+            _mountedRigidbody.transform.SetPositionAndRotation(GetMountWorldPosition(), _mountPoseTransform.rotation);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -286,8 +308,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             var canMountIgnoringFit = CanMountCandidate(candidate);
             var fitsMountPoint      = FitsMountPoint(candidate.Rigidbody.gameObject);
             var isIgnited           = candidate.Firework != null && candidate.Firework.IsIgnited;
+            var isPickedUp          = candidate.Rigidbody.TryGetComponent<IsPickedUp>(out _);
 
-            if (FireworkMountRules.ShouldRejectWithForce(canMountIgnoringFit, fitsMountPoint, candidate.Rigidbody.isKinematic, isIgnited) &&
+            if (FireworkMountRules.ShouldRejectWithForce(canMountIgnoringFit, fitsMountPoint, candidate.Rigidbody.isKinematic, isIgnited, isPickedUp) &&
                 _rigidbodiesRejectedThisFrame.ContainsKey(candidate.Rigidbody.GetInstanceID()) == false)
             {
                 _rigidbodiesRejectedThisFrame.Add(candidate.Rigidbody.GetInstanceID(), candidate.Rigidbody);
@@ -575,6 +598,118 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         }
 
         public bool HasMountedFirework => _mountedEntityNetworkObjectId.Value != 0;
+
+        /// <summary>
+        /// Whether this socket is the one currently holding <paramref name="candidate"/>. Lets a tool
+        /// tell "the seat I am taking this out of" apart from every other seat, so it can stop offering
+        /// that one while the player drags the item free rather than pulling it straight back in (#2471).
+        /// Driven off the replicated id, so it answers the same on a client as on the host.
+        /// </summary>
+        public bool IsHolding(GameObject candidate)
+        {
+            if (candidate == null || _mountedEntityNetworkObjectId.Value == 0)
+                return false;
+
+            if (_mountedFirework.OrNull() == null)
+                TryResolveMountedFirework();
+
+            return _mountedRigidbody.OrNull() != null && _mountedRigidbody.gameObject == candidate;
+        }
+
+        /// <summary>
+        /// Inner diameter of this tube in meters - what <see cref="FitsFootprint"/> measures against.
+        /// Exposed so a tool can draw a marker sized to the opening rather than to the item (#2541).
+        /// </summary>
+        public float AllowedDiameter => _allowedDiameter;
+
+        /// <summary>
+        /// Where this socket's mouth is - the rim an item is dropped through, facing along the bore.
+        /// Tools mark a free socket there (#2541).
+        ///
+        /// Nothing about a socket authors that height. The mount pose is at the BOTTOM of the sleeve,
+        /// where the item's base comes to rest, and the trigger is sized to catch the item's BODY
+        /// rather than to outline the opening - on the stock single shot racks its center sits about
+        /// a centimetre down INSIDE the rack. So the rim is worked out from the rack's shape instead.
+        ///
+        /// A rack is a block with bores sunk into a flat top, and that is the one thing that holds
+        /// across the family: the 5 shot's sleeves stand upright, the 36 shot's fan out to 26 degrees,
+        /// and on both every mouth is on the same flat face. So the rim is where this socket's bore
+        /// leaves that face - which stays right however far the socket is tilted, unlike anything
+        /// measured straight up the bore. Its COLLIDERS are no use for it: they are coarse proxies
+        /// that stop about 3cm short of the sleeves on both stock racks, which is enough to leave the
+        /// marker sitting down inside the hole with the near wall in front of it.
+        ///
+        /// Measured once and kept as a height along the bore, since a rack cannot grow a new rim.
+        /// </summary>
+        public Pose GetOpeningPose()
+        {
+            var boreUp = _mountPoseTransform.up;
+
+            //Not cached until the rack is there to be measured, since Start is what resolves it - a
+            //tool asking before that would otherwise pin the fallback in place for good
+            if (_openingHeightAlongBore.HasValue == false)
+            {
+                var measuredHeight = MeasureOpeningHeightAlongBore(_mountPoseTransform.position, boreUp);
+
+                if (_mountRootTransform != null)
+                    _openingHeightAlongBore = measuredHeight;
+
+                return new Pose(_mountPoseTransform.position + boreUp * measuredHeight, _mountPoseTransform.rotation);
+            }
+
+            return new Pose(_mountPoseTransform.position + boreUp * _openingHeightAlongBore.Value, _mountPoseTransform.rotation);
+        }
+
+        private float MeasureOpeningHeightAlongBore(Vector3 boreBasePosition, Vector3 boreUp)
+        {
+            if (_mountRootTransform == null)
+                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
+
+            //Taken in the RACK's own up rather than the world's, so one lying on its side still reports
+            //the face its mouths are on instead of whichever side happens to be uppermost
+            var rackUp        = _mountRootTransform.up;
+            var topFaceHeight = float.MinValue;
+
+            var rackRenderers = _mountRootTransform.GetComponentsInChildren<MeshRenderer>();
+            for (int i = 0; i < rackRenderers.Length; i++)
+            {
+                var rackRenderer = rackRenderers[i];
+                if (rackRenderer == null || rackRenderer.enabled == false)
+                    continue;
+
+                //Corner by corner off the LOCAL bounds: the world-aligned box Unity draws around a
+                //tilted rack is bigger than the rack, and would put the face above the rack itself
+                var localBounds = rackRenderer.localBounds;
+                var toWorld     = rackRenderer.localToWorldMatrix;
+
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var localCorner = new Vector3(
+                        (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
+                        (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
+                        (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
+
+                    topFaceHeight = Mathf.Max(topFaceHeight, Vector3.Dot(toWorld.MultiplyPoint3x4(localCorner) - boreBasePosition, rackUp));
+                }
+            }
+
+            if (topFaceHeight <= 0f)
+                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
+
+            //Where the bore crosses that face. A bore lying along the face has no crossing worth
+            //having, so anything past 60 degrees off the rack's up falls back rather than shooting off
+            var boreAgainstFace = Vector3.Dot(boreUp, rackUp);
+            if (boreAgainstFace < 0.5f)
+                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
+
+            return topFaceHeight / boreAgainstFace;
+        }
+
+        //Nothing to measure - a socket on an empty transform, or a rack with no renderers at all. The
+        //trigger is the only other thing that says anything about where the opening is, and a marker
+        //sitting a little high beats one buried inside a rack.
+        private float FallbackOpeningHeightAlongBore(Vector3 boreBasePosition, Vector3 boreUp) =>
+            Mathf.Max(Vector3.Dot(SnapPointWorldPosition - boreBasePosition, boreUp), 0f);
 
         /// <summary>
         /// Whether an item with the given upright renderer-bounds size would pass this tube's

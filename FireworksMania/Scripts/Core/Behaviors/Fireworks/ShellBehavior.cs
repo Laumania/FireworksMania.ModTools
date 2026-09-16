@@ -1,6 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
+using FireworksMania.Core.Common;
 using FireworksMania.Core.Definitions.EntityDefinitions;
 using UnityEngine;
 
@@ -47,9 +48,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
+            _effect.DisableEndlessLooping();
 
             _mainModule            = _effect.main;
-            _mainModule.loop       = false;
             _mainModule.startSpeed = _groundLaunchForce;
         }
 
@@ -64,7 +65,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.gameObject.SetActive(true);
             _effect.Play(true);
             
-            await UniTask.WaitWhile(() => _effect.IsAlive(true) || _effect.isPlaying, cancellationToken: token);
+            await WaitForEffectToFinishAsync(_effect, token);
             token.ThrowIfCancellationRequested();
 
             await DestroyFireworkAsync(token);
@@ -149,6 +150,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             };
         }
 #endif
+
+        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        public override ParticleSystem PrimaryEffect                          => _effect;
 
         public ParticleSystem LaunchEffectPrefab                              => _launchEffectPrefab;
         public ParticleSystem Effect                                          => _effect;

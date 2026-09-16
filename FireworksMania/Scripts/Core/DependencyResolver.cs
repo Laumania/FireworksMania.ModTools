@@ -13,11 +13,20 @@ namespace FireworksMania.Core
 
         public void Awake()
         {
+            //Claim, and no early return: the duplicate branch destroys the OTHER instance and keeps THIS
+            //one, so returning left the static pointing at the destroyed one - and every Get<T> then ran
+            //against its stale cache instead of this instance's empty one (#2390).
+            //This is SceneSingleton.Claim spelled out - that lives in the game assembly, which Core can't
+            //reference (#2902). DependencyResolverTests pins this copy to the same behavior.
             if (_instance != null && _instance != this)
             {
-                Destroy(_instance.gameObject);
-                return;
+                //Destroy throws outside play mode, and the EditMode tests drive this branch
+                if (Application.isPlaying)
+                    Destroy(_instance.gameObject);
+                else
+                    DestroyImmediate(_instance.gameObject);
             }
+
             _instance = this;
         }
 

@@ -97,9 +97,16 @@ namespace FireworksMania.Core.Common
         /// object stuck inside something else gets shot away as the physics pushes them apart, and the
         /// player can still push around something that is about to be gone. It saves the shrinking colliders
         /// from being updated every frame as well, though that part is small.
+        ///
+        /// Doing that quietly is what left a crate stacked on an erased crate hanging in mid air, so
+        /// whatever was resting on it is woken on the way out - see <see cref="PhysicsWakeUp"/> (#2733).
         /// </summary>
         private static void StopTakingPartInThePhysicsSimulation(GameObject gameObject)
         {
+            //Before the colliders go off, while there is still something to measure - and while whatever
+            //is resting on this object can still be found by where it is being touched
+            PhysicsWakeUp.WakeUpWhateverIsTouching(gameObject);
+
             gameObject.GetComponentsInChildren(true, _colliderBuffer); //List overload to avoid allocating on every single destroy
             foreach (var collider in _colliderBuffer)
                 collider.enabled = false;

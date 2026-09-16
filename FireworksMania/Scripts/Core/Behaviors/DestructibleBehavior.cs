@@ -34,6 +34,17 @@ namespace FireworksMania.Core.Behaviors
         [Tooltip("This optional delays when the original/current (this gameobject this component is one) is destroyed. This can be useful to perfectly time with an effect and sound.")]
         private float _delayInSecondsUntilOriginalGameObjectIsDetroyed = 0f;
 
+        //Serialization must stay unconditional: base-game prefabs carry this value into the Mod Tools
+        //project, where FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS is not defined - only the inspector
+        //visibility is internal. Making serialization conditional would strip the value out of every
+        //prefab that round-trips through Mod Tools.
+        [SerializeField]
+#if !FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
+        [HideInInspector]
+#endif
+        [Tooltip("Internal: what this destructible is, for achievements. Leave as None on modded content.")]
+        private DestructibleKind _destructibleKind = DestructibleKind.None;
+
         //After this many waited frames the slow-frame gate is ignored, so wreckage cannot be postponed
         //forever on a machine that stays above the slow-frame threshold for a long stretch
         private const int MaxSlowFramePostponeFrames = 30;
@@ -43,6 +54,7 @@ namespace FireworksMania.Core.Behaviors
         private int _debriLayerInt = -1;
         private List<ExplosionDamageSource> _pendingExplosionSources;
         private bool _hasSpawnedDebris = false;
+        private ulong _killingCauserClientId = ExplosionDamageSource.NoCauser;
 
         private Renderer[] _renderers;
         private Collider[] _colliders;
@@ -61,6 +73,10 @@ namespace FireworksMania.Core.Behaviors
 
         public override void OnNetworkDespawn()
         {
+            //Before the colliders go off - a body resting on this one is asleep and never feels them
+            //being switched off, so it has to be told or it just hangs where this held it up (#2733)
+            PhysicsWakeUp.WakeUpWhateverIsTouching(this.gameObject);
+
             // This runs on server + clients when the object despawns
             foreach (var r in _renderers) if (r) r.enabled = false;
             foreach (var c in _colliders) if (c) c.enabled = false;
@@ -100,7 +116,11 @@ namespace FireworksMania.Core.Behaviors
                 {
                     if (explosionSource.HasValue)
                         RememberPendingExplosionSource(explosionSource.Value);
-                    DestroyInternally();
+
+                    //Carry who caused it into the broadcast and onto the wreck, so destruction is
+                    //credited to the player responsible rather than to whoever happens to be hosting
+                    _killingCauserClientId = explosionSource.HasValue ? explosionSource.Value.CauserClientId : ExplosionDamageSource.NoCauser;
+                    DestroyInternally(_killingCauserClientId);
                 }
             }
         }
@@ -171,9 +191,13 @@ namespace FireworksMania.Core.Behaviors
 
 #endif
 
-        private void DestroyInternally()
+        private void DestroyInternally(ulong causerClientId = ExplosionDamageSource.NoCauser)
         {
             IsDestroyed = true;
+
+            //Server-only: ApplyDamageInternal is gated on IsServer and Messenger is an in-process bus,
+            //so only the host hears this. FireworksManager relays it to the causing client.
+            Messenger.Broadcast(new MessengerEventDestructibleDestroyedStruct(_destructibleKind, causerClientId));
 
             if (_destroyedPrefab.OrNull() == null)
             {
@@ -213,6 +237,15 @@ namespace FireworksMania.Core.Behaviors
             {
                 var spawnLocationTransform = _destroyedPrefabSpawnLocation != null ? _destroyedPrefabSpawnLocation : this.transform;
                 var spawnedNetworkObject = DependencyResolver.Instance.Get<IDestructionObjectPool>().GetNetworkObject(_destroyedPrefab, spawnLocationTransform.position, spawnLocationTransform.rotation);
+
+                //The wreck's embedded explosion chains into further destructibles; mark the wreck with
+                //the original causer so dominoes stay credited. Wrecks are pooled, so reset before set.
+                var causerMarker = spawnedNetworkObject.GetComponent<IgnitionCauserMarker>();
+                if (causerMarker == null)
+                    causerMarker = spawnedNetworkObject.gameObject.AddComponent<IgnitionCauserMarker>();
+                causerMarker.ResetIgnitionCauser();
+                causerMarker.TrySetIgnitionCauser(_killingCauserClientId);
+
                 spawnedNetworkObject.gameObject.SetLayersRecursively(_debriLayerInt);
                 spawnedNetworkObject.Spawn(true);
                 _hasSpawnedDebris = true;
@@ -264,6 +297,10 @@ namespace FireworksMania.Core.Behaviors
         [Rpc(SendTo.Everyone)]
         private void DisableCollidersRpc()
         {
+            //Same as in OnNetworkDespawn - the wreckage that replaces this object usually knocks the
+            //neighbors awake by itself, but nothing guarantees it, so don't leave it to chance (#2733)
+            PhysicsWakeUp.WakeUpWhateverIsTouching(this.gameObject);
+
             foreach (var c in _colliders) if (c) c.enabled = false;
         }
 
@@ -287,5 +324,6 @@ namespace FireworksMania.Core.Behaviors
 
         public GameObject DestroyedPrefab => _destroyedPrefab;
         public bool IsDestroyed { get; private set; }
+        public DestructibleKind Kind => _destructibleKind;
     }
 }

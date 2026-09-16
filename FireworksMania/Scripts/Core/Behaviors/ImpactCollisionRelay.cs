@@ -13,7 +13,10 @@ namespace FireworksMania.Core.Behaviors
     /// removing a NetworkBehaviour at runtime is not safe. All networking stays on
     /// <see cref="PlaySoundOnImpactBehavior"/>, which is never added or removed.
     ///
-    /// One relay serves EVERY <see cref="PlaySoundOnImpactBehavior"/> on its GameObject. Only one relay
+    /// One relay serves EVERY <see cref="PlaySoundOnImpactBehavior"/> listening to its GameObject - the ones on
+    /// it, and any pointed at it from elsewhere through <see cref="PlaySoundOnImpactBehavior.SetImpactSource"/>,
+    /// which is how the player ragdoll's bones get theirs
+    /// (https://github.com/Laumania/FireworksMania/issues/2853). Only one relay
     /// may exist ([DisallowMultipleComponent], and a second one would double the marshaling cost this
     /// whole system exists to avoid), but a GameObject may legitimately carry several behaviours - two
     /// colliders wanting two different sounds is normal mod content

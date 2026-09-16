@@ -57,19 +57,22 @@ namespace FireworksMania.Core.Behaviors
                 return;
 
             _isErasing = true;
-            EraseAsync(_cancellationTokentoken).SuppressCancellationThrow().Forget();
+
+            //Whether this object is networked is settled here and not after the animation, as it can be despawned
+            //while the animation plays - and a client reading it afterwards would then remove the object itself
+            EraseAsync(IsSpawned, _cancellationTokentoken).SuppressCancellationThrow().Forget();
         }
 
-        private async UniTask EraseAsync(CancellationToken token)
+        private async UniTask EraseAsync(bool isNetworked, CancellationToken token)
         {
             //The network id is used to vary the animation a bit, as it's the one thing all peers agrees on
-            var variation = IsSpawned ? (NetworkObjectId % 100) / 99f : 0.5f;
+            var variation = isNetworked ? (NetworkObjectId % 100) / 99f : 0.5f;
 
             await DestroyAnimation.PlayAsync(this.transform, variation, token);
             token.ThrowIfCancellationRequested();
 
             //Clients only play the animation, the server is the one actually removing the object for everybody
-            if (IsSpawned && IsServer == false)
+            if (isNetworked && IsServer == false)
                 return;
 
             await DestroyAnimation.WaitForClientsAsync(NetworkManager, token);

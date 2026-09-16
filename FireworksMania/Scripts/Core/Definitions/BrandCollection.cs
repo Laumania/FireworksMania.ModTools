@@ -8,7 +8,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Definitions
 {
     [CreateAssetMenu(fileName = "New Brand Collection Definition", menuName = "Fireworks Mania/Definitions/Brand Collection Definition")]
-    public class BrandCollection : ScriptableObject
+    public class BrandCollection : ScriptableObject, IItemCollection
     {
         [Tooltip("Global unique definition id for this brand collection definition.")]
         [SerializeField]

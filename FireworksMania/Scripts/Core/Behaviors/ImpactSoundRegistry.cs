@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors
 {
@@ -15,6 +16,13 @@ namespace FireworksMania.Core.Behaviors
         private static readonly List<IImpactSoundCarrier> _registered = new List<IImpactSoundCarrier>();
 
         public static IReadOnlyList<IImpactSoundCarrier> Registered => _registered;
+
+        //Carriers unregister themselves as they are destroyed, and ImpactSoundManager.OnDestroy clears
+        //IsManaged - but with Domain Reload disabled anything those two miss is inherited by the next
+        //play session, and an IsManaged that stayed true with no manager alive means silent impacts
+        //because every carrier hands its relay away to nobody (#2612).
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState() => Reset();
 
         /// <summary>
         /// True while an <c>ImpactSoundManager</c> is deciding who carries the collision message.

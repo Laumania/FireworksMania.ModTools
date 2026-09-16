@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 using FireworksMania.Core.Messaging;
+using FireworksMania.Core.Utilities;
 
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
@@ -105,7 +107,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public void ApplyExplosionForce(Vector3 position, bool applyPhysicsForce = true, bool applyShakeEffect = true, bool applyIgnition = true)
         {
-            _onApplyExplosionForce?.Invoke();
+            //Guarded: a throwing listener here would skip the force, ignition and destruction passes
+            //below and stop a chain reaction dead - see UnityEventExtensions.InvokeSafe.
+            _onApplyExplosionForce.InvokeSafe(this, nameof(_onApplyExplosionForce));
 
             if (applyPhysicsForce || applyIgnition)
             {
@@ -175,7 +179,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private bool HandleDestructibles(Collider[] surroundingColliders, int count, Vector3 position)
         {
             var wasAnyDestructiblesDestroyed = false;
-            var explosionSource              = new ExplosionDamageSource(position, _explosionForce, _range, _upwardsmodifier, _forceMode, _applyForceRelativeToMass);
+            var explosionSource              = new ExplosionDamageSource(position, _explosionForce, _range, _upwardsmodifier, _forceMode, _applyForceRelativeToMass, ResolveCauserClientId());
             for (int i = 0; i < count; i++)
             {
                 var collider = surroundingColliders[i];
@@ -200,6 +204,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void HandleIgnitionAndPhysicsForces(List<Rigidbody> foundDistinctRigidbodies, Vector3 position, bool applyIgnition, bool applyPhysicsForce)
         {
+            //ExplosionBehavior plays the explosion on EVERY peer, so this runs everywhere. The force is
+            //already server-only - FireworksManager subscribes to the broadcast below only when IsServer -
+            //but the kinematic release below is a direct write, and used to run on non-authority copies
+            //too. Nothing re-asserts the kinematic state there until an ownership change, so a scene prop
+            //stayed dynamic for good and simulated its own gravity against the transform the server kept
+            //syncing to it (#2576). Resolved once per explosion rather than per rigidbody; no NetworkManager
+            //at all means nothing is replicated, so this peer is the only one there is.
+            var hasPhysicsAuthority = NetworkManager.Singleton == null || NetworkManager.Singleton.IsServer;
+
             foreach (var rigidBody in foundDistinctRigidbodies)
             {
                 var rangeMultiplier      = CalculateRangeMultiplier(position, rigidBody.ClosestPointOnBounds(position));
@@ -210,13 +223,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     {
                         var ignitionForce = _explosionForce;// * CalculateRangeMultiplier(position, ignitable.IgnitePositionTransform.position); - This was removed as it applied too little ignition force and wasn't funny
                         
-                        Messenger.Broadcast(new MessengerEventApplyIgnitableForceStruct(ignitable, ignitionForce));
+                        Messenger.Broadcast(new MessengerEventApplyIgnitableForceStruct(ignitable, ignitionForce, ResolveCauserClientId()));
                     }
                 }
 
                 if (applyPhysicsForce && CoreSettings.EnableExplosionPhysicsForces && ShouldApplyPhysicsForcesToRigidbody(rigidBody))
                 {
-                    if (_ignoreKinematic && rigidBody.CompareTag("Player") == false)
+                    if (_ignoreKinematic && hasPhysicsAuthority && rigidBody.CompareTag("Player") == false)
                         rigidBody.isKinematic = false;
 
                     var actualExplosionForce = _explosionForce * rangeMultiplier * CalculateMassMultiplier(rigidBody);
@@ -330,6 +343,26 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(this.transform.position, CalculateShakeRange());
-        }    
+        }
+
+        private IIgnitionCauserCarrier _causerCarrier;
+        private bool                   _causerLookupDone;
+
+        /// <summary>
+        /// The attribution carrier of the firework this effect belongs to. Resolved once and cached:
+        /// the lookup walks parents, and an explosion can call this while hundreds of objects are
+        /// being destroyed. Only meaningful on the server; NoCauser everywhere else and for anything
+        /// without a carrier above it (scene hazards, unattributed chains).
+        /// </summary>
+        private ulong ResolveCauserClientId()
+        {
+            if (_causerLookupDone == false)
+            {
+                _causerLookupDone = true;
+                _causerCarrier    = GetComponentInParent<IIgnitionCauserCarrier>();
+            }
+
+            return _causerCarrier != null ? _causerCarrier.IgnitionCauserClientId : ExplosionDamageSource.NoCauser;
+        }
     }
 }

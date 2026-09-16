@@ -80,5 +80,19 @@ namespace FireworksMania.Core.Utilities
 
             throw message == null ? new InvalidOperationException() : new InvalidOperationException(message);
         }
+
+        //The context half of CheckState, matching CheckNotNull. Without it a failed state check
+        //throws a bare InvalidOperationException with no object attached, so the console entry
+        //names the component TYPE and nothing else - and a check that fires on one of several
+        //instances of that type cannot be traced to the offending GameObject at all.
+        public static void CheckState(bool expression, string message, UnityEngine.MonoBehaviour context)
+        {
+            if (expression)
+            {
+                return;
+            }
+
+            throw new InvalidOperationException(Decorate(message, context));
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/FireworkMountBehavior")]
     [SelectionBase]
-    public class FireworkMountBehavior : NetworkBehaviour, ISaveableComponent, ISaveablePostActivatedComponent, IHaveBaseEntityDefinition, IIgnitable, IFireworkEntityHolder
+    public class FireworkMountBehavior : NetworkBehaviour, ISaveableComponent, ISaveablePostActivatedComponent, IHaveBaseEntityDefinition, IIgnitable, IFireworkEntityHolder, IIgnitionCauserCarrier
     {
         [Header("General")]
         [SerializeField]
@@ -25,6 +25,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         private FireworkMountPoint[] _mountPoints;
 
         private List<FireworkMountPointSaveData> _restoredTubeSaveData;
+        private IgnitionCauser _ignitionCauser;
 
         private void Awake()
         {
@@ -124,12 +125,24 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         public void Ignite(float ignitionForce)
         {
-            GetNextIgnitable()?.Ignite(ignitionForce);
+            GetNextIgnitable()?.Ignite(ignitionForce, IgnitionCauserClientId);
+        }
+
+        public void Ignite(float ignitionForce, ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            Ignite(ignitionForce);
         }
 
         public void IgniteInstant()
         {
-            GetNextIgnitable()?.IgniteInstant();
+            GetNextIgnitable()?.IgniteInstant(IgnitionCauserClientId);
+        }
+
+        public void IgniteInstant(ulong causerClientId)
+        {
+            TrySetIgnitionCauser(causerClientId);
+            IgniteInstant();
         }
 
         private IIgnitable GetNextIgnitable()
@@ -156,5 +169,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public Transform IgnitePositionTransform               => GetNextIgnitable()?.IgnitePositionTransform;
         public bool Enabled                                    => _mountPoints.Any(x => x.MountedFirework != null && x.MountedFirework.Enabled);
         public bool IsIgnited                                  => _mountPoints.Any(x => x.MountedFirework != null && x.MountedFirework.IsIgnited);
+
+        /// <summary>
+        /// Whether any of this rack's sockets holds a firework right now. Read off each socket's replicated
+        /// seat, so it answers the same on every peer, and without allocating - the hand asks it every frame
+        /// for a rack under the crosshair (#2898).
+        /// </summary>
+        public bool HasMountedFirework
+        {
+            get
+            {
+                if (_mountPoints == null)
+                    return false;
+
+                for (var i = 0; i < _mountPoints.Length; i++)
+                {
+                    if (_mountPoints[i] != null && _mountPoints[i].HasMountedFirework)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
+        public ulong IgnitionCauserClientId                 => _ignitionCauser.Value;
+        public void TrySetIgnitionCauser(ulong causerClientId) => _ignitionCauser.TrySet(causerClientId);
+        public void ResetIgnitionCauser()                      => _ignitionCauser.Reset();
     }
 }

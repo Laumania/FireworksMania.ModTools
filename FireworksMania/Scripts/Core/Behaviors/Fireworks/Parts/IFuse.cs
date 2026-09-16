@@ -27,5 +27,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         FuseNetworkIdentifier FuseNetworkIdentifier { get; }
         IFuseConnectionPoint ConnectionPoint        { get; }
         SaveableEntity SaveableEntityOwner          { get; }
+
+        //Defaulted for already-compiled mod implementations - see IIgnitable's causer overloads
+        void IgniteWithoutFuseTime(ulong causerClientId) => IgniteWithoutFuseTime();
     }
 }

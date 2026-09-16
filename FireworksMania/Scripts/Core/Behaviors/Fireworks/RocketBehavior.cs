@@ -20,6 +20,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         [SerializeField]
         protected ExplosionBehavior _explosion;
 
+        //The longest random pause between the thruster burning out and the burst (see LaunchInternalAsync);
+        //the duration estimate takes all of it (#2657)
+        private const float MaxRandomDelayAfterThrusterInSeconds = 0.1f;
 
         protected Rigidbody   _rigidbody;
         private Collider[]  _colliders;
@@ -72,7 +75,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
             if (_randomTimeDelayAfterThruster)
             {
-                await UniTask.Delay(Mathf.RoundToInt(UnityEngine.Random.Range(0f, 0.1f) * 1000f), cancellationToken: token);
+                await UniTask.Delay(Mathf.RoundToInt(UnityEngine.Random.Range(0f, MaxRandomDelayAfterThrusterInSeconds) * 1000f), cancellationToken: token);
                 token.ThrowIfCancellationRequested();
             }
 
@@ -83,8 +86,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             }
             
             _explosion.Explode();
-        
-            await UniTask.WaitWhile(() => _explosion.IsExploding, cancellationToken: token);
+
+            await _explosion.WaitForExplosionToFinishAsync(token);
             token.ThrowIfCancellationRequested();
 
             if (CoreSettings.AutoDespawnFireworks)
@@ -92,6 +95,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 await DestroyFireworkAsync(token);
                 token.ThrowIfCancellationRequested();
             }
+        }
+
+        /// <summary>Thrust, the random pause, then the burst (#2657).</summary>
+        public override float EstimateDurationInSeconds()
+        {
+            var seconds = 0f;
+
+            if (_thruster.OrNull() != null)
+                seconds += _thruster.MaxThrustTimeInSeconds;
+
+            if (_randomTimeDelayAfterThruster)
+                seconds += MaxRandomDelayAfterThrusterInSeconds;
+
+            if (_explosion.OrNull() != null)
+                seconds += _explosion.EstimateDurationInSeconds();
+
+            return seconds;
         }
 
         protected void DisableRigidBodyAndColliders()
