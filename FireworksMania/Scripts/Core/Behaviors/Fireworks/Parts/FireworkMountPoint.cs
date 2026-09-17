@@ -47,8 +47,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private int                  _playerLayer;
         private Collider[]           _rackColliders;
         private Collider             _triggerCollider;
-        private Transform            _mountRootTransform;
-        private float?               _openingHeightAlongBore;
 
         private readonly List<(Collider RackCollider, Collider SeatedCollider)> _ignoredCollisionPairs = new List<(Collider, Collider)>();
         private readonly Dictionary<int, Rigidbody> _rigidbodiesRejectedThisFrame                      = new Dictionary<int, Rigidbody>();
@@ -70,8 +68,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         {
             var mountRoot = GetComponentInParent<FireworkMountBehavior>();
             Preconditions.CheckNotNull(mountRoot, this);
-            _rackColliders      = mountRoot.GetComponentsInChildren<Collider>();
-            _mountRootTransform = mountRoot.transform;
+            _rackColliders = mountRoot.GetComponentsInChildren<Collider>();
 
             //Update methods only have work while something is seated or queued for rejection, so the
             //component sleeps until then - same pattern as MortarTube. Trigger callbacks still fire
@@ -558,16 +555,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void OnDrawGizmos()
         {
-            //Two things an author needs to SEE, not read as numbers: the firing direction (orange
-            //arrow) and the allowed diameter (cyan wire cylinder along the bore - anything slimmer
-            //than the cylinder fits). The cylinder extends well past the sleeve so it stays
-            //visible outside the rack model, unlike a single disc at the buried mount pose.
+            //Three things an author needs to SEE, not read as numbers: the firing direction (orange
+            //arrow), the allowed diameter (cyan wire cylinder along the bore - anything slimmer than
+            //the cylinder fits) and the green ring the tools show on this socket in game. The cylinder
+            //and the arrow run from the mount pose up to that ring, on the trigger sphere (#2911).
             var poseTransform = _mountPoseTransform != null ? _mountPoseTransform : this.transform;
             var origin        = poseTransform.position;
             var direction     = poseTransform.up;
             var radius        = _allowedDiameter * 0.5f;
-            var boreLength    = Mathf.Max(0.15f, _allowedDiameter * 3f);
-            var boreTop       = origin + direction * boreLength;
+            var openingPose   = GetOpeningPose();
+
+            //A socket with no ring up the bore to stop at - no trigger sphere, or one at or below the
+            //mount pose - keeps a fixed length, so its direction still shows
+            var boreLength = Vector3.Dot(openingPose.position - origin, direction);
+            if (boreLength <= 0.001f)
+                boreLength = Mathf.Max(0.15f, _allowedDiameter * 3f);
+
+            var boreTop = origin + direction * boreLength;
 
             var right   = poseTransform.right   * radius;
             var forward = poseTransform.forward * radius;
@@ -580,9 +584,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             UnityEditor.Handles.DrawLine(origin + forward, boreTop + forward);
             UnityEditor.Handles.DrawLine(origin - forward, boreTop - forward);
 
+            //The arrowhead stands on the ring, pointing out of the opening. The cone is drawn centered
+            //on its position, so it goes half its size further up the bore.
+            var arrowheadSize = Mathf.Max(radius, 0.01f);
+
             UnityEditor.Handles.color = new Color(1f, 0.6f, 0.1f, 0.9f);
             UnityEditor.Handles.DrawLine(origin, boreTop);
-            UnityEditor.Handles.ConeHandleCap(0, boreTop + direction * (boreLength * 0.1f), Quaternion.LookRotation(direction), boreLength * 0.2f, EventType.Repaint);
+            UnityEditor.Handles.ConeHandleCap(0, boreTop + direction * (arrowheadSize * 0.5f), Quaternion.LookRotation(direction), arrowheadSize, EventType.Repaint);
+
+            PlacementRing.DrawGizmo(openingPose, OpeningRadius);
         }
 #endif
 
@@ -618,98 +628,45 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         /// <summary>
         /// Inner diameter of this tube in meters - what <see cref="FitsFootprint"/> measures against.
-        /// Exposed so a tool can draw a marker sized to the opening rather than to the item (#2541).
         /// </summary>
         public float AllowedDiameter => _allowedDiameter;
 
         /// <summary>
-        /// Where this socket's mouth is - the rim an item is dropped through, facing along the bore.
-        /// Tools mark a free socket there (#2541).
+        /// Where the green placement ring goes on this socket: centered on its trigger sphere, facing the way
+        /// the sphere's object faces (#2911). Moving the sphere is how a creator moves the ring, and the gizmo
+        /// shows it in the editor. A socket whose trigger is not a sphere gets its ring on its mount pose.
         ///
-        /// Nothing about a socket authors that height. The mount pose is at the BOTTOM of the sleeve,
-        /// where the item's base comes to rest, and the trigger is sized to catch the item's BODY
-        /// rather than to outline the opening - on the stock single shot racks its center sits about
-        /// a centimetre down INSIDE the rack. So the rim is worked out from the rack's shape instead.
-        ///
-        /// A rack is a block with bores sunk into a flat top, and that is the one thing that holds
-        /// across the family: the 5 shot's sleeves stand upright, the 36 shot's fan out to 26 degrees,
-        /// and on both every mouth is on the same flat face. So the rim is where this socket's bore
-        /// leaves that face - which stays right however far the socket is tilted, unlike anything
-        /// measured straight up the bore. Its COLLIDERS are no use for it: they are coarse proxies
-        /// that stop about 3cm short of the sleeves on both stock racks, which is enough to leave the
-        /// marker sitting down inside the hole with the near wall in front of it.
-        ///
-        /// Measured once and kept as a height along the bore, since a rack cannot grow a new rim.
+        /// It used to be measured off the rack's shape, as the point where the bore leaves the rack's flat top
+        /// face. The racks that fan their sleeves out along an arch have no such face, and theirs hung in the
+        /// air up to half a meter off the rack.
         /// </summary>
         public Pose GetOpeningPose()
         {
-            var boreUp = _mountPoseTransform.up;
+            var triggerSphere = TriggerSphere;
+            if (triggerSphere != null)
+                return PlacementRing.GetPose(triggerSphere);
 
-            //Not cached until the rack is there to be measured, since Start is what resolves it - a
-            //tool asking before that would otherwise pin the fallback in place for good
-            if (_openingHeightAlongBore.HasValue == false)
-            {
-                var measuredHeight = MeasureOpeningHeightAlongBore(_mountPoseTransform.position, boreUp);
-
-                if (_mountRootTransform != null)
-                    _openingHeightAlongBore = measuredHeight;
-
-                return new Pose(_mountPoseTransform.position + boreUp * measuredHeight, _mountPoseTransform.rotation);
-            }
-
-            return new Pose(_mountPoseTransform.position + boreUp * _openingHeightAlongBore.Value, _mountPoseTransform.rotation);
+            var poseTransform = _mountPoseTransform != null ? _mountPoseTransform : this.transform;
+            return new Pose(poseTransform.position, poseTransform.rotation);
         }
 
-        private float MeasureOpeningHeightAlongBore(Vector3 boreBasePosition, Vector3 boreUp)
+        /// <summary>
+        /// How big the green placement ring on this socket is: its trigger sphere's radius, in world units
+        /// (#2911). A socket whose trigger is not a sphere gets a ring the size of its bore instead.
+        /// </summary>
+        public float OpeningRadius
         {
-            if (_mountRootTransform == null)
-                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
-
-            //Taken in the RACK's own up rather than the world's, so one lying on its side still reports
-            //the face its mouths are on instead of whichever side happens to be uppermost
-            var rackUp        = _mountRootTransform.up;
-            var topFaceHeight = float.MinValue;
-
-            var rackRenderers = _mountRootTransform.GetComponentsInChildren<MeshRenderer>();
-            for (int i = 0; i < rackRenderers.Length; i++)
+            get
             {
-                var rackRenderer = rackRenderers[i];
-                if (rackRenderer == null || rackRenderer.enabled == false)
-                    continue;
-
-                //Corner by corner off the LOCAL bounds: the world-aligned box Unity draws around a
-                //tilted rack is bigger than the rack, and would put the face above the rack itself
-                var localBounds = rackRenderer.localBounds;
-                var toWorld     = rackRenderer.localToWorldMatrix;
-
-                for (int corner = 0; corner < 8; corner++)
-                {
-                    var localCorner = new Vector3(
-                        (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
-                        (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
-                        (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
-
-                    topFaceHeight = Mathf.Max(topFaceHeight, Vector3.Dot(toWorld.MultiplyPoint3x4(localCorner) - boreBasePosition, rackUp));
-                }
+                var triggerSphere = TriggerSphere;
+                return triggerSphere != null ? PlacementRing.GetRadius(triggerSphere) : _allowedDiameter * 0.5f;
             }
-
-            if (topFaceHeight <= 0f)
-                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
-
-            //Where the bore crosses that face. A bore lying along the face has no crossing worth
-            //having, so anything past 60 degrees off the rack's up falls back rather than shooting off
-            var boreAgainstFace = Vector3.Dot(boreUp, rackUp);
-            if (boreAgainstFace < 0.5f)
-                return FallbackOpeningHeightAlongBore(boreBasePosition, boreUp);
-
-            return topFaceHeight / boreAgainstFace;
         }
 
-        //Nothing to measure - a socket on an empty transform, or a rack with no renderers at all. The
-        //trigger is the only other thing that says anything about where the opening is, and a marker
-        //sitting a little high beats one buried inside a rack.
-        private float FallbackOpeningHeightAlongBore(Vector3 boreBasePosition, Vector3 boreUp) =>
-            Mathf.Max(Vector3.Dot(SnapPointWorldPosition - boreBasePosition, boreUp), 0f);
+        //TryGetComponent rather than a cached lookup: it allocates nothing, and the gizmo needs a sphere a
+        //creator has only just added or removed to show up straight away
+        private SphereCollider TriggerSphere =>
+            TryGetComponent<SphereCollider>(out var sphere) && sphere.isTrigger ? sphere : null;
 
         /// <summary>
         /// Whether an item with the given upright renderer-bounds size would pass this tube's

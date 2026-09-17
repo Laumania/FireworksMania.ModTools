@@ -57,6 +57,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private const string OtherObjectEnterSound       = "MortarTubeEnter";
         private const string OtherObjectRejectSound      = "MortarTubeReject";
         private const float RejectionForce               = 2f;
+        private const float InchesToMeters               = 0.0254f;
 
         private ShellBehavior _shellBehaviorFromPrefab;
         private float _shellDurationInSeconds;
@@ -780,6 +781,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 }
             };
         }
+
+        //The green ring the tools show on this tube in game, drawn from the same trigger sphere (#2911)
+        private void OnDrawGizmos()
+        {
+            if (_mortarTubeTop != null)
+                PlacementRing.DrawGizmo(GetOpeningPose(), OpeningRadius);
+        }
 #endif
         private float GetLaunchTimeDifference()
         {
@@ -844,31 +852,50 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public bool IsReadyToLoadShell                        => IsShellLoaded == false && _tubeState.Value.IsShellLoading == false;
 
         /// <summary>
-        /// Where this tube's mouth is - the rim a shell is dropped over, facing along the bore. Tools
-        /// mark a loadable tube there (#2541).
+        /// Where the green placement ring goes on this tube: centered on the trigger sphere of its
+        /// <see cref="MortarTubeTop"/>, facing the way that object faces - the same rule as a rack socket's
+        /// (#2911). Moving the sphere is how a creator moves the ring, and the gizmo shows it in the editor. A
+        /// tube top without a trigger sphere gets its ring on the tube top itself.
         ///
-        /// Deliberately NOT the <see cref="MortarTubeTop"/> transform, which is the point a shell is
-        /// caught at and is placed clear of the mouth so it catches one on the way in - between 1cm
-        /// and 5cm above the rim across the stock mortars, with no rule to it. What IS authored on the
-        /// rim is where a loaded shell's fuse is draped over the edge: on every stock tube that sits
-        /// squarely in the middle of the tube wall, so its height along the bore is the rim's.
+        /// It used to sit on the rim, worked out from where a loaded shell's fuse hangs over the edge. The
+        /// sphere is where a shell is caught instead, which on the stock mortars is 1 to 5 cm above the rim.
         /// </summary>
         public Pose GetOpeningPose()
         {
+            var triggerSphere = TriggerSphere;
+            if (triggerSphere != null)
+                return PlacementRing.GetPose(triggerSphere);
+
             var topTransform = _mortarTubeTop.transform;
-            var boreUp       = topTransform.up;
-
-            //Nothing to measure against on a tube that never drapes a fuse. The tube top is then the
-            //only thing that speaks for the mouth at all, and it errs high rather than into the tube.
-            if (_unwrappedShellFusePivotPosition == null)
-                return new Pose(topTransform.position, topTransform.rotation);
-
-            //Along the bore only: the pivot is out at the tube wall, and a mouth marker belongs on the
-            //axis rather than off to whichever side the fuse happens to hang
-            var rimOffsetAlongBore = Vector3.Dot(_unwrappedShellFusePivotPosition.transform.position - topTransform.position, boreUp);
-
-            return new Pose(topTransform.position + boreUp * rimOffsetAlongBore, topTransform.rotation);
+            return new Pose(topTransform.position, topTransform.rotation);
         }
+
+        /// <summary>
+        /// How big the green placement ring on this tube is: its tube top's trigger sphere's radius, in world
+        /// units (#2911). A tube top without a trigger sphere gets a ring the size of the tube's bore instead.
+        /// </summary>
+        public float OpeningRadius
+        {
+            get
+            {
+                var triggerSphere = TriggerSphere;
+                if (triggerSphere != null)
+                    return PlacementRing.GetRadius(triggerSphere);
+
+                if (_diameter == null)
+                    return 0f;
+
+                //The diameter is a shell CLASS in inches and a shared asset, so it cannot know a rack has
+                //scaled the tube it sits in
+                var tubeScale = _mortarTubeTop.transform.lossyScale;
+                return _diameter.Diameter * InchesToMeters * 0.5f * Mathf.Max(Mathf.Abs(tubeScale.x), Mathf.Abs(tubeScale.z));
+            }
+        }
+
+        //TryGetComponent rather than a cached lookup: it allocates nothing, and the gizmo needs a sphere a
+        //creator has only just added or removed to show up straight away
+        private SphereCollider TriggerSphere =>
+            _mortarTubeTop != null && _mortarTubeTop.TryGetComponent<SphereCollider>(out var sphere) && sphere.isTrigger ? sphere : null;
 
         internal FireworkEntityDefinition ParentEntityDefinition
         {
