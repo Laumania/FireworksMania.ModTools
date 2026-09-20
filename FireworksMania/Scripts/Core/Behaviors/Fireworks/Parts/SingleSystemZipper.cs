@@ -201,17 +201,39 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     UpdateParticleSystem();
                 }
             }
+
+            WarnAboutCustomListsTooShortForTheCycles();
 #endif
         }
 
+#if UNITY_EDITOR
+        //Both custom lists are read once per cycle while the zipper plays, so one that is too short throws partway
+        //through the show and the zipper just stops. Said here, while it can still be fixed.
+        private void WarnAboutCustomListsTooShortForTheCycles()
+        {
+            if (EnableCustomColors && CycleColors.Count < NumberOfCycles)
+                Debug.LogWarning($"Zipper '{name}' has Enable Custom Colors on, but Cycle Colors has {CycleColors.Count} color(s) for {NumberOfCycles} cycle(s). " +
+                                 $"It will stop when cycle {CycleColors.Count + 1} starts.", this);
+
+            if (EnableCustomDelays && CycleDelays.Count < NumberOfCycles - 1)
+                Debug.LogWarning($"Zipper '{name}' has Enable Custom Delays on, but Cycle Delays has {CycleDelays.Count} delay(s), and {NumberOfCycles} cycles need {NumberOfCycles - 1}. " +
+                                 $"It will stop before cycle {CycleDelays.Count + 2}.", this);
+        }
+#endif
+
         public void UpdateParticleSystem()
         {
+            //Every write is guarded, because a ParticleSystem module setter marks the system dirty even when it
+            //writes the value already there. OnValidate calls this, and Unity runs OnValidate on every zipper prefab
+            //in memory after each domain reload - so unguarded, every script compile left the zipper cakes dirty
+            //for the next AssetDatabase.SaveAssets() to rewrite (#2934).
             var main = MainSystem.main;
 
-            float time = GetTime();
-            main.duration = time + 5;
+            float duration = GetTime() + 5;
+            if (main.duration != duration)
+                main.duration = duration;
 
-            if (CycleDelays.Count >= 1)
+            if (CycleDelays.Count >= 1 && IsConstant(main.startDelay, StartDelay) == false)
             {
                 main.startDelay = StartDelay;
             }
@@ -219,10 +241,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             var emission = MainSystem.emission;
 
-            emission.burstCount = 0;
-            emission.rateOverTime = 0;
-            emission.rateOverDistance = 0;
+            if (emission.burstCount != 0)
+                emission.burstCount = 0;
+
+            if (IsConstant(emission.rateOverTime, 0f) == false)
+                emission.rateOverTime = 0;
+
+            if (IsConstant(emission.rateOverDistance, 0f) == false)
+                emission.rateOverDistance = 0;
         }
+
+        //What assigning a plain float to a MinMaxCurve produces
+        private static bool IsConstant(ParticleSystem.MinMaxCurve curve, float value) =>
+            curve.mode == ParticleSystemCurveMode.Constant && curve.constant == value;
 
         /// <summary>
         /// How long this zipper keeps firing, from the moment its system is played until its last burst
@@ -240,7 +271,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private float GetTime()
         {
             float Time = (((TimeBetweenBursts * NumberOfBursts) + TimeBetweenBursts) * NumberOfCycles) + StartDelay;
-            for (int i = 0; i <= CycleDelays.Count - 1; i++)
+
+            //Only the delays the show waits on: the animators wait CycleDelays[i - 1] before each cycle after the
+            //first, so a list longer than that - custom delays left from when the zipper had more cycles - used to
+            //add time it never fires. Six base-game zippers reported 7.2 s too much that way (#2934).
+            var delaysWaitedOn = Mathf.Min(CycleDelays.Count, NumberOfCycles - 1);
+            for (int i = 0; i < delaysWaitedOn; i++)
             {
                 Time += CycleDelays[i];
             }
@@ -272,7 +308,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 #if UNITY_EDITOR
         private void Update()
         {
-            if (!Application.isPlaying)
+            //The edit-mode preview needs a system to watch. Without the null check, a zipper whose MainSystem is not
+            //set yet threw a NullReferenceException on every editor update.
+            if (!Application.isPlaying && MainSystem != null)
             {
                 if (Started == false)
                 {

@@ -27,8 +27,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private float _allowedDiameter = 0.08f;
 
         private const string MountSound        = "MortarTubeEnter";
-        private const string RejectSound      = "MortarTubeReject";
-        private const float  RejectionForce   = 2f;
+        private const string RejectSound       = "MortarTubeReject";
         private const float  MountTweenSeconds = 0.4f;
 
         //0 = empty socket. Written by the server, read by everyone so every peer can pin locally.
@@ -230,14 +229,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_rigidbodiesRejectedThisFrame.Count == 0)
                 return;
 
+            //The same throw a mortar tube gives, so the two refuse alike (#2937)
+            var opening = GetOpeningPose();
             foreach (var rejectedRigidbody in _rigidbodiesRejectedThisFrame.Values)
-            {
-                if (rejectedRigidbody.OrNull() == null)
-                    continue;
-
-                var rejectionForce = _mountPoseTransform.up.normalized * RejectionForce * rejectedRigidbody.mass;
-                rejectedRigidbody.AddForce(rejectionForce, ForceMode.Impulse);
-            }
+                RejectionBounce.ThrowClear(rejectedRigidbody, opening);
 
             _rigidbodiesRejectedThisFrame.Clear();
             PlayRejectSoundRpc();

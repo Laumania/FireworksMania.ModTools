@@ -132,6 +132,17 @@ MonoBehaviour:
   - SFX_Impact_GeneralMedium
   - SFX_SpawnElectricity_Os
   - SFX_SpawnFireworks_Os
+  - SoundTrackClassicalWalzMusic01
+  - SoundTrackClassicalWalzMusic02
+  - SoundTrackClassicalWalzMusic03
+  - SoundTrackClassicalWalzMusic04
+  - SoundTrackClassicalWalzMusic06
+  - SoundTrackClassicalWalzMusic07
+  - SoundTrackClassicalWalzMusic08
+  - SoundTrackClassicalWalzMusic09
+  - SoundTrackDeepTechno02
+  - SoundTrackDeepTechno10
+  - SoundTrackDeepTechno15
   - Spawn_Default
   - Spawn_Freeze
   - Thruster_Strobe_Start

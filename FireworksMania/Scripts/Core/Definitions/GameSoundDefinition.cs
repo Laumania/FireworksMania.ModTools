@@ -8,7 +8,8 @@ namespace FireworksMania.Core.Definitions
         Default    = 3,
         Ambient    = 0,
         UI         = 1,
-        Explosion  = 2
+        Explosion  = 2,
+        Music      = 4
     }
 
     [CreateAssetMenu(fileName = "New Game Sound", menuName = "Fireworks Mania/Definitions/Game Sound Definition")]
@@ -23,7 +24,7 @@ namespace FireworksMania.Core.Definitions
         private bool _loop = false;
 
         [SerializeField]
-        [Tooltip("Determine the type of sound. Default: Used for most sounds, Ambient: Used for ambient sounds and are forced to be 2D, UI: Used for UI sounds and are forced to be 2D, Explosions: Used for loud explosions as sounds of this type will duck other sounds for a short while to emphasize how loud it is.")]
+        [Tooltip("Determine the type of sound. Default: Used for most sounds, Ambient: Used for ambient sounds and are forced to be 2D, UI: Used for UI sounds and are forced to be 2D, Explosions: Used for loud explosions as sounds of this type will duck other sounds for a short while to emphasize how loud it is, Music: Used for songs - explosions never duck them, voice chat does, and the player turns them up or down with the Music volume setting.")]
         private SoundBusGroups _soundBus = SoundBusGroups.Default;
 
         [Header("Audio")]

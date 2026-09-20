@@ -56,7 +56,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private string _loadSound;
         private const string OtherObjectEnterSound       = "MortarTubeEnter";
         private const string OtherObjectRejectSound      = "MortarTubeReject";
-        private const float RejectionForce               = 2f;
         private const float InchesToMeters               = 0.0254f;
 
         private ShellBehavior _shellBehaviorFromPrefab;
@@ -241,11 +240,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if(_rigidbodiesRejectedThisFrame.Count == 0)
                 return;
 
+            //Thrown clear rather than kicked up the bore, where it only hopped and landed back on the tube (#2937)
+            var opening = GetOpeningPose();
             foreach (var rejectedRigidBody in _rigidbodiesRejectedThisFrame.Values)
-            {
-                var rejectionForce = _mortarTubeTop.transform.up.normalized * RejectionForce * rejectedRigidBody.mass;
-                rejectedRigidBody.AddForce(rejectionForce, ForceMode.Impulse);
-            }
+                RejectionBounce.ThrowClear(rejectedRigidBody, opening);
 
             _rigidbodiesRejectedThisFrame.Clear();
             PlayOtherObjectRejectSoundRpc();
@@ -428,14 +426,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (other.gameObject.isStatic)
                 return;
 
-            if (_tubeState.Value.IsShellLoading)
-                return;
-
             var otherRigidbody = other.attachedRigidbody;
             if (otherRigidbody.OrNull() == null)
                 return;
 
-            if (IsShellLoaded == false)
+            //Only an empty tube that is not already taking a shell loads one. A tube still pulling its shell down used
+            //to ignore everything that arrived, so a second shell was left sitting on the mouth and anything else was
+            //knocked off it; it now takes them as extras, exactly as a loaded tube does. That also keeps a second shell
+            //from starting a second load, which is what the early return it replaces was there for (#2937)
+            if (IsReadyToLoadShell)
             {
                 var shellBehaviorToLoad = otherRigidbody.GetComponent<ShellBehavior>();
                 if (shellBehaviorToLoad != null)
@@ -597,6 +596,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return false;
 
             if (otherRigidbody.isKinematic)
+                return false;
+
+            //Mortars and racks never go into a tube (#2288), and they are not thrown either: one touching the mouth is
+            //somebody setting things down side by side, not a failed insert - a 3 inch mortar set down against a
+            //loaded 2 inch one was kicked over. Rack sockets have always ignored them the same way (#2937)
+            if (otherRigidbody.TryGetComponent<IFireworkEntityHolder>(out _))
                 return false;
 
             return true;
