@@ -25,7 +25,6 @@ MonoBehaviour:
   - CodyB_KokkenRulle_Explosion_Deep
   - DefaultImpact
   - drinks_glasses_touching_003
-  - Dance_Rock_01
   - SlowClap_01
   - EXP_Firecracker_A
   - EXP_Firecracker_B
@@ -167,19 +166,24 @@ MonoBehaviour:
   - BaseGame - 30mmBurstSalute
   - BaseGame - 30mmBurstSaluteLouder
   - BaseGame - 30mmCrossetteBurst
+  - BaseGame - 30mmFallingLeaves
   - BaseGame - 30mmLaunch
-  - BaseGame - 30mmWaterfallBurst
+  - BaseGame - 30mmLaunchCometsMines
+  - BaseGame - 30mmWaterfall
   - BaseGame - 38mmBurst1
   - BaseGame - 38mmBurstSalute
   - BaseGame - 38mmLaunch1
+  - BaseGame - 45mmLaunchCometsMines
   - BaseGame - 50mmBurst
   - BaseGame - 50mmBurst2
   - BaseGame - 50mmBurstSalute
   - BaseGame - 50mmCrossetteInitial
   - BaseGame - 50mmCrossetteSecondary
   - BaseGame - 50mmLaunch
+  - BaseGame - 65mmLaunchCometsMines
   - BaseGame - 75mmBurst
   - BaseGame - 75mmCrossetteSecondary
+  - BaseGame - 75mmCrossetteSecondaryX7
   - BaseGame - 75mmLaunch
   - BaseGame - 100mmBurst
   - BaseGame - 100mmLaunch
@@ -196,6 +200,7 @@ MonoBehaviour:
   - BaseGame - CrackleSpiderWillowAdd
   - BaseGame - CrackleWillowAdd1
   - BaseGame - CrackleWillowFastAdd
+  - BaseGame - CrackleWillowTailAddNEW
   - BaseGame - DelayedCrackle11SecondsAdd
   - BaseGame - Firecracker5g
   - BaseGame - Firecracker50g

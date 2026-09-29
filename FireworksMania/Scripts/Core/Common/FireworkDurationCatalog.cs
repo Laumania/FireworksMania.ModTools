@@ -47,9 +47,9 @@ namespace FireworksMania.Core.Common
         private static void ResetStaticState() => Clear();
 
         /// <summary>
-        /// Estimates this entity's duration from its prefab and remembers it. Idempotent, and a no-op for an
-        /// entity that is not a firework - a mortar, a rack, a prop - which is how the inventory knows to
-        /// show no duration for those.
+        /// Estimates this entity's duration from its prefab and remembers it, replacing whatever was
+        /// remembered for its id. Idempotent, and remembers nothing for an entity that is not a firework - a
+        /// mortar, a rack, a prop - which is how the inventory knows to show no duration for those.
         /// </summary>
         public static void Warm(BaseEntityDefinition entityDefinition)
         {
@@ -60,6 +60,10 @@ namespace FireworksMania.Core.Common
             //one of them would otherwise share the one entry. OnValidate already calls that out as an error
             if (string.IsNullOrEmpty(entityDefinition.Id))
                 return;
+
+            //A mod can replace a base game entity under the same id (#3015), so what was remembered for the
+            //id may be the game's firework - it must not outlive the replacement, whatever this one turns out to be
+            _durationsByDefinitionId.Remove(entityDefinition.Id);
 
             var fireworkBehavior = entityDefinition.PrefabGameObject.GetComponent<BaseFireworkBehavior>();
             if (fireworkBehavior.OrNull() == null)

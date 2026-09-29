@@ -15,7 +15,6 @@ namespace FireworksMania.Core.Editor.PropertyDrawers
     public class GameSoundDrawer : PropertyDrawer
     {
         private List<string> _selectableSoundItems;
-        private HashSet<string> _soundOptions = new HashSet<string>();
         private string temp;
 
 
@@ -47,31 +46,38 @@ namespace FireworksMania.Core.Editor.PropertyDrawers
 
         private void PopulateFromGameSoundCollections()
         {
-            _soundOptions.Clear();            
+            var gameSoundNames = AssetDatabaseHelper.FindAssetsByType<GameSoundNameCollection>()
+                                                    .SelectMany(collection => collection.Sounds);
 
-            var soundNameCollections = AssetDatabaseHelper.FindAssetsByType<GameSoundNameCollection>();
+            var definitionNames = AssetDatabaseHelper.FindAssetsByType<GameSoundDefinition>()
+                                                     .Where(definition => definition != null)
+                                                     .Select(definition => definition.name);
 
-            foreach (var foundGameSoundCollectionItem in soundNameCollections)
+            _selectableSoundItems = BuildSelectableSoundItems(gameSoundNames, definitionNames);
+        }
+
+        //A sound is listed once. The game's own sounds are in a GameSoundNameCollection and usually also a
+        //GameSoundDefinition in the project, so those go under "Fireworks Mania" and only the rest - a mod's own
+        //definitions - under "Others" (#3024). Ignoring case, because MasterAudio looks sound groups up that way.
+        internal static List<string> BuildSelectableSoundItems(IEnumerable<string> gameSoundNames, IEnumerable<string> definitionNames)
+        {
+            var seenNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var items     = new List<string>();
+
+            foreach (var soundName in gameSoundNames)
             {
-                foreach (var soundItem in foundGameSoundCollectionItem.Sounds)
-                {
-                    if (_soundOptions.Contains(soundItem) == false)
-                        _soundOptions.Add("Fireworks Mania/" +soundItem);
-                }
+                if (seenNames.Add(soundName))
+                    items.Add("Fireworks Mania/" + soundName);
             }
 
-            var gameSoundDefinitions = AssetDatabaseHelper.FindAssetsByType<GameSoundDefinition>();
-            foreach (var gameSoundDef in gameSoundDefinitions)
+            foreach (var soundName in definitionNames)
             {
-                if (gameSoundDef != null)
-                {
-                    if (_soundOptions.Contains(gameSoundDef.name) == false)
-                        _soundOptions.Add("Others/"+gameSoundDef.name);
-                }
+                if (seenNames.Add(soundName))
+                    items.Add("Others/" + soundName);
             }
 
-            _selectableSoundItems = _soundOptions.ToList();
-            _selectableSoundItems.Sort(StringComparer.OrdinalIgnoreCase);
+            items.Sort(StringComparer.OrdinalIgnoreCase);
+            return items;
         }
     }
 

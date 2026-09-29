@@ -72,6 +72,9 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private IIgnitionCauserCarrier _causerCarrier;
         private bool                   _causerCarrierResolved;
 
+        private bool _isEffectRegisteredByOwner;
+        private bool _isEffectRegistered;
+
         private void Awake()
         {
             Preconditions.CheckNotNull(_fuseConnectionPoint, this);
@@ -89,6 +92,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             //is still drawn into all shadow cascades. Enforced in code so modded fuses are covered too.
             foreach (var renderer in _enabledMeshRenderers)
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            //A firework and a mortar tube register every particle system they carry, this fuse's included, so
+            //registering it again here would put the same systems in two entries. Any other fuse - a Fuse Node,
+            //a Sound Track Player, a mod's prop - has nobody registering it, and does it itself while it burns
+            _isEffectRegisteredByOwner = GetComponentInParent<BaseFireworkBehavior>(true) != null ||
+                                         GetComponentInParent<MortarTube>(true) != null;
 
             SetEmissionOnParticleSystems(false);
         }
@@ -144,6 +153,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public override void OnDestroy()
         {
             CancelPendingEffectDeactivation();
+            UnregisterEffect();
             base.OnDestroy();
         }
 
@@ -395,6 +405,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (CanToggleEffectGameObject)
                     _particleSystem.gameObject.SetActive(true);
 
+                RegisterEffect();
                 _particleSystem.Play(true);
                 Messenger.Broadcast(new MessengerEventPlaySoundStruct(_fuseIgnitedSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
             }
@@ -419,7 +430,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 DeactivateEffectWhenDrainedAsync(_particleSystem, _effectDrainCancellationTokenSource.Token).Forget();
             }
             else
+            {
                 _particleSystem.gameObject.SetActive(false);
+                UnregisterEffect();
+            }
         }
 
         private async UniTask DeactivateEffectWhenDrainedAsync(ParticleSystem effect, CancellationToken token)
@@ -429,6 +443,31 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if (effect != null)
                 effect.gameObject.SetActive(false);
+
+            UnregisterEffect();
+        }
+
+        /// <summary>
+        /// Hands a burning effect to PerformanceManager - which also gives it wind (#3004) - for as long as it is
+        /// burning, and no longer. The live sweep walks every registered entry round-robin, so a show's worth of
+        /// unlit fuses sitting in that list would only slow down how soon it gets back to what is burning.
+        /// </summary>
+        private void RegisterEffect()
+        {
+            if (_isEffectRegisteredByOwner || _isEffectRegistered)
+                return;
+
+            _isEffectRegistered = true;
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, _particleSystem.GetComponentsInChildren<ParticleSystem>(true)));
+        }
+
+        private void UnregisterEffect()
+        {
+            if (_isEffectRegistered == false)
+                return;
+
+            _isEffectRegistered = false;
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsUnregisteringStruct(this.gameObject));
         }
 
         private void CancelPendingEffectDeactivation()
@@ -446,6 +485,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_particleSystem != newEffect)
             {
                 CancelPendingEffectDeactivation();
+                UnregisterEffect();
 
                 if (_particleSystem != null)
                 {

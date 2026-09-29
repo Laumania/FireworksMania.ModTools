@@ -28,12 +28,16 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
     // TAA accumulates over multiple frames - the preview warms up its history with this many renders
     // before the final captured frame, so a single-frame capture still gets the temporal smoothing
     private const int TemporalAAWarmupRenders               = 8;
+    // Extra exposure (EV) on top of the profile's own Post Exposure, so icons come out a little
+    // brighter than the raw in-game grade (#3036). One place to tune overall icon brightness.
+    private const float PreviewExposureBoost                = 0.75f;
     private static GameObject PreviewLightingPrefab         = null;
     private static GameObject PreviewLightingPrefabInstance = null;
     private static GameObject PreviewCameraInstance         = null;
     private static Camera     PreviewAlphaCamera            = null;
     private static PostProcessLayer   PreviewPostProcessLayer   = null;
     private static PostProcessProfile PreviewPostProcessProfile = null;
+    private static ColorGrading       PreviewColorGrading       = null;
 
     // Icons must always render identically: lit only by the PreviewLightingPrefab, never by the
     // open scene's lights, ambient, fog, probes or reflections. So all preview rendering happens
@@ -440,6 +444,12 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
             PreviewPostProcessProfile = null;
         }
 
+        if (PreviewColorGrading.OrNull() != null)
+        {
+            DestroyImmediate(PreviewColorGrading);
+            PreviewColorGrading = null;
+        }
+
         if (PreviewCameraInstance.OrNull() != null)
             DestroyImmediate(PreviewCameraInstance);
 
@@ -514,6 +524,7 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
         RemoveProfileSettings<Grain>(PreviewPostProcessProfile);
         RemoveProfileSettings<DepthOfField>(PreviewPostProcessProfile);
         RemoveProfileSettings<AmbientOcclusion>(PreviewPostProcessProfile);
+        BoostPreviewExposure(PreviewPostProcessProfile);
 
         var volume           = volumeGameObject.AddComponent<PostProcessVolume>();
         volume.isGlobal      = true;
@@ -537,6 +548,23 @@ public class GenerateSpriteFromPrefabAssetUtility : UnityEditor.Editor
     {
         if (profile.HasSettings<T>())
             profile.RemoveSettings<T>();
+    }
+
+    // The profile copy is shallow - its effect settings are still the FM Default asset's own
+    // sub-assets - so Color Grading is swapped for a private clone before its exposure is raised,
+    // otherwise the boost would be written into the game's profile.
+    private static void BoostPreviewExposure(PostProcessProfile profile)
+    {
+        var colorGrading = profile.GetSetting<ColorGrading>();
+        if (colorGrading == null)
+            return;
+
+        PreviewColorGrading           = Instantiate(colorGrading);
+        PreviewColorGrading.hideFlags = HideFlags.HideAndDontSave;
+        PreviewColorGrading.postExposure.Override(colorGrading.postExposure.value + PreviewExposureBoost);
+
+        profile.RemoveSettings<ColorGrading>();
+        profile.AddSettings(PreviewColorGrading);
     }
 
     public static Sprite CaptureImage(GameObject pref, bool front, bool Ortho)

@@ -124,7 +124,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (_forceExplosionAlwaysUp)
                 _explosionForceEffect.gameObject.transform.rotation = Quaternion.identity;
 
-            Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_explosionSound, this.transform.position, delayBasedOnDistanceToListener: true));
+            //A firework is allowed to explode silently - Lady Fingers get their crackle from the particle
+            //systems instead, and this component is only here for the force and the visuals. Same guard as
+            //the one ParticleSystemSound has always had, so the [None] never sets off on a trip it cannot
+            //finish (#2977).
+            if (GameSoundAttribute.IsNoSound(_explosionSound) == false)
+                Messenger.Broadcast(new MessengerEventPlaySoundAtVector3Struct(_explosionSound, this.transform.position, delayBasedOnDistanceToListener: true));
 
             if (_delayInSecondsBetweenSoundAndExplosionEffect > 0f)
             {

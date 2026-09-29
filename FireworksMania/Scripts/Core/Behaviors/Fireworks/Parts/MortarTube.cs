@@ -295,8 +295,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             //under the tube, so the shell has to be named explicitly or the log would blame the tube for it
             _shellEffect.DisableEndlessLooping(entityDefinition.Id);
 
-            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, _shellEffect.GetComponentsInChildren<ParticleSystem>(true)));
-
             //Read here rather than at launch: the tube is standing still with a shell in it, and the shell
             //it holds cannot change without coming back through here. It is the shell's own duration - the
             //number the inventory shows for that shell - so a shell fired from a tube frees its owner's slot
@@ -354,9 +352,30 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 _mortarInternalFuse.ReplaceEffect(fallbackFuseEffect);
             }
 
+            RegisterEffects();
+
             _mortarInternalFuse.ResetFuse();
             //A reloaded tube is a fresh shot: the next igniter earns the next shell's destruction
             ResetIgnitionCauser();
+        }
+
+        /// <summary>
+        /// Everything a loaded shell plays from this tube registers as one firework: the launch effect, the shell's
+        /// own effect and the fuse burning on the unwrapped shell fuse (#3004). All three are instantiated here
+        /// rather than being children of anything that registers itself - the launch effect is a prefab of its
+        /// own, and the fuse effect is handed to the tube's internal fuse, which leaves its registration to the
+        /// tube - so without this nothing reaches them: no wind, and nothing PerformanceManager can turn down.
+        /// </summary>
+        private void RegisterEffects()
+        {
+            var effectSystems = new List<ParticleSystem>();
+            effectSystems.AddRange(_launchEffect.GetComponentsInChildren<ParticleSystem>(true));
+            effectSystems.AddRange(_shellEffect.GetComponentsInChildren<ParticleSystem>(true));
+
+            if (_mortarInternalFuse.Effect != null)
+                effectSystems.AddRange(_mortarInternalFuse.Effect.GetComponentsInChildren<ParticleSystem>(true));
+
+            Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, effectSystems.ToArray()));
         }
 
         private void MarkEffectAsInMortarTube(ParticleSystem effect, string shellEntityDefinitionId)
