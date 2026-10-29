@@ -22,7 +22,7 @@ using Random = UnityEngine.Random;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/MortarTube")]
-    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint, IAmGameObject, IFiringSystemReceiver, IIgnitionCauserCarrier
+    public class MortarTube : NetworkBehaviour, IIgnitable, IHaveFuse, IHaveFuseConnectionPoint, IAmGameObject, IFiringSystemReceiver, IIgnitionCauserCarrier, IReadsParticleSystems
     {
         internal event Action<Transform, ShellBehavior> OnShellLaunched;
         public event Action OnFiringSystemReceiverDataUpdated;
@@ -277,23 +277,29 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (entityDefinition == null)
                 return;
 
+            //The shell's parts are cloned from the game's particle mesh templates when it has them, so a load skips
+            //Unity's cost for a mesh shared by thousands of particle renderers (#3123). _shellBehaviorFromPrefab stays
+            //the prefab's: a template can be dropped while the tube is loaded, and IsShellLoaded would then read false
+            var templates            = DependencyResolver.Instance.Get<IParticlePrefabTemplates>();
             _shellBehaviorFromPrefab = entityDefinition.PrefabGameObject.GetComponent<ShellBehavior>();
 
-            _launchEffect                    = Instantiate(_shellBehaviorFromPrefab.LaunchEffectPrefab, this.transform);
-            _launchEffect.transform.position = _mortarTubeTop.transform.position;
-            _launchEffect.transform.rotation = _mortarTubeTop.transform.rotation;
-            _launchEffect.gameObject.SetActive(false);
-
-            _shellEffect                    = Instantiate(_shellBehaviorFromPrefab.Effect, this.transform);
+            //The shell's effect before the launch effect: cloning a part of the shell pins the shell's template, so
+            //building the launch effect's template next cannot drop it for the budget
+            _shellEffect                    = InstantiatePart(templates, _shellBehaviorFromPrefab.Effect, this.transform);
             _shellEffect.transform.position = _mortarTubeTop.transform.position;
             _shellEffect.transform.rotation = _mortarTubeTop.transform.rotation;
             MarkEffectAsInMortarTube(_shellEffect, entityDefinition.Id);
             _shellEffect.gameObject.SetActive(false);
 
-            //The effect is cloned straight off the shell prefab, so ShellBehavior.Awake never runs for it and
+            //The effect is cloned off the shell prefab or its template, so ShellBehavior.Awake never runs for it and
             //DestroyWhenFinishedPlayingCoroutine below is the only thing that ever cleans it up. It now hangs
             //under the tube, so the shell has to be named explicitly or the log would blame the tube for it
             _shellEffect.DisableEndlessLooping(entityDefinition.Id);
+
+            _launchEffect                    = InstantiatePart(templates, _shellBehaviorFromPrefab.LaunchEffectPrefab, this.transform);
+            _launchEffect.transform.position = _mortarTubeTop.transform.position;
+            _launchEffect.transform.rotation = _mortarTubeTop.transform.rotation;
+            _launchEffect.gameObject.SetActive(false);
 
             //Read here rather than at launch: the tube is standing still with a shell in it, and the shell
             //it holds cannot change without coming back through here. It is the shell's own duration - the
@@ -308,7 +314,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             var calculatedStartSpeed = mainEffect.startSpeed.Evaluate(0) * CalculateStartSpeedForceMultiplier(this.DiameterDefinition.Diameter, _shellBehaviorFromPrefab.DiameterDefinition.Diameter);
             mainEffect.startSpeed    = calculatedStartSpeed;
 
-            _shellUnwrappedFuse                    = Instantiate(_shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
+            _shellUnwrappedFuse                    = InstantiatePart(templates, _shellBehaviorFromPrefab.UnwrappedShellFusePrefab, this.transform);
             _shellUnwrappedFuse.transform.position = _unwrappedShellFusePivotPosition.transform.position;
             _shellUnwrappedFuse.transform.rotation = _unwrappedShellFusePivotPosition.transform.rotation;
             _shellUnwrappedFuse.gameObject.SetActive(true);
@@ -333,7 +339,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
             if (actualShellFuse != null && actualShellFuse.Effect != null)
             {
-                var fuseEffect = Instantiate(actualShellFuse.Effect, _shellUnwrappedFuse.transform);
+                var fuseEffect = InstantiatePart(templates, actualShellFuse.Effect, _shellUnwrappedFuse.transform);
                 fuseEffect.transform.position = _shellUnwrappedFuse.IgnitePosition.position;
                 fuseEffect.transform.rotation = _shellUnwrappedFuse.IgnitePosition.rotation;
                 _mortarInternalFuse.ReplaceEffect(fuseEffect, actualShellFuse.IgniteSound);
@@ -347,7 +353,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 var mortarTubeFuseEffectPrefabResource = Resources.Load<GameObject>(mortarTubeFuseEffectPrefabPath);
                 Preconditions.CheckNotNull(mortarTubeFuseEffectPrefabResource, this);
 
-                var fallbackFuseEffect = Instantiate(mortarTubeFuseEffectPrefabResource, _mortarInternalFuse.transform).GetComponent<ParticleSystem>();
+                var fallbackFuseEffect = InstantiatePart(templates, mortarTubeFuseEffectPrefabResource.transform, _mortarInternalFuse.transform).GetComponent<ParticleSystem>();
                 Preconditions.CheckNotNull(fallbackFuseEffect, this);
                 _mortarInternalFuse.ReplaceEffect(fallbackFuseEffect);
             }
@@ -376,6 +382,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 effectSystems.AddRange(_mortarInternalFuse.Effect.GetComponentsInChildren<ParticleSystem>(true));
 
             Messenger.Broadcast(new MessengerEventFireworkParticleSystemsRegisteringStruct(this.gameObject, effectSystems.ToArray()));
+        }
+
+        /// <summary>
+        /// Clones a part of the loaded shell - a prefab of its own, or a child of the shell prefab - through the game's
+        /// particle mesh templates (#3123), or exactly like Instantiate when nothing provides them. Returns the part's own
+        /// component on the clone, which is the clone's root. A missing part fails the way Instantiate does, with Unity's
+        /// own "object you want to instantiate is null", not a NullReferenceException from here.
+        /// </summary>
+        private static T InstantiatePart<T>(IParticlePrefabTemplates templates, T original, Transform parent) where T : Component
+        {
+            if (templates == null || original == null)
+                return Instantiate(original, parent);
+
+            return templates.Instantiate(original.gameObject, parent).GetComponent<T>();
         }
 
         private void MarkEffectAsInMortarTube(ParticleSystem effect, string shellEntityDefinitionId)
@@ -430,8 +450,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 Debug.LogWarning($"Unable to launch '{this.gameObject.name}' due to missing effects, some of them are null...can't explain it");
         }
 
-        
-        private async void OnTriggerEnterMortarTube(Collider other)
+
+        private void OnTriggerEnterMortarTube(Collider other)
         {
             if (!IsServer)
                 return;
@@ -449,126 +469,165 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             if (otherRigidbody.OrNull() == null)
                 return;
 
-            //Only an empty tube that is not already taking a shell loads one. A tube still pulling its shell down used
-            //to ignore everything that arrived, so a second shell was left sitting on the mouth and anything else was
-            //knocked off it; it now takes them as extras, exactly as a loaded tube does. That also keeps a second shell
-            //from starting a second load, which is what the early return it replaces was there for (#2937)
-            if (IsReadyToLoadShell)
-            {
-                var shellBehaviorToLoad = otherRigidbody.GetComponent<ShellBehavior>();
-                if (shellBehaviorToLoad != null)
-                {
-                    if (shellBehaviorToLoad.DiameterDefinition.Diameter <= this.DiameterDefinition.Diameter &&
-                        shellBehaviorToLoad.IsIgnited == false)
-                    {
-                        //Flagged the moment the shell starts its way down the bore, not when it lands at
-                        //the bottom two seconds later - and replicated, so every peer's placement tools
-                        //stop offering this tube right away instead of showing a ghost for a tube that
-                        //is already taking a shell (#2349)
-                        SetShellLoadingInProgress(true);
-                        otherRigidbody.isKinematic = true;
-
-                        try
-                        {
-                            foreach (var collider in shellBehaviorToLoad.gameObject.GetComponentsInChildren<Collider>())
-                                collider.enabled = false;
-
-                            PlayShellLoadSoundRpc();
-
-                            var boreAlignedRotation = CalculateBoreAlignedRotation(shellBehaviorToLoad.gameObject.transform.rotation, _mortarTubeTop.transform.rotation);
-
-                            var sequence = DOTween.Sequence();
-                            await sequence.Join(shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(boreAlignedRotation, 0.4f))
-                                .Join(shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.4f))
-                                .Append(
-                                DOVirtual.Float(0f, 1f, 2f, (float value) => {
-                                    var position = Vector3.Lerp(_mortarTubeTop.transform.position, _mortarTubeBottom.transform.position, value);
-                                    shellBehaviorToLoad.gameObject.transform.position = position;
-                                })
-                            ).SetLink(shellBehaviorToLoad.gameObject);
-
-                            //Either side of the load can be erased while the shell is still travelling
-                            //down the bore - the finally below is what puts the tube back up for grabs
-                            if (shellBehaviorToLoad.OrNull() == null || this.OrNull() == null || IsSpawned == false)
-                                return;
-
-                            _tubeState.Value = new MortarTubeState()
-                            {
-                                IsLaunched             = false,
-                                Seed                   = 0,
-                                ServerStartTimeAsFloat = 0,
-                                ShellEntityId          = shellBehaviorToLoad.EntityDefinition.Id
-                            };
-
-                            //The shell stops existing here and the tube takes over its effects, so
-                            //anything keeping books on the shell has to be told before it goes (#2630)
-                            Messenger.Broadcast(new MessengerEventShellSwallowedByMortarTubeStruct(shellBehaviorToLoad.gameObject, this));
-
-                            shellBehaviorToLoad.gameObject.DestroyOrDespawn();
-                        }
-                        finally
-                        {
-                            if (this.OrNull() != null && IsSpawned)
-                                SetShellLoadingInProgress(false);
-                        }
-                    }
-                }
-            }
-            else if (IsAllowedToEnterMortarTube(otherRigidbody, out var cachedBounds))
-            {
-                //Deliberately does NOT set the shell-loading flag - that would put a cooldown on
-                //stuffing things into a mortar tube, and it is more fun when it goes fast
-                otherRigidbody.isKinematic = true;
-
-                foreach (var collider in otherRigidbody.gameObject.GetComponentsInChildren<Collider>())
-                    collider.enabled = false;
-
-                // Calculate the scale factor to resize objectSize to (0.2, 0.2, 0.2)
-                var targetScaledSize     = _mortarTubeTop.DetectionRadius * 2f;
-                Vector3 scaleFactor      = Vector3.one;
-                
-                if (cachedBounds != null)
-                {
-                    // Avoid division by zero
-                    scaleFactor.x = cachedBounds.Value.size.x != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.x, 0f, 1f) : 1f;
-                    scaleFactor.y = cachedBounds.Value.size.y != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.y, 0f, 1f) : 1f;
-                    scaleFactor.z = cachedBounds.Value.size.z != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.z, 0f, 1f) : 1f;
-
-                    // Use the smallest scale to maintain proportions
-                    float uniformScale = Mathf.Min(scaleFactor.x, scaleFactor.y, scaleFactor.z);
-                    scaleFactor = new Vector3(uniformScale, uniformScale, uniformScale);
-                }
-
-                PlayOtherObjectEnterLoadSoundRpc();
-
-                //Bore-aligned for the same reason the shell path above is (#2358): a shell dropped into
-                //a tube that is ALREADY loaded comes through here instead, and tweening to the tube's own
-                //rotation corkscrewed it in exactly the way that fix removed (#2470). Safe here too -
-                //ShootOutOtherObjectsInTube snaps the rotation to the tube's before firing anything out,
-                //so this tween's end orientation is thrown away either way.
-                var boreAlignedRotation = CalculateBoreAlignedRotation(otherRigidbody.gameObject.transform.rotation, _mortarTubeTop.transform.rotation);
-
-                var sequence = DOTween.Sequence();
-                await sequence.Join(otherRigidbody.gameObject.transform.DOScale(scaleFactor, 0.2f))
-                    .Join(otherRigidbody.gameObject.transform.DORotateQuaternion(boreAlignedRotation, 0.2f))
-                    .Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f))
-                    .Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f))
-                    .Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f))
-                    .SetLink(otherRigidbody.gameObject);
-
-                otherRigidbody.gameObject.transform.position = _mortarTubeTop.transform.position; //Move it back to be inside the MortarTubeTop so it's loaded in properly when loaded via blueprints
-
-                if (otherRigidbody.TryGetComponent<NetworkObject>(out var netObj))
-                    netObj.Despawn(false);
-
-                _otherRigidbodiesInsideMortarTube.Add(otherRigidbody);
-                this.enabled = true;
-            }
-            else if(ShouldBeRejectedWithForce(otherRigidbody))
+            //An empty tube that will not load what arrived leaves it alone - it only throws things off a tube that is
+            //loaded or taking its shell
+            var wasReadyToLoadShell = IsReadyToLoadShell;
+            if (TryTake(otherRigidbody) == false && wasReadyToLoadShell == false && ShouldBeRejectedWithForce(otherRigidbody))
             {
                 _rigidbodiesRejectedThisFrame.Add(otherRigidbody.GetInstanceID(), otherRigidbody);
                 this.enabled = true;
             }
+        }
+
+        /// <summary>
+        /// Server-only: takes a freshly spawned item into this tube on the spot - as its shell, or as an extra - so
+        /// spawning into a tube never gives the item a physics step inside it (#3045). It is the same decision the
+        /// tube's trigger makes, only sooner: an item spawned into a tube has its pivot on the tube top, so it starts
+        /// out up to 9.5 cm deep in the tube's solid collider, and the step before the trigger noticed it was spent
+        /// pushing the two apart, which shoved the mortar. Returns false when the tube would not take it, and the
+        /// caller leaves it to the physics and the trigger. The counterpart of
+        /// <see cref="FireworkMountPoint.TryMountSpawnedFirework"/>.
+        /// </summary>
+        public bool TryTakeSpawnedItem(GameObject spawnedItem)
+        {
+            if (IsServer == false || IsSpawned == false)
+                return false;
+
+            var spawnedRigidbody = spawnedItem.OrNull() != null ? spawnedItem.GetComponent<Rigidbody>() : null;
+            return spawnedRigidbody != null && TryTake(spawnedRigidbody);
+        }
+
+        //Only an empty tube that is not already taking a shell loads one. A tube still pulling its shell down used
+        //to ignore everything that arrived, so a second shell was left sitting on the mouth and anything else was
+        //knocked off it; it now takes them as extras, exactly as a loaded tube does. That also keeps a second shell
+        //from starting a second load, which is what the early return it replaces was there for (#2937)
+        private bool TryTake(Rigidbody otherRigidbody)
+        {
+            if (IsReadyToLoadShell)
+            {
+                var shellBehaviorToLoad = otherRigidbody.GetComponent<ShellBehavior>();
+                if (shellBehaviorToLoad == null ||
+                    shellBehaviorToLoad.DiameterDefinition.Diameter > this.DiameterDefinition.Diameter ||
+                    shellBehaviorToLoad.IsIgnited)
+                    return false;
+
+                LoadShell(shellBehaviorToLoad, otherRigidbody);
+                return true;
+            }
+
+            if (IsAllowedToEnterMortarTube(otherRigidbody, out var cachedBounds) == false)
+                return false;
+
+            TakeAsExtra(otherRigidbody, cachedBounds);
+            return true;
+        }
+
+        //Everything up to the first await runs before this returns, so the shell is already kinematic and without
+        //colliders by the time the caller carries on
+        private async void LoadShell(ShellBehavior shellBehaviorToLoad, Rigidbody otherRigidbody)
+        {
+            //Flagged the moment the shell starts its way down the bore, not when it lands at
+            //the bottom two seconds later - and replicated, so every peer's placement tools
+            //stop offering this tube right away instead of showing a ghost for a tube that
+            //is already taking a shell (#2349)
+            SetShellLoadingInProgress(true);
+            otherRigidbody.isKinematic = true;
+
+            try
+            {
+                foreach (var collider in shellBehaviorToLoad.gameObject.GetComponentsInChildren<Collider>())
+                    collider.enabled = false;
+
+                PlayShellLoadSoundRpc();
+
+                var boreAlignedRotation = CalculateBoreAlignedRotation(shellBehaviorToLoad.gameObject.transform.rotation, _mortarTubeTop.transform.rotation);
+
+                var sequence = DOTween.Sequence();
+                await sequence.Join(shellBehaviorToLoad.gameObject.transform.DORotateQuaternion(boreAlignedRotation, 0.4f))
+                    .Join(shellBehaviorToLoad.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.4f))
+                    .Append(
+                    DOVirtual.Float(0f, 1f, 2f, (float value) => {
+                        var position = Vector3.Lerp(_mortarTubeTop.transform.position, _mortarTubeBottom.transform.position, value);
+                        shellBehaviorToLoad.gameObject.transform.position = position;
+                    })
+                ).SetLink(shellBehaviorToLoad.gameObject);
+
+                //Either side of the load can be erased while the shell is still travelling
+                //down the bore - the finally below is what puts the tube back up for grabs
+                if (shellBehaviorToLoad.OrNull() == null || this.OrNull() == null || IsSpawned == false)
+                    return;
+
+                _tubeState.Value = new MortarTubeState()
+                {
+                    IsLaunched             = false,
+                    Seed                   = 0,
+                    ServerStartTimeAsFloat = 0,
+                    ShellEntityId          = shellBehaviorToLoad.EntityDefinition.Id
+                };
+
+                //The shell stops existing here and the tube takes over its effects, so
+                //anything keeping books on the shell has to be told before it goes (#2630)
+                Messenger.Broadcast(new MessengerEventShellSwallowedByMortarTubeStruct(shellBehaviorToLoad.gameObject, this));
+
+                shellBehaviorToLoad.gameObject.DestroyOrDespawn();
+            }
+            finally
+            {
+                if (this.OrNull() != null && IsSpawned)
+                    SetShellLoadingInProgress(false);
+            }
+        }
+
+        //Same as LoadShell: kinematic and without colliders before this returns
+        private async void TakeAsExtra(Rigidbody otherRigidbody, Bounds? cachedBounds)
+        {
+            //Deliberately does NOT set the shell-loading flag - that would put a cooldown on
+            //stuffing things into a mortar tube, and it is more fun when it goes fast
+            otherRigidbody.isKinematic = true;
+
+            foreach (var collider in otherRigidbody.gameObject.GetComponentsInChildren<Collider>())
+                collider.enabled = false;
+
+            // Calculate the scale factor to resize objectSize to (0.2, 0.2, 0.2)
+            var targetScaledSize     = _mortarTubeTop.DetectionRadius * 2f;
+            Vector3 scaleFactor      = Vector3.one;
+
+            if (cachedBounds != null)
+            {
+                // Avoid division by zero
+                scaleFactor.x = cachedBounds.Value.size.x != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.x, 0f, 1f) : 1f;
+                scaleFactor.y = cachedBounds.Value.size.y != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.y, 0f, 1f) : 1f;
+                scaleFactor.z = cachedBounds.Value.size.z != 0 ? Math.Clamp(targetScaledSize / cachedBounds.Value.size.z, 0f, 1f) : 1f;
+
+                // Use the smallest scale to maintain proportions
+                float uniformScale = Mathf.Min(scaleFactor.x, scaleFactor.y, scaleFactor.z);
+                scaleFactor = new Vector3(uniformScale, uniformScale, uniformScale);
+            }
+
+            PlayOtherObjectEnterLoadSoundRpc();
+
+            //Bore-aligned for the same reason the shell path above is (#2358): a shell dropped into
+            //a tube that is ALREADY loaded comes through here instead, and tweening to the tube's own
+            //rotation corkscrewed it in exactly the way that fix removed (#2470). Safe here too -
+            //ShootOutOtherObjectsInTube snaps the rotation to the tube's before firing anything out,
+            //so this tween's end orientation is thrown away either way.
+            var boreAlignedRotation = CalculateBoreAlignedRotation(otherRigidbody.gameObject.transform.rotation, _mortarTubeTop.transform.rotation);
+
+            var sequence = DOTween.Sequence();
+            await sequence.Join(otherRigidbody.gameObject.transform.DOScale(scaleFactor, 0.2f))
+                .Join(otherRigidbody.gameObject.transform.DORotateQuaternion(boreAlignedRotation, 0.2f))
+                .Join(otherRigidbody.gameObject.transform.DOMove(_mortarTubeTop.transform.position, 0.2f))
+                .Append(otherRigidbody.gameObject.transform.DOMove(_mortarTubeBottom.transform.position, 0.1f))
+                .Join(otherRigidbody.gameObject.transform.DOScale(0f, .1f))
+                .SetLink(otherRigidbody.gameObject);
+
+            otherRigidbody.gameObject.transform.position = _mortarTubeTop.transform.position; //Move it back to be inside the MortarTubeTop so it's loaded in properly when loaded via blueprints
+
+            if (otherRigidbody.TryGetComponent<NetworkObject>(out var netObj))
+                netObj.Despawn(false);
+
+            _otherRigidbodiesInsideMortarTube.Add(otherRigidbody);
+            this.enabled = true;
         }
 
         /// <summary>
@@ -669,6 +728,22 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
                 //Note: We have to spawn it before igniting etc. else events are not hooked up on Server and therefore won't actually ignite
                 otherObjectRigidbody.transform.localScale = Vector3.one; //Scale have to be set before spawning else scale is wrong on clients
+
+                //Out of the tube and a physics object again BEFORE it spawns. ObjectVisibilityManager decides who
+                //is sent a spawning object, and it shows kinematic objects at any range - so spawned while still
+                //kinematic from the trip down the bore, every client on the map was sent it and destroyed it again a
+                //tick later (#3269). Dynamic, only clients within range get it, and the spawn carries the real start
+                //pose rather than the tube top's
+                var calculatedRadius                    = _mortarTubeTop.DetectionRadius * 5f;
+                var randomPositionInMortarTopRadius     = _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * calculatedRadius * 0.5f) + (Random.insideUnitSphere * calculatedRadius);
+                otherObjectRigidbody.transform.SetPositionAndRotation(randomPositionInMortarTopRadius, _mortarTubeTop.transform.rotation);
+                otherObjectRigidbody.isKinematic        = false;
+                otherObjectRigidbody.linearDamping      = 0f;
+                otherObjectRigidbody.angularDamping     = 0f;
+
+                foreach (var collider in otherObjectRigidbody.gameObject.GetComponentsInChildren<Collider>())
+                    collider.enabled = true;
+
                 if (otherObjectRigidbody.TryGetComponent<NetworkObject>(out var spawnNetObj))
                 {
                     spawnNetObj.Spawn(true);
@@ -702,17 +777,6 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 if (otherObjectRigidbody.TryGetComponent<IIgnitable>(out var ignitable))
                     ignitable.IgniteInstant(IgnitionCauserClientId);
 
-                var calculatedRadius                    = _mortarTubeTop.DetectionRadius * 5f;
-                var randomPositionInMortarTopRadius     = _mortarTubeTop.transform.position + (_mortarTubeTop.transform.up * calculatedRadius * 0.5f) + (Random.insideUnitSphere * calculatedRadius);
-                otherObjectRigidbody.transform.position = randomPositionInMortarTopRadius;
-                otherObjectRigidbody.isKinematic        = false;
-                otherObjectRigidbody.linearDamping      = 0f;
-                otherObjectRigidbody.angularDamping     = 0f;
-
-                foreach (var collider in otherObjectRigidbody.gameObject.GetComponentsInChildren<Collider>())
-                    collider.enabled = true;
-
-                otherObjectRigidbody.rotation = _mortarTubeTop.transform.rotation;
                 otherObjectRigidbody.AddForce(Random.Range(0.7f, 1.3f) * (_mortarTubeTop.transform.up.normalized * calculatedForce * otherObjectRigidbody.mass), ForceMode.Impulse);
             }
 
@@ -951,6 +1015,15 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public ulong IgnitionCauserClientId                 => _ignitionCauser.Value;
         public void TrySetIgnitionCauser(ulong causerClientId) => _ignitionCauser.TrySet(causerClientId);
         public void ResetIgnitionCauser()                      => _ignitionCauser.Reset();
+
+        /// <summary>The loaded shell's effect and the launch effect, which this plays and waits on (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (_shellEffect != null)
+                results.Add(_shellEffect);
+            if (_launchEffect != null)
+                results.Add(_launchEffect);
+        }
     }
 
     [Serializable]

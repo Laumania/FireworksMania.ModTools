@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
@@ -9,7 +10,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/Thruster")]
-    public class Thruster : NetworkBehaviour
+    public class Thruster : NetworkBehaviour, IReadsParticleSystems
     {
         [Header("General")]
         [SerializeField]
@@ -260,5 +261,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         /// The longest this thruster can burn, for estimating a firework's duration on its prefab (#2657).
         /// </summary>
         public float MaxThrustTimeInSeconds => _thrustTime * MaxThrustTimeFactor;
+
+        /// <summary>The thruster's effect, which this plays and drains (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (_effect != null)
+                results.Add(_effect);
+        }
     }
 }

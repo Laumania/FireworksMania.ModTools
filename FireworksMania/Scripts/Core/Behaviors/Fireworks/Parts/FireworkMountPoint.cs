@@ -23,7 +23,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         [SerializeField]
         [Min(0f)]
-        [Tooltip("Inner diameter of the tube in meters. Fireworks whose renderer bounds footprint is larger than this (plus a small tolerance) bounce off instead of seating.")]
+        [Tooltip("Inner diameter of the tube in meters. Fireworks whose bottom - the part that goes down the bore, up to the trigger sphere - is wider than this (plus a small tolerance) bounce off instead of seating.")]
         private float _allowedDiameter = 0.08f;
 
         private const string MountSound        = "MortarTubeEnter";
@@ -127,10 +127,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private void ClearLocalMountState()
         {
-            foreach (var (rackCollider, seatedCollider) in _ignoredCollisionPairs)
+            //A rocket launching out of its socket is still inside the rack's colliders for its first steps.
+            //Turning the pairs back on here made PhysX push it out of the rack on the way, costing up to 2 m of
+            //climb and making sockets in one row fly differently (#3047) - it is flying away, so leave them off.
+            //Anything else let go (grabbed out, knocked loose, rack gone) needs the rack solid again.
+            if (IsLeavingUnderThrust() == false)
             {
-                if (rackCollider != null && seatedCollider != null)
-                    Physics.IgnoreCollision(rackCollider, seatedCollider, false);
+                foreach (var (rackCollider, seatedCollider) in _ignoredCollisionPairs)
+                {
+                    if (rackCollider != null && seatedCollider != null)
+                        Physics.IgnoreCollision(rackCollider, seatedCollider, false);
+                }
             }
             _ignoredCollisionPairs.Clear();
 
@@ -143,6 +150,17 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             _mountedFirework     = null;
             _mountedRigidbody    = null;
             _mountedBottomOffset = 0f;
+        }
+
+        //The thruster, not IsIgnited or the launch state: a cake already firing in its socket that an explosion
+        //knocks loose is launched too, and with the pairs left off it would sink straight through the rack
+        private bool IsLeavingUnderThrust()
+        {
+            if (_mountedFirework.OrNull() == null)
+                return false;
+
+            var thruster = _mountedFirework.GetComponentInChildren<Thruster>();
+            return thruster != null && thruster.IsThrusting;
         }
 
         private bool TryResolveMountedFirework()
@@ -383,12 +401,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         private bool FitsMountPoint(GameObject candidateGameObject)
         {
-            var candidateBounds = FireworkMountRules.CalculateUprightRendererBounds(candidateGameObject);
-            if (candidateBounds.HasValue == false)
-                return false;
-
-            return FireworkMountRules.FitsDiameter(candidateBounds.Value.size, _allowedDiameter);
+            return FitsFootprint(MountFitProfile.Measure(candidateGameObject));
         }
+
+        //How far the bore runs from the mount pose, where a seated item's bottom rests, up to the opening -
+        //the placement ring on the trigger sphere (#2911). Zero when there is no sphere above the pose.
+        private float BoreDepth => Mathf.Max(0f, Vector3.Dot(GetOpeningPose().position - _mountPoseTransform.position, _mountPoseTransform.up));
 
         private async void MountAsync(BaseFireworkBehavior firework, Rigidbody fireworkRigidbody)
         {
@@ -664,12 +682,23 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             TryGetComponent<SphereCollider>(out var sphere) && sphere.isTrigger ? sphere : null;
 
         /// <summary>
-        /// Whether an item with the given upright renderer-bounds size would pass this tube's
-        /// seating fit check - lets tools show the fit before the player commits (#1105).
+        /// Whether an item with the given upright renderer-bounds size fits this tube, measured whole.
+        /// The seating check itself only measures what goes down the bore - see the
+        /// <see cref="MountFitProfile"/> overload, which is what tools should ask (#3046).
         /// </summary>
         public bool FitsFootprint(Vector3 uprightBoundsSize)
         {
             return FireworkMountRules.FitsDiameter(uprightBoundsSize, _allowedDiameter);
+        }
+
+        /// <summary>
+        /// Whether an item would pass this tube's seating fit check: the part of it that goes down the bore
+        /// has to fit the diameter, not its widest part anywhere - lets tools show the fit before the
+        /// player commits (#1105, #3046).
+        /// </summary>
+        public bool FitsFootprint(MountFitProfile profile)
+        {
+            return FireworkMountRules.FitsBore(profile, _allowedDiameter, BoreDepth);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Definitions.EntityDefinitions;
@@ -25,7 +26,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         IHaveFuse,
         IHaveFuseConnectionPoint,
         IFiringSystemReceiver,
-        IIgnitionCauserCarrier
+        IIgnitionCauserCarrier,
+        IReadsParticleSystems
     {
         [Header("General")]
         [FormerlySerializedAs("_metadata")]
@@ -547,10 +549,20 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         /// <summary>
         /// The effect this firework's own behavior plays, or null for one whose show is an
-        /// <see cref="Parts.ExplosionBehavior"/>. Only there so the duration catalog can measure it on the
-        /// prefab before anything is spawned - a firework never needs to read its own effect back.
+        /// <see cref="Parts.ExplosionBehavior"/>. The duration catalog measures it on the prefab before
+        /// anything is spawned, and once the firework is launched the game reads it to switch off the
+        /// sub-emitter systems in it that have finished while the effect still plays (#3175). That counts on
+        /// the effect being played once and then switched off or destroyed, as the built-in behaviors do.
         /// </summary>
         public virtual ParticleSystem PrimaryEffect           => null;
+
+        /// <summary>The effect this firework plays and waits on (#3214). A firework that reads more adds them.</summary>
+        public virtual void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            var effect = PrimaryEffect;
+            if (effect != null)
+                results.Add(effect);
+        }
 
         /// <summary>
         /// Roughly how many seconds this firework keeps firing, from the fuse burning through until its last

@@ -8,7 +8,7 @@ using NaughtyAttributes;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [ExecuteAlways]
-    public class SingleSystemZipper : MonoBehaviour
+    public class SingleSystemZipper : MonoBehaviour, IReadsParticleSystems
     {
         [ReadOnly]
         [Header("=========== Zipper Player Settings ===========")]
@@ -900,5 +900,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         }
 #endif
+
+        /// <summary>The zipper's system, which this drives (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (MainSystem != null)
+                results.Add(MainSystem);
+        }
     }
 }

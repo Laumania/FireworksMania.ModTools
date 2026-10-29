@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
@@ -16,7 +17,7 @@ using UnityEngine.Serialization;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/Fuse")]
-    public class Fuse : NetworkBehaviour, IFuse, IIgnitable, IHaveFuseConnectionPoint
+    public class Fuse : NetworkBehaviour, IFuse, IIgnitable, IHaveFuseConnectionPoint, IReadsParticleSystems
     {
         [Header("General")]
         [Range(0, 50)]
@@ -544,5 +545,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 
         public ParticleSystem Effect => _particleSystem;
         public string IgniteSound => _fuseIgnitedSound;
+
+        /// <summary>The fuse's burning effect, which this plays and drains (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (_particleSystem != null)
+                results.Add(_particleSystem);
+        }
     }
 }

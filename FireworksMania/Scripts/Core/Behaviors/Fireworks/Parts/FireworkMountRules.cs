@@ -22,6 +22,19 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             return boundsSize.x <= maxAllowedSize && boundsSize.z <= maxAllowedSize;
         }
 
+        /// <summary>
+        /// Whether what goes down a socket's bore - the bottom <paramref name="boreDepth"/> of the item - fits
+        /// its diameter, so a rocket is judged by its stick rather than its head (#3046). A depth of zero or
+        /// less measures the whole item.
+        /// </summary>
+        public static bool FitsBore(MountFitProfile profile, float allowedDiameter, float boreDepth)
+        {
+            if (profile == null)
+                return false;
+
+            return FitsDiameter(profile.FootprintWithinDepth(boreDepth), allowedDiameter);
+        }
+
         //Blueprint loads restore seated fireworks kinematic inside the sockets' triggers before the
         //rack re-registers them - a kinematic candidate is never a throw/drop, so it must never seat
         //(or bounce) via the trigger path

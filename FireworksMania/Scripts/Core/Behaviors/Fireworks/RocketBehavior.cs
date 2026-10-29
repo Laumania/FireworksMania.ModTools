@@ -62,13 +62,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (token.IsCancellationRequested)
                 return;
 
-            _thruster.TurnOn();
-
-            await UniTask.Delay(200);
-            token.ThrowIfCancellationRequested();
-
+            //Let go BEFORE the thrust starts. A rocket seated in a rack socket is kinematic, and it used to be held
+            //for 200 ms with the thruster already running - spending the strongest part of a front-loaded burn on
+            //the spot and costing it about a fifth of its climb, while a rocket standing free lost nothing (#3047)
             _rigidbody.isKinematic = false;
             _rigidbody.useGravity  = true;
+
+            _thruster.TurnOn();
 
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();

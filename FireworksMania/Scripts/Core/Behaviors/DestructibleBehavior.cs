@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors
 {
-    public class DestructibleBehavior : NetworkBehaviour, IDestructible
+    public class DestructibleBehavior : NetworkBehaviour, IDestructible, IReadsParticleSystems
     {
         [Header("General")]
         [SerializeField]
@@ -325,5 +325,16 @@ namespace FireworksMania.Core.Behaviors
         public GameObject DestroyedPrefab => _destroyedPrefab;
         public bool IsDestroyed { get; private set; }
         public DestructibleKind Kind => _destructibleKind;
+
+        /// <summary>The destruction effects, which this plays (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (_particleSystems == null)
+                return;
+
+            for (int i = 0; i < _particleSystems.Length; i++)
+                if (_particleSystems[i] != null)
+                    results.Add(_particleSystems[i]);
+        }
     }
 }

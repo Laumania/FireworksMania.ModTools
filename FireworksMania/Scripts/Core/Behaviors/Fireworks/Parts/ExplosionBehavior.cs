@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Common;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks.Parts
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/Parts/ExplosionBehavior")]
-    public class ExplosionBehavior : NetworkBehaviour, IExplosion
+    public class ExplosionBehavior : NetworkBehaviour, IExplosion, IReadsParticleSystems
     {
         [Header("General")]
         [SerializeField]
@@ -72,7 +73,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     Explode();
             }
 
-            if (_launchState.Value.IsLaunched)
+            //On the server Explode() above sets the launch state synchronously, so OnLaunchStateChanged has already
+            //started the explosion by now - starting it again here pushed everything in range twice in the same frame,
+            //and played the sound twice (#3182). A client gets no callback for the value it spawns with, so this is
+            //what starts it there.
+            if (_launchState.Value.IsLaunched && _hasExplosionStarted == false)
                 ExplodeVisualsAsync(_cancellationToken).Forget();
         }
 
@@ -234,8 +239,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public bool IsExploding => _launchState.Value.IsLaunched;
 
         /// <summary>
-        /// Only there so the effect can be read off the prefab - the content tests sweep it - a firework never
-        /// needs to read it back.
+        /// The effect this explosion plays. The content tests read it off the prefab, and once the firework is
+        /// launched the game reads it to switch off the sub-emitter systems in it that have finished while the
+        /// effect still plays (#3175). That counts on the effect being played once and switched off when it has
+        /// drained, as this component does.
         /// </summary>
         public ParticleSystem ExplosionEffect => _explosionParticleEffect;
 
@@ -248,6 +255,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         public float EstimateDurationInSeconds()
         {
             return _delayInSecondsBetweenSoundAndExplosionEffect + ParticleEffectDuration.MeasureFiringDurationInSeconds(_explosionParticleEffect);
+        }
+
+        /// <summary>The explosion's effect, which this plays (#3214).</summary>
+        public void CollectReadParticleSystems(List<ParticleSystem> results)
+        {
+            if (_explosionParticleEffect != null)
+                results.Add(_explosionParticleEffect);
         }
     }
 }

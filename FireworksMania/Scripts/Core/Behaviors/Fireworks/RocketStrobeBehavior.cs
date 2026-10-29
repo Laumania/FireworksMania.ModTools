@@ -42,14 +42,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 
         protected override async UniTask LaunchInternalAsync(CancellationToken token)
         {
-            _thruster.TurnOn();
-            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_startWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
-
-            await UniTask.Delay(200, cancellationToken: token);
-            token.ThrowIfCancellationRequested();
-
+            //Let go before the thrust starts, as RocketBehavior does - holding a kinematic (rack-seated) rocket
+            //while the thruster runs spends its burn on the spot (#3047)
             _rigidbody.isKinematic = false;
             _rigidbody.useGravity = true;
+
+            _thruster.TurnOn();
+            Messenger.Broadcast(new MessengerEventPlaySoundStruct(_startWhistleSound, this.transform, delayBasedOnDistanceToListener: false, followTransform: true));
 
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();

@@ -198,6 +198,11 @@ namespace FireworksMania.Core.Common
                 if (subEmitter == null || _stageChain.Contains(subEmitter) || IsActiveWithin(subEmitter, effect) == false || Emits(subEmitter) == false)
                     continue;
 
+                //An observer's probe only counts the deaths - it adds no stage, and its own long-lived particles
+                //would otherwise make the firework look a second longer than it is
+                if (ParticleSystemObserver.IsDeathProbe(system, subEmitter))
+                    continue;
+
                 var stageEnd = MeasureFiringEnd(subEmitter, effect);
                 if (stageEnd > nextStage)
                     nextStage = stageEnd;

@@ -73,7 +73,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 await DestroyFireworkAsync(token);
         }
 
-        //Exposed only so the duration catalog can measure it on the prefab (#2651)
+        //The duration catalog measures it on the prefab (#2651), and once launched the game reads it to switch off the
+        //sub-emitter systems in it that have finished while it still plays (#3175)
         public override ParticleSystem PrimaryEffect => _smokeEffect;
 
         private void StopAllEffects()
