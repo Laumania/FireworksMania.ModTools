@@ -1,13 +1,18 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Common;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/ZipperBehavior")]
-    public class ZipperBehavior : BaseFireworkBehavior
+    public class ZipperBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Zipper Settings")]
         [SerializeField]
         private GameObject _model;
@@ -72,5 +77,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

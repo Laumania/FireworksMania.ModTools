@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Messaging;
@@ -8,8 +9,12 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/FountainBehavior")]
-    public class FountainBehavior : BaseFireworkBehavior
+    public class FountainBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Fountain Settings")]
         [SerializeField]
         private ParticleSystem _effect;
@@ -78,5 +83,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             
             base.OnDestroy();            
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

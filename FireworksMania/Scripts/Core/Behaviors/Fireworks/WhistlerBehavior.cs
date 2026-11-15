@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Messaging;
 using FireworksMania.Core.Utilities;
@@ -10,8 +11,12 @@ using Thruster = FireworksMania.Core.Behaviors.Fireworks.Parts.Thruster;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/WhistlerBehavior")]
-    public class WhistlerBehavior : BaseFireworkBehavior
+    public class WhistlerBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Whistler Settings")]
         [SerializeField]
         private GameObject _model;
@@ -109,5 +114,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 //this.transform.DOScaleX(.7f, .1f);
             }
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

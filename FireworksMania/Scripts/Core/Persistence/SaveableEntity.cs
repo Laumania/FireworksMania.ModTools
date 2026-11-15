@@ -224,6 +224,12 @@ namespace FireworksMania.Core.Persistence
         public string Map;
         public string Description;
         public DateTime ModifiedUtc;
+
+        /// <summary>
+        /// How many items the blueprint holds, not counting fuse connections. Null for a blueprint saved before the
+        /// count was stored.
+        /// </summary>
+        public int? ItemCount;
     }
 
 

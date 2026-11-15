@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Utilities;
 using Unity.Netcode;
@@ -8,8 +9,12 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/CakeBehavior")]
-    public class CakeBehavior : BaseFireworkBehavior
+    public class CakeBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: the caliber of its tubes, 15mm to 125mm")]
+        private EntityCaliberDefinition _caliber;
+
         [Header("Cake Settings")]
         [SerializeField]
         private ParticleSystem _effect;
@@ -68,5 +73,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _caliber;
     }
 }

@@ -1,13 +1,18 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Common;
 using UnityEngine;
 
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/RomanCandleBehavior")]
-    public class RomanCandleBehavior : BaseFireworkBehavior
+    public class RomanCandleBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Roman Candle Settings")]
         [SerializeField]
         private ParticleSystem _effect;
@@ -62,5 +67,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Attributes;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Common;
@@ -9,8 +10,12 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/SmokeBombBehavior")]
-    public class SmokeBombBehavior : BaseFireworkBehavior
+    public class SmokeBombBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("SmokeBomb Settings")]
         [SerializeField]
         private ParticleSystem _smokeEffect;
@@ -82,5 +87,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _smokeEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _smokeEffect.gameObject.SetActive(false);
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

@@ -44316,6 +44316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: 1f515913ab98ce7498d8de386e2011c4, type: 2}
   _fuse: {fileID: 92598663943625052}
+  _caliber: {fileID: 11400000, guid: 3010710fd9e74da449991afac9746a7d, type: 2}
   _effect: {fileID: 2675364400232763382}
   _recoilForce: 30
   _OnLaunched:

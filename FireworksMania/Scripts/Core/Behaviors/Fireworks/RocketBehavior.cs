@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Utilities;
 using UnityEngine;
@@ -7,8 +8,12 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/RocketBehavior")]
-    public class RocketBehavior : BaseFireworkBehavior
+    public class RocketBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Rocket Settings")]
         [SerializeField]
         protected GameObject _model;
@@ -23,6 +28,12 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         //The longest random pause between the thruster burning out and the burst (see LaunchInternalAsync);
         //the duration estimate takes all of it (#2657)
         private const float MaxRandomDelayAfterThrusterInSeconds = 0.1f;
+
+        //Every rocket burns this long before its thrust pushes, frozen or not (#3287). The rockets were tuned with this
+        //hold from v2021.6.1; v2026.10.1 (#3047) dropped it and frozen and rack rockets flew up to 1.66x as high.
+        //It used to pin only a kinematic rocket, so a rocket standing free flew far higher than a frozen one. Now the
+        //thruster itself holds the force, so every rocket starts its climb from rest at the same point of the burn.
+        internal const float LaunchHoldSeconds = 0.2f;
 
         protected Rigidbody   _rigidbody;
         private Collider[]  _colliders;
@@ -62,13 +73,10 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             if (token.IsCancellationRequested)
                 return;
 
-            //Let go BEFORE the thrust starts. A rocket seated in a rack socket is kinematic, and it used to be held
-            //for 200 ms with the thruster already running - spending the strongest part of a front-loaded burn on
-            //the spot and costing it about a fifth of its climb, while a rocket standing free lost nothing (#3047)
-            _rigidbody.isKinematic = false;
-            _rigidbody.useGravity  = true;
+            _thruster.TurnOn(LaunchHoldSeconds);
 
-            _thruster.TurnOn();
+            await LetGoWhenThrustStartsAsync(token);
+            token.ThrowIfCancellationRequested();
 
             await UniTask.WaitWhile(() => _thruster.IsThrusting, cancellationToken: token);
             token.ThrowIfCancellationRequested();
@@ -95,6 +103,21 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 await DestroyFireworkAsync(token);
                 token.ThrowIfCancellationRequested();
             }
+        }
+
+        //A frozen or seated rocket is kinematic: let it go in the step its thrust starts to push (#3287). The server
+        //waits on the thruster's own burn clock, never an Update timer: one frame can hold any number of physics steps,
+        //so a timer let go of rockets later the lower the frame rate. A client's thruster doesn't run, so it counts the
+        //same stretch of physics time.
+        internal async UniTask LetGoWhenThrustStartsAsync(CancellationToken token)
+        {
+            if (IsServer)
+                await UniTask.WaitWhile(() => _thruster.IsHoldingForce, PlayerLoopTiming.FixedUpdate, token);
+            else
+                await UniTask.Delay(System.TimeSpan.FromSeconds(LaunchHoldSeconds), DelayType.DeltaTime, PlayerLoopTiming.FixedUpdate, token);
+
+            _rigidbody.isKinematic = false;
+            _rigidbody.useGravity  = true;
         }
 
         /// <summary>Thrust, the random pause, then the burst (#2657).</summary>
@@ -124,5 +147,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 collider.enabled = false;
             }
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

@@ -117,6 +117,14 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                     continue;
                 }
 
+                //The load waits a frame between post activations with the world live, so the firework can have been
+                //blown up or caught by the ObjectCatcher since the dictionary was built (#3316)
+                if (savedEntity == null)
+                {
+                    Debug.LogWarning($"Saved entity '{seatedEntityInstanceId}' for tube {i} on '{this.gameObject.name}' was destroyed while the blueprint was loading - leaving that tube empty", this);
+                    continue;
+                }
+
                 _mountPoints[i].RestoreMountedEntity(savedEntity);
             }
 

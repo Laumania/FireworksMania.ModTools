@@ -9833,6 +9833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: 652cfe3e52d6627489dd24c7de9e2f35, type: 2}
   _fuse: {fileID: 7770721373904661315}
+  _class: {fileID: 11400000, guid: 0c49a76f3f55ed84d81a537f08a19eb2, type: 2}
   _smokeEffect: {fileID: 8920665087822763055}
   _ignitionExplosionEffect: {fileID: 7271079179854891512}
   _sound: IgnitedFuse_Low

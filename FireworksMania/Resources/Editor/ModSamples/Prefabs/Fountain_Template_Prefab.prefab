@@ -9858,6 +9858,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: da926d609c75205418213d6a849d8355, type: 2}
   _fuse: {fileID: 4158304775116387584}
+  _class: {fileID: 11400000, guid: 0c49a76f3f55ed84d81a537f08a19eb2, type: 2}
   _effect: {fileID: 1442558311298273590}
   _startSound: Fountain_Gold_Start
   _coreSound: Fountain_Gold_Core

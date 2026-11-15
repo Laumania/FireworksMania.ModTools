@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Common;
 using FireworksMania.Core.Utilities;
 using UnityEngine;
@@ -8,8 +9,12 @@ using UnityEngine.Events;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/PreloadedTubeBehavior")]
-    public class PreloadedTubeBehavior : BaseFireworkBehavior
+    public class PreloadedTubeBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: the caliber of its tubes, 15mm to 125mm")]
+        private EntityCaliberDefinition _caliber;
+
         [Header("Preloaded Tube Settings")]
         [SerializeField]
         private ParticleSystem _effect;
@@ -81,5 +86,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
             _effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _effect.gameObject.SetActive(false);
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _caliber;
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/ShellBehavior")]
-    public class ShellBehavior : BaseFireworkBehavior, IHaveEntityDiameterDefinition
+    public class ShellBehavior : BaseFireworkBehavior, IHaveEntityDiameterDefinition, IHaveEntityClassificationDefinition
     {
         [SerializeField]
         private EntityDiameterDefinition _diameter;
@@ -159,6 +159,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public ParticleSystem Effect                                          => _effect;
         public UnwrappedShellFuse UnwrappedShellFusePrefab                    => TryGetUnwrappedShellFuse();
         public EntityDiameterDefinition DiameterDefinition                    => _diameter;
+        EntityClassificationDefinition IHaveEntityClassificationDefinition.ClassificationDefinition => _diameter;
         public MeshRenderer ModelMeshRenderer                                 => TryGetModelMeshRenderer();
         public override bool IsIgnited                                        => _fuse.IsIgnited;
         public float Recoil                                                   => _effect.main.startSpeed.Evaluate(0);

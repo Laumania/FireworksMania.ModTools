@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using FireworksMania.Core.Definitions.EntityDefinitions;
 using FireworksMania.Core.Behaviors.Fireworks.Parts;
 using FireworksMania.Core.Utilities;
 using UnityEngine;
@@ -7,8 +8,12 @@ using UnityEngine;
 namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/FirecrackerBehavior")]
-    public class FirecrackerBehavior : BaseFireworkBehavior
+    public class FirecrackerBehavior : BaseFireworkBehavior, IHaveEntityClassificationDefinition
     {
+        [SerializeField]
+        [Tooltip("How the Inventory and Shop list this firework: F2, F3 or F4")]
+        private EntityClassDefinition _class;
+
         [Header("Firecracker Settings")]
         [SerializeField]
         private GameObject _model;
@@ -77,5 +82,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
                 collider.enabled = false;
             }
         }
+
+        public EntityClassificationDefinition ClassificationDefinition => _class;
     }
 }

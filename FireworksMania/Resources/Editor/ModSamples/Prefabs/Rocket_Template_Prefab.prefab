@@ -78,6 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: b8494a238699e9547b8f6d8101cf46bd, type: 2}
   _fuse: {fileID: 4655286033552443298}
+  _class: {fileID: 11400000, guid: 2dc8de4cd54da9f429b06d0d5e1010d3, type: 2}
   _model: {fileID: 2649750184224405152}
   _thruster: {fileID: 9132369238615044797}
   _randomTimeDelayAfterThruster: 1

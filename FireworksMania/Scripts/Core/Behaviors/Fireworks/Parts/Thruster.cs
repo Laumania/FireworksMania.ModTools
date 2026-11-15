@@ -54,7 +54,11 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         private const float MinThrustTimeFactor = 0.9f;
         private const float MaxThrustTimeFactor = 1.1f;
 
+        //Ten float additions of 0.02 don't land exactly on 0.2
+        private const float ForceHoldTolerance = 0.0001f;
+
         private float _curveDeltaTime = 0.0f;
+        private float _forceHoldSeconds;
         private float _remainingThrustTime;
         private Transform _thrusterTransform;
         private Rigidbody _rigidbody;
@@ -119,7 +123,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                     return;
                 }
 
+                //Decided on the burn clock as it stood before this step - the same reading a launching rocket lets go on
+                var forceHeld = IsHoldingForce;
+
                 _curveDeltaTime += Time.fixedDeltaTime;
+
+                if (forceHeld)
+                    return;
 
                 //ForceMode.Force and ForceMode.Acceleration are already integrated over the fixed
                 //timestep by Unity, so scaling by the live Time.fixedDeltaTime here applied it twice
@@ -163,7 +173,13 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
             }
         }
 
-        public void TurnOn()
+        public void TurnOn() => TurnOn(forceHoldSeconds: 0f);
+
+        /// <summary>
+        /// Burns, but pushes nothing for the first <paramref name="forceHoldSeconds"/> of the burn: a rocket's launch
+        /// hold (#3287). The burn time still counts from here, so the thruster burns out when it always did.
+        /// </summary>
+        internal void TurnOn(float forceHoldSeconds)
         {
             if (!IsServer)
                 return;
@@ -174,7 +190,8 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
                 return;
             }
 
-            this.enabled = true;
+            _forceHoldSeconds  = forceHoldSeconds;
+            this.enabled       = true;
             _isThrusting.Value = true;
         }
 
@@ -256,6 +273,16 @@ namespace FireworksMania.Core.Behaviors.Fireworks.Parts
         }
 
         public bool IsThrusting => _isThrusting.Value;
+
+        /// <summary>
+        /// Still inside the launch hold <see cref="TurnOn(float)"/> was given. The burn clock only runs on the server, so
+        /// a client always reads false. A burn shorter than the hold ends it, or a rocket waiting on it would never burst.
+        /// </summary>
+        internal bool IsHoldingForce => IsThrusting && IsForceHeld(_curveDeltaTime, _forceHoldSeconds);
+
+        /// <summary>Whether a step taken at this burn clock is held, for a hold of <paramref name="forceHoldSeconds"/> (#3287).</summary>
+        internal static bool IsForceHeld(float burnClockSeconds, float forceHoldSeconds) =>
+            forceHoldSeconds > 0f && burnClockSeconds < forceHoldSeconds - ForceHoldTolerance;
 
         /// <summary>
         /// The longest this thruster can burn, for estimating a firework's duration on its prefab (#2657).

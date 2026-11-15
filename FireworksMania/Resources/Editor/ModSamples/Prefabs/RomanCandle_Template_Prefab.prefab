@@ -14980,6 +14980,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: f88b1c931bce9db449dabda02c57d7cd, type: 2}
   _fuse: {fileID: 5542472225773845373}
+  _class: {fileID: 11400000, guid: 0c49a76f3f55ed84d81a537f08a19eb2, type: 2}
   _effect: {fileID: 8293622202473246557}
 --- !u!54 &5248060472567050838
 Rigidbody:

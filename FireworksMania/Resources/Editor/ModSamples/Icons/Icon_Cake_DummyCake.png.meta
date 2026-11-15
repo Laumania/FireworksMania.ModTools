@@ -1,7 +1,10 @@
 fileFormatVersion: 2
 guid: b0d8d9928440e4647ba286665a5f97ce
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 3500572653052092116
+    second: Icon_Cake_DummyCake_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -160,7 +163,29 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Icon_Cake_DummyCake_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1024
+        height: 1024
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dedd97f748849030800000000000000
+      internalID: 3500572653052092116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []

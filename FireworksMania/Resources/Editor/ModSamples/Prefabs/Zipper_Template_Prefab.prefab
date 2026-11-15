@@ -14788,6 +14788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: b26f1b63df464ed42a98130e8aa054dc, type: 2}
   _fuse: {fileID: 400979784158346132}
+  _class: {fileID: 11400000, guid: 0c49a76f3f55ed84d81a537f08a19eb2, type: 2}
   _model: {fileID: 1880251066039135080}
   _effect: {fileID: 9062956024398139601}
 --- !u!54 &6167767953586700446

@@ -15211,6 +15211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: 13bf198344dbec449bd7ffc9d66f11cf, type: 2}
   _fuse: {fileID: 3934408425822671856}
+  _caliber: {fileID: 11400000, guid: 4a6244d88884d1e449fc6c26ed3f39b2, type: 2}
   _effect: {fileID: 9194284702851712888}
 --- !u!114 &295093533155252227
 MonoBehaviour:

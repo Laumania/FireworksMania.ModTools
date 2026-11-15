@@ -14,7 +14,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
 {
     [AddComponentMenu("Fireworks Mania/Behaviors/Fireworks/MortarBehavior")]
     [SelectionBase]
-    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition, IFireworkEntityHolder, IIgnitionCauserCarrier
+    public class MortarBehavior : NetworkBehaviour, ISaveableComponent, IHaveBaseEntityDefinition, IIgnitable, IHaveEntityDiameterDefinition, IHaveEntityClassificationDefinition, IFireworkEntityHolder, IIgnitionCauserCarrier
     {
         [Header("General")]
         [SerializeField]
@@ -209,6 +209,7 @@ namespace FireworksMania.Core.Behaviors.Fireworks
         public bool Enabled                                    => _mortarTubes.Any(x => x.Enabled);
         public bool IsIgnited                                  => _mortarTubes.Any(x => x.IsIgnited);
         public EntityDiameterDefinition DiameterDefinition     => _diameter;
+        EntityClassificationDefinition IHaveEntityClassificationDefinition.ClassificationDefinition => _diameter;
 
         public ulong IgnitionCauserClientId                 => _ignitionCauser.Value;
         public void TrySetIgnitionCauser(ulong causerClientId) => _ignitionCauser.TrySet(causerClientId);

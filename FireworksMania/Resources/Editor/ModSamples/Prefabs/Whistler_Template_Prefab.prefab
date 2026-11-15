@@ -77,6 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityDefinition: {fileID: 11400000, guid: 6dc3391b258c6f04aa689205f987239d, type: 2}
   _fuse: {fileID: 2160262332848329504}
+  _class: {fileID: 11400000, guid: 0c49a76f3f55ed84d81a537f08a19eb2, type: 2}
   _model: {fileID: 2649750184224405152}
   _thruster: {fileID: 2702267436129031173}
   _explosion: {fileID: 4678857289009512978}
