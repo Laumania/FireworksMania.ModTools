@@ -25,7 +25,14 @@ namespace FireworksMania.Core.Definitions.EntityDefinitions
         [FormerlySerializedAs("EntityDefinitionType")]
         private EntityDefinitionType _entityDefinitionType;
 
+        //Internal (#3434), but serialization must stay unconditional: the FireworksMania.Fireworks content project
+        //assigns these and exports them into the game, and a mod that set one keeps it - only the inspector
+        //visibility is internal
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
         [Header("Brand Collection")]
+#else
+        [HideInInspector]
+#endif
         [Tooltip("Optional reference to Brand Collection this item is part of.")]
         [SerializeField]
         private BrandCollection _collectionDefinition;

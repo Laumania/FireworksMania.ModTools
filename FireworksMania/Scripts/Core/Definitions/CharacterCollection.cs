@@ -9,9 +9,8 @@ namespace FireworksMania.Core.Definitions
     /// ever sees <see cref="Name"/> on a header. Additive to the modder-facing Core surface; a
     /// <see cref="CharacterDefinition"/> without one simply lands in the trailing "Others" group.
     /// </summary>
-#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
+    //Open to modders (#3434), unlike BrandCollection: a mod's characters can bring their own group
     [CreateAssetMenu(fileName = "New Character Collection", menuName = "Fireworks Mania/Definitions/Character Collection")]
-#endif
     public class CharacterCollection : ScriptableObject, IItemCollection
     {
         [Tooltip("Global unique definition id for this character collection.")]

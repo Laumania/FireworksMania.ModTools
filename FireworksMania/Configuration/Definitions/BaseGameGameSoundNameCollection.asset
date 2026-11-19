@@ -152,15 +152,20 @@ MonoBehaviour:
   - TOY_Squeeky_Bright_mono_deep
   - Zipper_Launch
   - BaseGame_20mmBurst1
+  - BaseGame_20mmBurst2-NEW2026
   - BaseGame_20mmBurstSalute
   - BaseGame_20mmCrackleNew3
   - BaseGame_20mmCrossetteBurst
   - BaseGame_20mmLaunch
+  - BaseGame_20mmLaunch2-NEW2026
   - BaseGame_25mmBurst1
+  - BaseGame_25mmBurst2-NEW2026
   - BaseGame_25mmBurstSalute
   - BaseGame_25mmLaunch
   - BaseGame_30mmBurst1
   - BaseGame_30mmBurst2
+  - BaseGame_30mmBurst3-NEW2026
+  - BaseGame_30mmBurstMalossiDK_1
   - BaseGame_30mmBurstQuieter
   - BaseGame_30mmBurstSalute
   - BaseGame_30mmBurstSaluteLouder
@@ -168,6 +173,7 @@ MonoBehaviour:
   - BaseGame_30mmFallingLeaves
   - BaseGame_30mmHowlerLaunchWhistle
   - BaseGame_30mmLaunch
+  - BaseGame_30mmLaunch2-NEW2026
   - BaseGame_30mmLaunchCometsMines
   - BaseGame_30mmWaterfall
   - BaseGame_38mmBurst1
@@ -197,12 +203,16 @@ MonoBehaviour:
   - BaseGame_CrackleChrysAddShortHeavy1
   - BaseGame_CrackleChrysAddShortMINE
   - BaseGame_CrackleCometTailAdd1
+  - BaseGame_CrackleMine10Shot3LayerMineBluetoChrysandTimeRainRedGreenStrobeMineCrackleAdd
   - BaseGame_CrackleMineAdd1
   - BaseGame_CrackleMineLongAdd
+  - BaseGame_CracklePalmDeepAdd1
   - BaseGame_CrackleSpiderWillowAdd
   - BaseGame_CrackleWillowAdd1
   - BaseGame_CrackleWillowFastAdd
   - BaseGame_CrackleWillowTailAddNEW
+  - BaseGame_CracklingTailMine1
+  - BaseGame_CracklingTailMine2
   - BaseGame_DelayedCrackle11SecondsAdd
   - BaseGame_Firecracker5g
   - BaseGame_Firecracker50g
@@ -210,7 +220,10 @@ MonoBehaviour:
   - BaseGame_Firecracker200g
   - BaseGame_FirecrackerLadyFinger
   - BaseGame_FirecrackerPreburner1Second
+  - BaseGame_Fountain_20Seconds_1
+  - BaseGame_Fountain_20Seconds_2
   - BaseGame_FoxyBurst
+  - BaseGame_Gerb_1Second_1
   - BaseGame_HeavyCrackleHalfSecondDelayAdd
   - BaseGame_LaunchWhistleAdd
   - BaseGame_LaunchWhistleTwirlAdd
@@ -218,6 +231,7 @@ MonoBehaviour:
   - BaseGame_MediumCrackleOneOneQuarterSecondDelayAdd
   - BaseGame_MediumCrackleThreeQuarterSecondDelayAdd
   - BaseGame_Mozzie
+  - BaseGame_ReallyHeavyCracklePointSevenSecondDelayAdd
   - BaseGame_RocketLaunchLarge
   - BaseGame_RocketLaunchMedium1
   - BaseGame_RocketLaunchMedium2
@@ -232,11 +246,14 @@ MonoBehaviour:
   - BaseGame_SmokeBalls
   - BaseGame_SnapCrackleAdd1
   - BaseGame_SnapCrackleAddFast1
+  - BaseGame_SnapCrackleAddHeavy1
   - BaseGame_StrobeRocketBurst
   - BaseGame_1.75InchShellLaunch1
   - BaseGame_1.75InchShellLaunchGround
+  - BaseGame_3InchLargeChrysanthemumCrackleAdd
   - BaseGame_3InchShellLaunchGround
   - BaseGame_3InchShellLaunchNEW
+  - BaseGame_4InchDisplayShellDelayedCrackleChrys
   - BaseGame_4InchShellFallingLeaves
   - BaseGame_4InchShellLaunchGround
   - BaseGame_4InchShellLaunchNEW
@@ -252,6 +269,7 @@ MonoBehaviour:
   - BaseGame_8InchShellLaunch1
   - BaseGame_CrossetteBurst
   - BaseGame_DelayedCracklingChrysShorter
+  - BaseGame_DisplayShellDelayedCrackleChrys1.2SecondDelay
   - BaseGame_FarfalleBurstSizzleAdd
   - BaseGame_FarfalleBurstSizzleShortAdd
   - BaseGame_Scala8InitialBurst

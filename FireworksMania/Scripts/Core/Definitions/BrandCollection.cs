@@ -7,7 +7,11 @@ using UnityEngine;
 
 namespace FireworksMania.Core.Definitions
 {
+    //Internal (#3434): collections are the base game's Shop and Inventory grouping, not something modders author.
+    //The type stays public, so mods that already reference one keep compiling
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
     [CreateAssetMenu(fileName = "New Brand Collection Definition", menuName = "Fireworks Mania/Definitions/Brand Collection Definition")]
+#endif
     public class BrandCollection : ScriptableObject, IItemCollection
     {
         [Tooltip("Global unique definition id for this brand collection definition.")]

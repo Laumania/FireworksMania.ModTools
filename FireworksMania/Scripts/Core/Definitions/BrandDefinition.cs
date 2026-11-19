@@ -7,7 +7,10 @@ using UnityEngine;
 
 namespace FireworksMania.Core.Definitions
 {
+    //Internal (#3434): a brand is only ever reached through a BrandCollection, which modders no longer see
+#if FIREWORKSMANIA_SHOW_INTERNAL_MODTOOLS
     [CreateAssetMenu(fileName = "New Brand Definition", menuName = "Fireworks Mania/Definitions/Brand Definition")]
+#endif
     public class BrandDefinition : ScriptableObject
     {
         [Tooltip("Global unique definition id for this brand definition.")]
